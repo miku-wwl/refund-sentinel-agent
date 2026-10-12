@@ -1,0 +1,21 @@
+{
+  "package": "agentic-intent-gate",
+  "version": "0.1.0",
+  "hashed_installed_files_checked": 47,
+  "all_record_hashes_match": true,
+  "source": {
+    "url": "https://github.com/miku-wwl/agentic-intent-gate.git",
+    "vcs_info": {
+      "commit_id": "fd742b783058a53400c465b4ab59c6e80715895a",
+      "requested_revision": "fd742b783058a53400c465b4ab59c6e80715895a",
+      "vcs": "git"
+    }
+  },
+  "release_tag_object": "ce0a516baf857bf79b53237677fff7fd3c50de95",
+  "release_tag_peeled_commit": "fd742b783058a53400c465b4ab59c6e80715895a",
+  "licensing_metadata": {
+    "License": null,
+    "License-Expression": null,
+    "License-File": null
+  }
+}

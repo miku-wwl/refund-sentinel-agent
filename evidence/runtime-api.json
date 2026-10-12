@@ -1,0 +1,16 @@
+{
+  "installed": {
+    "version": "0.1.0",
+    "commit": "fd742b783058a53400c465b4ab59c6e80715895a"
+  },
+  "public_signatures": {
+    "ToolBinding": "(tool_name: str, tool_version: str, adapter_id: str, binding_revision: str, target: str, execution_scope: str) -> None",
+    "ToolCapability": "(binding: agentic_intent_gate.application.action_compiler.ToolBinding, description: str, input_schema: collections.abc.Mapping, target_argument: str | None = None, semantic_rule: collections.abc.Callable | None = None) -> None",
+    "open_runtime": "(*, gate_path, provider, capability, registry, verifier, policy, predecessor_stopped=False)",
+    "RunService.create": "(self, intent: agentic_intent_gate.domain.contracts.Intent, *, deadline: float | None = None) -> agentic_intent_gate.domain.run.Run",
+    "RunService.decide": "(self, run_id: str, request: agentic_intent_gate.domain.approval.ApprovalDecisionRequest) -> agentic_intent_gate.domain.run.Run",
+    "Gateway.admit": "(self, command, principal)",
+    "Gateway.authorize": "(self, command, principal)",
+    "Gateway.execute": "(self, command, principal, *, deadline=None)"
+  }
+}

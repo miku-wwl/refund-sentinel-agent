@@ -1,0 +1,74 @@
+{
+  "label": "GENUINE LOCAL AI + FAKE PAYMENT FACTS; NO REFUND EXECUTED",
+  "model": "phi4-mini:latest",
+  "response_format": "json_schema",
+  "elapsed_seconds": 12.03,
+  "result": {
+    "id": "473812f9-68fe-4ae0-8279-f2d3b846b84f",
+    "capture_id": "DEMO0000000000001",
+    "message": "Synthetic customer request: One item arrived damaged. Please refund USD 25.00 from the USD 120.00 payment.",
+    "modes": {
+      "payment": "offline",
+      "ai": "real"
+    },
+    "analysis_state": "READY",
+    "capture": {
+      "capture_id": "DEMO0000000000001",
+      "order_id": "DEMOORDER00000001",
+      "merchant_id": "DEMO-MERCHANT",
+      "amount": "120.00",
+      "currency": "USD",
+      "status": "COMPLETED",
+      "prior_refunds": false,
+      "source": "fake"
+    },
+    "recommendation": {
+      "recommendation": "REFUND",
+      "requested_amount": "25.00",
+      "currency": "USD",
+      "explanation": "One item arrived damaged, as indicated by the customer, which justifies a refund.",
+      "reason_code": "DAMAGED_ITEM",
+      "uncertainty": "LOW"
+    },
+    "refund_arguments": {
+      "incident_id": "473812f9-68fe-4ae0-8279-f2d3b846b84f",
+      "capture_id": "DEMO0000000000001",
+      "amount": "25.00",
+      "currency": "USD"
+    },
+    "policy": "PASS",
+    "run_id": "f7e217ac-c53f-4001-86c6-7948418aa666",
+    "run": {
+      "run_id": "f7e217ac-c53f-4001-86c6-7948418aa666",
+      "intent": {
+        "text": "{\"incident_id\": \"473812f9-68fe-4ae0-8279-f2d3b846b84f\"}"
+      },
+      "state": "AwaitingApproval",
+      "plan": {
+        "goal": "Issue one reviewed partial refund for this incident",
+        "target": "paypal-sandbox-refunds",
+        "steps": [
+          {
+            "tool_name": "paypal_partial_refund",
+            "tool_version": "1",
+            "arguments": {
+              "amount": "25.00",
+              "capture_id": "DEMO0000000000001",
+              "currency": "USD",
+              "incident_id": "473812f9-68fe-4ae0-8279-f2d3b846b84f"
+            }
+          }
+        ],
+        "risk_class": "SIDE_EFFECT"
+      },
+      "risk_class": "SIDE_EFFECT",
+      "version": 4,
+      "approval_required": true,
+      "created_at": "2026-10-11T23:27:03.476941Z",
+      "updated_at": "2026-10-11T23:27:03.684360Z",
+      "error": null
+    },
+    "plan_digest": "516db080a2be1bd2a29f15eecb6a2814943f23f2bae2f6b9731dd551b9cacfd2"
+  },
+  "provider_refund_calls": []
+}

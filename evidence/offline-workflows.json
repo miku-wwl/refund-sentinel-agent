@@ -1,0 +1,348 @@
+{
+  "completed": {
+    "label": "SIMULATED PAYMENTS + DETERMINISTIC TEST PROVIDER",
+    "behavior": "COMPLETED",
+    "binding": {
+      "tool_name": "paypal_partial_refund",
+      "tool_version": "1",
+      "adapter_id": "paypal-sandbox-adapter",
+      "binding_revision": "refund-binding-v1",
+      "target": "paypal-sandbox-refunds",
+      "execution_scope": "969abcb7-7e66-4633-9e1b-470c793b5534"
+    },
+    "incident": {
+      "id": "722d2e38-8703-469b-aa08-90d11c13274d",
+      "capture_id": "DEMO0000000000001",
+      "message": "Synthetic customer: One item arrived damaged. Please refund USD 25.00.",
+      "modes": {
+        "payment": "offline",
+        "ai": "deterministic"
+      },
+      "analysis_state": "READY",
+      "capture": {
+        "capture_id": "DEMO0000000000001",
+        "order_id": "DEMOORDER00000001",
+        "merchant_id": "DEMO-MERCHANT",
+        "amount": "120.00",
+        "currency": "USD",
+        "status": "COMPLETED",
+        "prior_refunds": false,
+        "source": "fake"
+      },
+      "recommendation": {
+        "recommendation": "REFUND",
+        "requested_amount": "25.00",
+        "currency": "USD",
+        "explanation": "Deterministic fixture extracted an explicit amount; no AI was called.",
+        "reason_code": "OTHER",
+        "uncertainty": "LOW"
+      },
+      "refund_arguments": {
+        "incident_id": "722d2e38-8703-469b-aa08-90d11c13274d",
+        "capture_id": "DEMO0000000000001",
+        "amount": "25.00",
+        "currency": "USD"
+      },
+      "policy": "PASS",
+      "run_id": "f111d563-2757-4e68-b23c-7135ed82cf7b",
+      "run": {
+        "run_id": "f111d563-2757-4e68-b23c-7135ed82cf7b",
+        "intent": {
+          "text": "{\"incident_id\": \"722d2e38-8703-469b-aa08-90d11c13274d\"}"
+        },
+        "state": "Approved",
+        "plan": {
+          "goal": "Issue one reviewed partial refund for this incident",
+          "target": "paypal-sandbox-refunds",
+          "steps": [
+            {
+              "tool_name": "paypal_partial_refund",
+              "tool_version": "1",
+              "arguments": {
+                "amount": "25.00",
+                "capture_id": "DEMO0000000000001",
+                "currency": "USD",
+                "incident_id": "722d2e38-8703-469b-aa08-90d11c13274d"
+              }
+            }
+          ],
+          "risk_class": "SIDE_EFFECT"
+        },
+        "risk_class": "SIDE_EFFECT",
+        "version": 5,
+        "approval_required": true,
+        "created_at": "2026-10-11T23:32:37.947860Z",
+        "updated_at": "2026-10-11T23:32:38.175860Z",
+        "error": null
+      },
+      "plan_digest": "5bb342b00a1f0fe444f710147f7df2b21bab5e3bccb85e06256d8129ad62cf7d",
+      "action": {
+        "run_id": "f111d563-2757-4e68-b23c-7135ed82cf7b",
+        "step_index": 0,
+        "tool_name": "paypal_partial_refund",
+        "tool_version": "1",
+        "target": "paypal-sandbox-refunds",
+        "normalized_arguments": {
+          "amount": "25.00",
+          "capture_id": "DEMO0000000000001",
+          "currency": "USD",
+          "incident_id": "722d2e38-8703-469b-aa08-90d11c13274d"
+        },
+        "risk_class": "SIDE_EFFECT",
+        "action_id": "69a15aff-2094-42c9-b90a-fb7609649398",
+        "state": "Succeeded",
+        "version": 4,
+        "created_at": "2026-10-11T23:32:38.229582Z",
+        "updated_at": "2026-10-11T23:32:38.444447Z",
+        "authorization": {
+          "authorization_id": "37afedf4-96fb-45b2-8236-dce836b43e21",
+          "authorized_at": "2026-10-11T23:32:38.283630Z",
+          "policy_revision": "refund-policy-v1",
+          "subject_id": "merchant-operator"
+        },
+        "result": {
+          "code": "EXECUTION_SUCCEEDED",
+          "message": "The tool effect was confirmed.",
+          "receipt_reference": "141e2295-76d0-4923-90a7-bf1bcf0a0706"
+        },
+        "effect_key": "8a729e9e-b1a7-4c0d-811b-1539ab3c2354"
+      },
+      "evidence": [
+        {
+          "id": "34bdc04c-cbc8-40a7-b828-245e6dea4532",
+          "effect_key": "8a729e9e-b1a7-4c0d-811b-1539ab3c2354",
+          "payload_digest": "3d16903a753407fa608de26fecd5f193f8d39ba6f12437d0986925e74bf0d3bb",
+          "data": {
+            "phase": "REFUND_DISPATCH",
+            "source": "fake",
+            "request_id": "8a729e9e-b1a7-4c0d-811b-1539ab3c2354",
+            "capture_id": "DEMO0000000000001",
+            "amount": "25.00",
+            "currency": "USD"
+          },
+          "created_at": "2026-10-11T23:32:38.381290+00:00"
+        },
+        {
+          "id": "05be9703-af85-42b5-b3e3-462a4f1eb36c",
+          "effect_key": "8a729e9e-b1a7-4c0d-811b-1539ab3c2354",
+          "payload_digest": "3d16903a753407fa608de26fecd5f193f8d39ba6f12437d0986925e74bf0d3bb",
+          "data": {
+            "phase": "REFUND_RESPONSE",
+            "refund_id": "C7B9A325F93148EDB",
+            "source": "fake",
+            "provider_status": "COMPLETED"
+          },
+          "created_at": "2026-10-11T23:32:38.394241+00:00"
+        },
+        {
+          "id": "141e2295-76d0-4923-90a7-bf1bcf0a0706",
+          "effect_key": "8a729e9e-b1a7-4c0d-811b-1539ab3c2354",
+          "payload_digest": "3d16903a753407fa608de26fecd5f193f8d39ba6f12437d0986925e74bf0d3bb",
+          "data": {
+            "phase": "VERIFIED_REFUND",
+            "source": "fake",
+            "refund_id": "C7B9A325F93148EDB",
+            "provider_status": "COMPLETED",
+            "amount": "25.00",
+            "currency": "USD",
+            "capture_id": "DEMO0000000000001"
+          },
+          "created_at": "2026-10-11T23:32:38.402634+00:00"
+        }
+      ]
+    },
+    "recorded_provider_calls": [
+      {
+        "id": 1,
+        "request_id": "8a729e9e-b1a7-4c0d-811b-1539ab3c2354",
+        "capture_id": "DEMO0000000000001",
+        "amount": "25.00",
+        "currency": "USD"
+      }
+    ],
+    "persisted_provider_refunds": [
+      {
+        "id": "C7B9A325F93148EDB",
+        "status": "COMPLETED",
+        "amount": {
+          "value": "25.00",
+          "currency_code": "USD"
+        },
+        "links": [
+          {
+            "rel": "up",
+            "href": "https://api-m.sandbox.paypal.com/v2/payments/captures/DEMO0000000000001",
+            "method": "GET"
+          }
+        ]
+      }
+    ],
+    "command_replayed": true,
+    "restart_persisted_state": "Succeeded"
+  },
+  "ambiguous": {
+    "label": "SIMULATED PAYMENTS + DETERMINISTIC TEST PROVIDER",
+    "behavior": "TIMEOUT_AFTER_EFFECT",
+    "binding": {
+      "tool_name": "paypal_partial_refund",
+      "tool_version": "1",
+      "adapter_id": "paypal-sandbox-adapter",
+      "binding_revision": "refund-binding-v1",
+      "target": "paypal-sandbox-refunds",
+      "execution_scope": "856e335e-44c8-4133-be03-fe7f31948bdf"
+    },
+    "incident": {
+      "id": "70445a7c-b7bc-48ac-8dc1-3e45b8c41435",
+      "capture_id": "DEMO0000000000001",
+      "message": "Synthetic customer: One item arrived damaged. Please refund USD 25.00.",
+      "modes": {
+        "payment": "offline",
+        "ai": "deterministic"
+      },
+      "analysis_state": "READY",
+      "capture": {
+        "capture_id": "DEMO0000000000001",
+        "order_id": "DEMOORDER00000001",
+        "merchant_id": "DEMO-MERCHANT",
+        "amount": "120.00",
+        "currency": "USD",
+        "status": "COMPLETED",
+        "prior_refunds": false,
+        "source": "fake"
+      },
+      "recommendation": {
+        "recommendation": "REFUND",
+        "requested_amount": "25.00",
+        "currency": "USD",
+        "explanation": "Deterministic fixture extracted an explicit amount; no AI was called.",
+        "reason_code": "OTHER",
+        "uncertainty": "LOW"
+      },
+      "refund_arguments": {
+        "incident_id": "70445a7c-b7bc-48ac-8dc1-3e45b8c41435",
+        "capture_id": "DEMO0000000000001",
+        "amount": "25.00",
+        "currency": "USD"
+      },
+      "policy": "PASS",
+      "run_id": "f6a82b7a-f5a4-4a6d-ab83-b2016ac729ca",
+      "run": {
+        "run_id": "f6a82b7a-f5a4-4a6d-ab83-b2016ac729ca",
+        "intent": {
+          "text": "{\"incident_id\": \"70445a7c-b7bc-48ac-8dc1-3e45b8c41435\"}"
+        },
+        "state": "Approved",
+        "plan": {
+          "goal": "Issue one reviewed partial refund for this incident",
+          "target": "paypal-sandbox-refunds",
+          "steps": [
+            {
+              "tool_name": "paypal_partial_refund",
+              "tool_version": "1",
+              "arguments": {
+                "amount": "25.00",
+                "capture_id": "DEMO0000000000001",
+                "currency": "USD",
+                "incident_id": "70445a7c-b7bc-48ac-8dc1-3e45b8c41435"
+              }
+            }
+          ],
+          "risk_class": "SIDE_EFFECT"
+        },
+        "risk_class": "SIDE_EFFECT",
+        "version": 5,
+        "approval_required": true,
+        "created_at": "2026-10-11T23:32:39.146099Z",
+        "updated_at": "2026-10-11T23:32:39.276001Z",
+        "error": null
+      },
+      "plan_digest": "8781de8697ad528d8ecf6bf8b16f9c17bd87abb18cb656c120759dba1fd51c4b",
+      "action": {
+        "run_id": "f6a82b7a-f5a4-4a6d-ab83-b2016ac729ca",
+        "step_index": 0,
+        "tool_name": "paypal_partial_refund",
+        "tool_version": "1",
+        "target": "paypal-sandbox-refunds",
+        "normalized_arguments": {
+          "amount": "25.00",
+          "capture_id": "DEMO0000000000001",
+          "currency": "USD",
+          "incident_id": "70445a7c-b7bc-48ac-8dc1-3e45b8c41435"
+        },
+        "risk_class": "SIDE_EFFECT",
+        "action_id": "6ec19dad-0e92-482c-b2d8-1a6eb7f7a56d",
+        "state": "Unknown",
+        "version": 4,
+        "created_at": "2026-10-11T23:32:39.338626Z",
+        "updated_at": "2026-10-11T23:32:39.564791Z",
+        "authorization": {
+          "authorization_id": "75492d1b-7509-4b5d-891e-b7be7b25cba3",
+          "authorized_at": "2026-10-11T23:32:39.396969Z",
+          "policy_revision": "refund-policy-v1",
+          "subject_id": "merchant-operator"
+        },
+        "result": {
+          "code": "EXECUTION_OUTCOME_UNKNOWN",
+          "message": "The external effect outcome is unknown.",
+          "receipt_reference": null
+        },
+        "effect_key": "3ba55b78-a4f1-4c71-89aa-cc9841eeca9b"
+      },
+      "evidence": [
+        {
+          "id": "9141dc74-6835-4871-85be-0c155b1f35a0",
+          "effect_key": "3ba55b78-a4f1-4c71-89aa-cc9841eeca9b",
+          "payload_digest": "37c21b09088c717d2c886bf4b2899a5e3ab983e5332ebe8a2c0ceab5a566a647",
+          "data": {
+            "phase": "REFUND_DISPATCH",
+            "source": "fake",
+            "request_id": "3ba55b78-a4f1-4c71-89aa-cc9841eeca9b",
+            "capture_id": "DEMO0000000000001",
+            "amount": "25.00",
+            "currency": "USD"
+          },
+          "created_at": "2026-10-11T23:32:39.506794+00:00"
+        },
+        {
+          "id": "45ddbde8-f6b7-4be8-852d-29f3482ce68f",
+          "effect_key": "3ba55b78-a4f1-4c71-89aa-cc9841eeca9b",
+          "payload_digest": "37c21b09088c717d2c886bf4b2899a5e3ab983e5332ebe8a2c0ceab5a566a647",
+          "data": {
+            "phase": "REFUND_ERROR",
+            "error": "PAYPAL_TRANSPORT_UNCERTAIN",
+            "definitive_no_effect": false
+          },
+          "created_at": "2026-10-11T23:32:39.520049+00:00"
+        }
+      ]
+    },
+    "recorded_provider_calls": [
+      {
+        "id": 1,
+        "request_id": "3ba55b78-a4f1-4c71-89aa-cc9841eeca9b",
+        "capture_id": "DEMO0000000000001",
+        "amount": "25.00",
+        "currency": "USD"
+      }
+    ],
+    "persisted_provider_refunds": [
+      {
+        "id": "8124173AA1D943CE9",
+        "status": "COMPLETED",
+        "amount": {
+          "value": "25.00",
+          "currency_code": "USD"
+        },
+        "links": [
+          {
+            "rel": "up",
+            "href": "https://api-m.sandbox.paypal.com/v2/payments/captures/DEMO0000000000001",
+            "method": "GET"
+          }
+        ]
+      }
+    ],
+    "command_replayed": true,
+    "restart_persisted_state": "Unknown"
+  }
+}

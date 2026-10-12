@@ -1,0 +1,27 @@
+{
+  "label": "GENUINE LOCAL AI + FAKE PAYMENT FACTS; NO REFUND EXECUTED",
+  "model": "phi4-mini:latest",
+  "elapsed_seconds": 18.38,
+  "result": {
+    "id": "0c58fdc0-c707-46ec-bc1c-4d7b523d7ae7",
+    "capture_id": "DEMO0000000000001",
+    "message": "Synthetic customer request: One item arrived damaged. Please refund USD 25.00 from the USD 120.00 payment.",
+    "modes": {
+      "payment": "offline",
+      "ai": "real"
+    },
+    "analysis_state": "BLOCKED",
+    "capture": {
+      "capture_id": "DEMO0000000000001",
+      "order_id": "DEMOORDER00000001",
+      "merchant_id": "DEMO-MERCHANT",
+      "amount": "120.00",
+      "currency": "USD",
+      "status": "COMPLETED",
+      "prior_refunds": false,
+      "source": "fake"
+    },
+    "policy": "INVALID_MODEL_RESPONSE"
+  },
+  "provider_refund_calls": []
+}

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Refund Sentinel · AI-Powered Refund Incident Responder</title>
+  <link rel="stylesheet" href="/static/style.css"><script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header><a class="brand" href="/">◈ <span>Refund Sentinel</span></a><span class="badge">SANDBOX ONLY</span></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">AI-POWERED REFUND INCIDENT RESPONDER</p>
+      <h1>A thoughtful refund.<br>A deliberate decision.</h1>
+      <p>Turn a customer request into a reviewed refund. You approve the exact plan,
+        authorize it separately, and inspect the payment evidence.</p></div>
+      <div class="mode-box"><strong id="modes">Checking configuration…</strong>
+        <p id="mode-note"></p></div></div>
+    <ol class="steps" aria-label="Refund workflow"><li>01 Request</li><li>02 Analysis</li><li>03 Approval</li><li>04 Authorization</li><li>05 Receipt</li></ol>
+    <div id="error" role="alert" hidden></div>
+    <div class="layout">
+      <aside>
+        <section class="card"><h2>Merchant session</h2>
+          <p>Load your local <code>operator.capability</code> file. This credential stays in browser memory.</p>
+          <label for="capability">Private capability file</label>
+          <input id="capability" type="file" accept=".capability">
+          <p id="session-status" class="muted">Session locked</p>
+        </section>
+        <section class="card"><h2>Customer request</h2><p class="muted">Use synthetic customer data for this demo.</p>
+          <form id="request-form">
+            <label for="capture">Allowed capture ID</label><select id="capture" required></select>
+            <label for="message">Customer message</label>
+            <textarea id="message" rows="5" minlength="5" maxlength="2000" required placeholder="The item arrived damaged. Please refund USD 25.00."></textarea>
+            <button id="analyze" type="submit" disabled>Analyze request <span>→</span></button>
+          </form>
+          <p class="fine">Policy: USD or NZD · partial refund · no prior refunds · one incident per capture</p>
+        </section>
+        <section class="card"><h2>Persistent incidents</h2><button id="refresh" class="secondary" disabled>Refresh saved incidents</button><div id="history"></div></section>
+      </aside>
+      <div id="workspace">
+        <section id="empty" class="card empty"><div class="symbol">◈</div><h2>Start with the customer's story</h2>
+          <p>The model interprets the request. Trusted payment facts and merchant policy determine whether a refund plan can proceed.</p>
+          <div class="trust">Model proposes → Merchant approves → Runtime guards → Provider confirms</div></section>
+        <div id="incident" hidden>
+          <section class="card"><div class="section-title"><h2>Request analysis</h2><span id="policy" class="badge"></span></div>
+            <p id="explanation"></p><div class="facts" id="facts"></div><p id="recommendation" class="muted"></p>
+          </section>
+          <section class="card"><div class="section-title"><h2>Exact refund plan</h2><span id="run-state" class="badge"></span></div>
+            <p id="plan-summary"></p><p class="fine">Confirmation fingerprint: <code id="fingerprint"></code></p>
+            <details><summary>Inspect full persisted plan</summary><pre id="plan"></pre></details>
+            <div class="buttons"><button id="approve" disabled>Approve this exact plan</button><button id="reject" class="secondary" disabled>Reject</button></div>
+            <p class="fine">Approval records your decision. Execution still needs a separate authorization.</p>
+          </section>
+          <section class="card"><div class="section-title"><h2>Execution controls</h2><span id="action-state" class="badge"></span></div>
+            <div class="buttons"><button id="admit" class="secondary" disabled>Prepare durable action</button>
+              <button id="authorize" class="secondary" disabled>Authorize execution</button>
+              <button id="execute" disabled>Execute refund</button></div>
+            <p id="execution-note" class="muted"></p>
+          </section>
+          <section class="card"><div class="section-title"><h2>Receipt &amp; provider evidence</h2><button id="verify" class="secondary" disabled>Check refund status (read only)</button></div>
+            <p id="outcome">No refund has been attempted.</p><div id="result-facts" class="facts"></div>
+            <details><summary>Inspect durable action and observations</summary><pre id="evidence"></pre></details>
+          </section>
+        </div>
+      </div>
+    </div>
+    <footer>Refund Sentinel · local merchant MVP · Agentic Intent Gate v0.1.0<br>Sandbox payment evidence and local execution state are shown separately.</footer>
+  </main>
+</body>
+</html>

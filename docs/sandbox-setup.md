@@ -1,0 +1,27 @@
+# Real Sandbox setup and approved smoke test
+
+1. Create/use a PayPal Developer account and a **Sandbox Business** account plus a separate **Sandbox Personal** buyer. Obtain your Sandbox app's client ID/secret and the Business merchant ID through the developer dashboard. Keep credentials private.
+2. Prepare a completed Sandbox order/capture with no prior refunds. Record its capture ID and associated order ID. Use a small synthetic USD/NZD amount greater than the proposed partial refund. The application's policy needs capture/order association and merchant evidence.
+3. Configure `.env`: `PAYMENT_MODE=sandbox`, `AI_MODE=real`, `PAYPAL_MERCHANT_ID`, `PAYPAL_CAPTURE_IDS` (explicit comma-separated allowlist), `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `SENTINEL_STATE_DIR=.state-sandbox`, plus a real `LLM_BASE_URL`, `LLM_MODEL` and optional `LLM_API_KEY`. Keep `PAYPAL_ENVIRONMENT=sandbox` and the fixed Sandbox URL. Use `LLM_FORMAT=json_schema` with a compatible model.
+4. Install and initialize using the README. Verify credentials/payment facts with the read-only command:
+
+   ```powershell
+   .\.venv\Scripts\refund-sentinel.exe check-capture --capture-id YOUR17CHARCAPTURE
+   ```
+
+   This performs OAuth authentication and capture/order GETs. It creates no order, captures no payment and issues no refund. A failed check prints a redacted code. Do not put OAuth output in screenshots.
+
+5. Start the local Sandbox dashboard, load its private operator capability, and enter synthetic customer text. Review the exact capture, merchant, amount, policy and Plan. **Stop before approval/authorization/execution until the human approves the specific capture ID, currency and refund amount.** No automatic Sandbox refund has been performed by this implementation session.
+6. The human then approves the exact Plan, prepares the Action, separately authorizes, and executes the approved test case. Save redacted evidence of the Runtime Action, PayPal refund ID, lookup status and local receipt. COMPLETED is provider confirmation at that read, not a broader settlement guarantee. For Pending/Unknown, inspect the provider; never create a fresh incident/state directory or request ID to retry.
+
+## Explicit fixture preparation, outside the refund tool
+
+No fixture-creation program runs during startup or tests. Use the official [Orders create reference](https://developer.paypal.com/api/orders/v2/orders-create) in an authenticated developer REST tool to explicitly POST an `intent=CAPTURE` order with one Sandbox purchase unit. Sign in as the Sandbox buyer and complete the returned approval flow. Only after buyer approval, explicitly POST `/v2/checkout/orders/{order_id}/capture` as documented in [Orders capture](https://developer.paypal.com/api/orders/v2/orders-capture). Read the returned purchase-unit capture ID and check it using `check-capture`.
+
+These create/capture operations are developer-operated test preparation, not additional registered Runtime tools. They must be deliberate actions; never automate buyer login, fixture payments, or a refund as a normal startup task. An existing eligible Sandbox capture may be used instead.
+
+## Local AI option
+
+A pre-existing Ollama server can use `LLM_BASE_URL=http://127.0.0.1:11434/v1`, `LLM_MODEL=phi4-mini:latest`, `LLM_FORMAT=json_schema`, blank API key. This repository does not install/start Ollama or download a model. Its real mode must be tested with the selected model; deterministic mode is always labeled separately. Only synthetic request data and amount/currency/status are sent to the model. Hosted endpoints require HTTPS.
+
+The current session verified local Ollama interpretation and Plan creation with fake payment facts. It did not verify PayPal credentials or perform a Sandbox refund. A separate `.state-*` directory is required when changing provider/merchant configuration; this is for distinct environments, never for retrying an unresolved capture.
