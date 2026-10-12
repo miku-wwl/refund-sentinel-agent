@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-13",
+  "tests": 157,
+  "test_failures": 0,
+  "real_oauth": "PASS",
+  "real_capture_get": "BLOCKED_NO_CAPTURE_ID",
+  "real_order_get": "BLOCKED_NO_CAPTURE_ID",
+  "real_refund_post": "NOT AUTHORIZED / NOT RUN",
+  "env_bytes_unchanged": true,
+  "env_git_ignored": true,
+  "AGENTS_unchanged": true,
+  "installed_core_hashes_match": 47,
+  "credential_and_capability_literal_scan": "PASS",
+  "packaging": "PASS",
+  "head_unchanged": true,
+  "new_application_process_started": false,
+  "existing_application_state_reset": false
+}

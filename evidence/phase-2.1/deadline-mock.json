@@ -1,0 +1,9 @@
+{
+  "source": "ISOLATED_FAKE_PROVIDER",
+  "requested_gateway_deadline_seconds": 30,
+  "actual_runtime_limit_seconds": 5,
+  "elapsed_seconds": 5.136312,
+  "durable_action_state": "Unknown",
+  "committed_fake_refunds": 1,
+  "provider_attempts_after_replay": 1
+}

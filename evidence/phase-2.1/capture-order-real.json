@@ -1,0 +1,12 @@
+{
+  "check": "capture_order",
+  "status": "BLOCKED",
+  "code": "BLOCKED_NO_CAPTURE_ID",
+  "requests": [],
+  "payment_mutation_requests": 0,
+  "checks": {
+    "capture_get": "BLOCKED",
+    "order_get": "BLOCKED",
+    "refund_post": "NOT AUTHORIZED / NOT RUN"
+  }
+}

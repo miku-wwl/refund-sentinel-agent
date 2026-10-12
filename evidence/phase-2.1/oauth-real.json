@@ -1,0 +1,18 @@
+{
+  "check": "oauth",
+  "status": "PASS",
+  "code": "BEARER_RESPONSE_VALID",
+  "token_cache_reused": true,
+  "source": "REAL_SANDBOX",
+  "environment": "sandbox",
+  "elapsed_seconds": 1.521497,
+  "requests": [
+    {
+      "operation": "oauth",
+      "method": "POST",
+      "http_status": 200,
+      "elapsed_seconds": 1.520656
+    }
+  ],
+  "payment_mutation_requests": 0
+}

@@ -66,7 +66,8 @@ def strict_json(raw: str):
     return json.loads(raw, object_pairs_hook=pairs)
 
 
-def validate_policy(facts: CaptureFacts, proposal: Recommendation, settings):
+def validate_capture_policy(facts: CaptureFacts, settings):
+    """Payment eligibility only; does not invent a recommendation or authorize a refund."""
     if facts.capture_id not in settings.capture_ids:
         raise Problem("CAPTURE_NOT_ALLOWED")
     if facts.source != ("fake" if settings.payment_mode == "offline" else "paypal-sandbox"):
@@ -77,6 +78,12 @@ def validate_policy(facts: CaptureFacts, proposal: Recommendation, settings):
         raise Problem("CAPTURE_NOT_ELIGIBLE")
     if facts.currency not in {"USD", "NZD"}:
         raise Problem("UNSUPPORTED_CURRENCY")
+    if Decimal(facts.amount) <= Decimal("0.01") or Decimal(settings.max_refund) < Decimal("0.01"):
+        raise Problem("AMOUNT_OUTSIDE_POLICY")
+
+
+def validate_policy(facts: CaptureFacts, proposal: Recommendation, settings):
+    validate_capture_policy(facts, settings)
     if proposal.recommendation != "REFUND" or proposal.uncertainty == "HIGH":
         raise Problem("MANUAL_REVIEW_REQUIRED")
     if proposal.currency != facts.currency or proposal.requested_amount is None:

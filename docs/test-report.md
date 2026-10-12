@@ -1,5 +1,7 @@
 # Test report — 2026-10-12
 
+Historical baseline below: 91 tests at initial implementation. The [Phase 2.1 report](phase-2.1-report.md) contains the new regression count and separate genuine OAuth evidence; original evidence files are preserved.
+
 ## Automated quality gates
 
 Environment: Windows, Python 3.13.9, installed `agentic-intent-gate==0.1.0` from the full qualified Git commit. No tests call PayPal or a model service.

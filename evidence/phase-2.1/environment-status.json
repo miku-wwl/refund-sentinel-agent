@@ -1,0 +1,28 @@
+{
+  "source": "PRIVATE_CONFIGURATION_STATUS_ONLY",
+  "variables": {
+    "PAYMENT_MODE": "PRESENT",
+    "AI_MODE": "PRESENT",
+    "PAYPAL_ENVIRONMENT": "PRESENT",
+    "PAYPAL_BASE_URL": "PRESENT",
+    "PAYPAL_CLIENT_ID": "PRESENT",
+    "PAYPAL_CLIENT_SECRET": "PRESENT",
+    "PAYPAL_MERCHANT_ID": "PRESENT",
+    "PAYPAL_CAPTURE_IDS": "EMPTY_OR_MISSING",
+    "MAX_REFUND": "PRESENT",
+    "SENTINEL_STATE_DIR": "PRESENT"
+  },
+  "expected_mode_and_origin_checks": {
+    "PAYMENT_MODE": true,
+    "AI_MODE": true,
+    "PAYPAL_ENVIRONMENT": true,
+    "PAYPAL_BASE_URL": true,
+    "SENTINEL_STATE_DIR": true
+  },
+  "merchant_id_format_valid": true,
+  "merchant_identity_ownership": "NOT VERIFIED: no capture/order evidence",
+  "capture_allowlist_empty": true,
+  "inherited_conflicting_variable_names": [],
+  "env_git_ignored": true,
+  "env_bytes_unchanged": true
+}

@@ -1,0 +1,19 @@
+{
+  "anonymous_pinned_tree_get": "PASS",
+  "tree_complete": true,
+  "license_paths": [],
+  "pinned_commit": "fd742b783058a53400c465b4ab59c6e80715895a",
+  "installed_core_hashes_match": 47,
+  "anonymous_git_tag_access": "PASS",
+  "distribution_license_metadata": {
+    "License": null,
+    "License-Expression": null,
+    "License-File": null
+  },
+  "requires_python": "<3.14,>=3.13",
+  "local_python": "3.13.9",
+  "pinned_readme_license_mentions": false,
+  "pinned_source_project_license": null,
+  "pinned_source_license_files": null,
+  "pinned_source_requires_python": ">=3.13,<3.14"
+}

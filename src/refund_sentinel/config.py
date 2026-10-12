@@ -1,14 +1,63 @@
 import os
+import re
+import sys
 from pathlib import Path
 from typing import Literal
 from urllib.parse import urlsplit
 
 from pydantic import Field, SecretStr, field_validator, model_validator
 
-from .models import CaptureId, Money, StrictModel
+from .models import CaptureId, Money, Problem, StrictModel
 
 SANDBOX_URL = "https://api-m.sandbox.paypal.com"
 PINNED_COMMIT = "fd742b783058a53400c465b4ab59c6e80715895a"
+PAYPAL_ENV_FIELDS = {
+    "payment_mode": "PAYMENT_MODE",
+    "environment": "PAYPAL_ENVIRONMENT",
+    "paypal_base_url": "PAYPAL_BASE_URL",
+    "client_id": "PAYPAL_CLIENT_ID",
+    "client_secret": "PAYPAL_CLIENT_SECRET",
+}
+
+
+def verify_python_version():
+    if sys.version_info[:2] != (3, 13):
+        raise Problem("PYTHON_313_REQUIRED", 503)
+
+
+def env_fields(mapping):
+    data = {key: os.environ[name] for key, name in mapping.items() if name in os.environ}
+    for key in ("client_id", "client_secret", "llm_api_key"):
+        if key in data:
+            data[key] = SecretStr(data[key])
+    return data
+
+
+class SandboxOAuthSettings(StrictModel):
+    """Auth-only configuration; normal Settings still requires merchant and capture evidence."""
+
+    payment_mode: Literal["sandbox"]
+    environment: Literal["sandbox"] = "sandbox"
+    paypal_base_url: Literal["https://api-m.sandbox.paypal.com"] = SANDBOX_URL
+    client_id: SecretStr
+    client_secret: SecretStr
+
+    @model_validator(mode="after")
+    def credentials(self):
+        if (
+            not self.client_id.get_secret_value().strip()
+            or not self.client_secret.get_secret_value()
+        ):
+            raise ValueError("Missing Sandbox OAuth credentials")
+        return self
+
+    @classmethod
+    def from_env(cls):
+        if os.environ.get("PAYMENT_MODE") != "sandbox":
+            raise Problem("SANDBOX_CHECK_REQUIRES_SANDBOX_MODE")
+        if not os.environ.get("PAYPAL_CLIENT_ID") or not os.environ.get("PAYPAL_CLIENT_SECRET"):
+            raise Problem("BLOCKED_CREDENTIALS")
+        return cls(**env_fields(PAYPAL_ENV_FIELDS))
 
 
 class Settings(StrictModel):
@@ -56,6 +105,12 @@ class Settings(StrictModel):
             or self.merchant_id == "DEMO-MERCHANT"
         ):
             raise ValueError("Missing PayPal Sandbox credentials or merchant identity")
+        if self.payment_mode == "sandbox" and not re.fullmatch(r"[A-Z0-9]{13}", self.merchant_id):
+            raise ValueError(
+                "Sandbox merchant ID must be a merchant identity, not an email/app name"
+            )
+        if self.payment_mode == "sandbox" and any(x.startswith("DEMO") for x in self.capture_ids):
+            raise ValueError("Offline capture fixtures are forbidden in Sandbox mode")
         if self.ai_mode == "real" and (not self.llm_base_url or not self.llm_model):
             raise ValueError("Missing real AI endpoint or model")
         return self
@@ -68,40 +123,48 @@ class Settings(StrictModel):
 
     @classmethod
     def from_env(cls):
-        mapping = {
-            "payment_mode": "PAYMENT_MODE",
+        mapping = PAYPAL_ENV_FIELDS | {
             "ai_mode": "AI_MODE",
-            "environment": "PAYPAL_ENVIRONMENT",
-            "paypal_base_url": "PAYPAL_BASE_URL",
             "merchant_id": "PAYPAL_MERCHANT_ID",
             "max_refund": "MAX_REFUND",
-            "client_id": "PAYPAL_CLIENT_ID",
-            "client_secret": "PAYPAL_CLIENT_SECRET",
             "llm_base_url": "LLM_BASE_URL",
             "llm_model": "LLM_MODEL",
             "llm_api_key": "LLM_API_KEY",
             "llm_format": "LLM_FORMAT",
         }
-        data = {key: os.environ[name] for key, name in mapping.items() if name in os.environ}
-        for key in ("client_id", "client_secret", "llm_api_key"):
-            if key in data:
-                data[key] = SecretStr(data[key])
+        data = env_fields(mapping)
         if "PAYPAL_CAPTURE_IDS" in os.environ:
             data["capture_ids"] = tuple(
                 x.strip() for x in os.environ["PAYPAL_CAPTURE_IDS"].split(",") if x.strip()
             )
+        elif data.get("payment_mode") == "sandbox":
+            data["capture_ids"] = ()
         return cls(**data)
 
 
-def load_env(path=Path(".env")):
-    """Small literal dotenv reader; no expansion, execution, or implicit environment override."""
+def read_env(path=Path(".env")):
+    """Return private literal values to trusted code only; never use this mapping as diagnostics."""
     if not path.exists():
-        return
+        return {}
+    values = {}
     for line in path.read_text("utf-8-sig").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
         name, sep, value = line.partition("=")
-        if not sep or not name.replace("_", "").isalnum():
+        if not sep or not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name) or name in values:
             raise ValueError("Invalid .env line")
-        os.environ.setdefault(name, value.strip().strip("\"'"))
+        values[name] = value.strip().strip("\"'")
+    return values
+
+
+def load_env(path=Path(".env")):
+    """Preserve private file/process values; reject conflicting inherited configuration."""
+    values = read_env(path)
+    conflicts = sorted(
+        name for name, value in values.items() if name in os.environ and os.environ[name] != value
+    )
+    if conflicts:
+        raise Problem("ENVIRONMENT_OVERRIDE_CONFLICT:" + ",".join(conflicts))
+    for name, value in values.items():
+        os.environ.setdefault(name, value)

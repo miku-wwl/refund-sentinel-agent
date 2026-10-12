@@ -17,7 +17,7 @@ from agentic_intent_gate.runtime import (
     provision_capability,
 )
 
-from .config import PINNED_COMMIT
+from .config import PINNED_COMMIT, verify_python_version
 from .llm import ChatCompletionsAnalyst, DeterministicAnalyst
 from .models import CaptureFacts, Problem, Recommendation, RefundInput, validate_policy
 from .paypal import FakePayPal, ProviderError, SandboxPayPal, identifier, verified_refund
@@ -52,6 +52,7 @@ ARGUMENT_SCHEMA = {
 
 
 def verify_distribution():
+    verify_python_version()
     dist = importlib.metadata.distribution("agentic-intent-gate")
     direct = json.loads(dist.read_text("direct_url.json") or "{}")
     if dist.version != "0.1.0" or direct.get("vcs_info", {}).get("commit_id") != PINNED_COMMIT:

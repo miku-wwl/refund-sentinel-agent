@@ -1,5 +1,7 @@
 # Implementation status — 2026-10-12
 
+This is the initial implementation snapshot. The [2026-10-13 Phase 2.1 report](phase-2.1-report.md) records subsequent Python compatibility, preflight, contract and licensing checks. Genuine Sandbox OAuth now passed; capture/order reads remain blocked because no capture ID is configured. Refund execution remains unauthorized and was not run.
+
 | Phase | Status | Evidence / remaining boundary |
 |---|---|---|
 | 0 — Verification/scaffolding | PASS | Root instructions preserved; fixed Runtime installed/API inspected; annotated tag verified; reference consumer read; official sources recorded; project/dependency configuration and MIT application license added |

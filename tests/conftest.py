@@ -1,6 +1,7 @@
 import json
 from uuid import uuid4
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
@@ -8,6 +9,20 @@ from refund_sentinel.config import Settings
 from refund_sentinel.integration import provision
 from refund_sentinel.paypal import FakePayPal
 from refund_sentinel.web import create_app
+
+
+@pytest.fixture(autouse=True)
+def forbid_real_http_in_regression_tests(monkeypatch):
+    """Every regression uses ASGI, fake provider or MockTransport; fail before any real socket."""
+
+    async def forbidden_async(*args, **kwargs):
+        raise AssertionError("Offline regression tests cannot use a real HTTP transport")
+
+    def forbidden_sync(*args, **kwargs):
+        raise AssertionError("Offline regression tests cannot use a real HTTP transport")
+
+    monkeypatch.setattr(httpx.AsyncHTTPTransport, "handle_async_request", forbidden_async)
+    monkeypatch.setattr(httpx.HTTPTransport, "handle_request", forbidden_sync)
 
 
 @pytest.fixture

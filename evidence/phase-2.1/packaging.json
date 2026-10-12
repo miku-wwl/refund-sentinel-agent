@@ -1,0 +1,12 @@
+{
+  "result": "PASS",
+  "wheel_sha256": "f509f05de6f7709fd4f124a797c86ad8bde677e7f0f4a4603a8c9b7924ef1898",
+  "requires_python": "<3.14,>=3.13",
+  "static_assets": [
+    "refund_sentinel/static/app.js",
+    "refund_sentinel/static/index.html",
+    "refund_sentinel/static/style.css"
+  ],
+  "source_files_match_current_tree": 14,
+  "core_pin_unchanged": true
+}

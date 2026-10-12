@@ -12,20 +12,33 @@ Execution control is provided by the external `agentic-intent-gate` version **0.
 
 ## Install and run
 
-Python 3.11+ and Git are required. Verified locally with Python 3.13.9 on Windows. Git must already have authorized access to the dependency; never put tokens in URLs. Before public judging, resolve the dependency licensing/access gap in [competition notes](docs/competition.md).
+Python **>=3.13,<3.14** and Git are required, matching the pinned Runtime. Verified locally with Python 3.13.9 on Windows. Git access to the dependency must be available; never put tokens in URLs. Before public judging, resolve the dependency licensing gap in [competition notes](docs/competition.md).
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements.lock.txt
 .\.venv\Scripts\python.exe -m pip install -e '.[dev]' --no-deps
-Copy-Item .env.example .env
+if (-not (Test-Path -LiteralPath .env)) { Copy-Item -LiteralPath .env.example -Destination .env }
 .\.venv\Scripts\refund-sentinel.exe init
 .\.venv\Scripts\refund-sentinel.exe serve --port 8879 --predecessor-stopped
 ```
 
 Open **http://127.0.0.1:8879**. On macOS/Linux use `.venv/bin/python` and `.venv/bin/refund-sentinel`; platform execution there has not been verified. `pip install -e '.[dev]'` can install directly from pyproject instead of the tested lock snapshot.
 
-`init` accepts only a new empty state directory; it provisions the operator capability, persisted trusted configuration, and the explicitly fake payment fixture. Startup never creates or captures a PayPal payment. `--predecessor-stopped` confirms the previous owner stopped; do not use multiple workers or simultaneous processes against the same state. Stop with Ctrl+C before restarting. The CLI loads `.env` without overriding existing process environment variables.
+`init` accepts only a new empty state directory; it provisions the operator capability, persisted trusted configuration, and the explicitly fake payment fixture. Startup never creates or captures a PayPal payment. `--predecessor-stopped` confirms the previous owner stopped; do not use multiple workers or simultaneous processes against the same state. Stop with Ctrl+C before restarting. The CLI loads `.env` without changing its contents. Identical inherited values are preserved; conflicting inherited variables stop execution with `ENVIRONMENT_OVERRIDE_CONFLICT` and variable names only. Clear unintended shell overrides before retrying.
+
+The startup example applies to an offline configuration or a fully configured Sandbox capture workflow. If your existing private `.env` enables Sandbox with no capture IDs, use the independent preflight commands below; normal `init`/`serve` still requires a valid merchant and explicit capture allowlist.
+
+## Sandbox read-only preflight
+
+```powershell
+.\.venv\Scripts\refund-sentinel.exe check-auth
+.\.venv\Scripts\refund-sentinel.exe check-capture --capture-id YOUR_ACTUAL_ALLOWLISTED_CAPTURE_ID
+```
+
+`check-auth` requires Sandbox mode and private client credentials, but no merchant/capture/model configuration or Runtime state. It prints a sanitized status and latency, validates the Bearer response, demonstrates token cache reuse, and permits only the OAuth POST. Invalid credentials, timeouts, connections and response errors have distinct codes. An empty capture allowlist causes `check-capture` to print `BLOCKED_NO_CAPTURE_ID` without any request. Protected preflight transport permits only OAuth and fixed-origin capture/order/refund GETs; all payment-changing requests are rejected before dispatch. These commands do not open or provision state databases.
+
+On 2026-10-13, genuine Sandbox OAuth passed; capture/order reads remained blocked and no refund was authorized or attempted. See the [Phase 2.1 report](docs/phase-2.1-report.md) for redacted evidence, compatibility tests, deadline limits and required human actions. Refund endpoint tests use isolated mocks only.
 
 ## Demo workflow
 
