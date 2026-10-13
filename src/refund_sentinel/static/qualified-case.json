@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "HISTORICAL_VERIFIED_PAYPAL_SANDBOX",
+  "observed_at": "2026-10-13T12:43:31.859287+00:00",
+  "runtime": {
+    "version": "0.2.0",
+    "commit": "7261fdd2f47d2b15fabe8faac527eeee37338eb1",
+    "profile": "paypal-sandbox-15s",
+    "adapter_seconds": 15,
+    "binding_revision": "refund-binding-v2.exec-15s",
+    "execution_scope": "0adba35b-e7b5-4e82-833b-94a3ff5db0bf"
+  },
+  "payment": {
+    "capture_id": "1YA65594665951620",
+    "order_id": "3KT99923NY800615C",
+    "merchant_id": "EZL4XDY2TTLVW",
+    "gross_amount": "20.00",
+    "currency": "NZD",
+    "buyer_identity": "VERIFIED_INDEPENDENT_PRIVATE_REFERENCE",
+    "refund_balance_ledger": "NOT_AUTHORITATIVE_COMPLETE_LEDGER"
+  },
+  "analysis": {
+    "source": "REAL_LOCAL_OLLAMA",
+    "model": "phi4-mini:latest",
+    "incident_description": "Synthetic test customer requested NZD 5.00 for a damaged item.",
+    "incident_is_synthetic": true,
+    "recommendation": {
+      "recommendation": "REFUND",
+      "requested_amount": "5.00",
+      "currency": "NZD",
+      "explanation": "The customer reports a damaged item and requests a partial refund of 5.00 NZD for the original completed amount of 20.00 NZD.",
+      "reason_code": "DAMAGED_ITEM",
+      "uncertainty": "LOW"
+    },
+    "plan": {
+      "goal": "Issue one reviewed partial refund for this incident",
+      "target": "paypal-sandbox-refunds",
+      "steps": [
+        {
+          "tool_name": "paypal_partial_refund",
+          "tool_version": "1",
+          "arguments": {
+            "amount": "5.00",
+            "capture_id": "1YA65594665951620",
+            "currency": "NZD",
+            "incident_id": "89a42a3b-be41-4bc5-b3ad-8d44a0596c07"
+          }
+        }
+      ],
+      "risk_class": "SIDE_EFFECT"
+    },
+    "plan_review_sha256": "2790e1b560ec2012d55c60e487457d4b280376cd299db40cf4ecf50f5813ac56"
+  },
+  "execution": {
+    "run_id": "397aee37-1138-4813-8a9e-da5b503a0660",
+    "action_id": "26a5748a-7b1a-4dc7-a52c-a98e6bf0a4a1",
+    "action_state": "Succeeded",
+    "action_version": 4,
+    "refund_id": "1XN74010T5365280D",
+    "refund_status": "COMPLETED",
+    "amount": "5.00",
+    "currency": "NZD",
+    "financial_post_count": 1,
+    "gateway_seconds": 4.766604,
+    "post_http_status": 201,
+    "post_seconds": 2.148422,
+    "verification_http_status": 200,
+    "verification_seconds": 1.392813,
+    "receipt_id": "e1415750-0971-4347-a88d-a3704dbb79c8",
+    "receipt_persisted": true,
+    "independent_new_process_verification": true,
+    "three_separate_human_gates_recorded": true
+  },
+  "historical_failed_case": {
+    "action_id": "5f7f7713-56f3-4afc-b5ef-1bd8c24c92d5",
+    "state": "Failed",
+    "version": 4,
+    "financial_post_count": 0
+  },
+  "limitations": [
+    "Historical proof, not a live PayPal query.",
+    "One Sandbox sample, not a latency or exactly-once guarantee.",
+    "No production or multi-user security qualification."
+  ]
+}

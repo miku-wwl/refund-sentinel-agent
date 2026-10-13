@@ -1,0 +1,194 @@
+{
+  "phase": "3.1",
+  "status": "PASS",
+  "review_recommendation": "GO for independent UI review in ChatGPT Work",
+  "pytest": {
+    "passed": 535,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 494.96,
+    "new_model_contract_tests": 28,
+    "warning": "Existing Starlette/HTTPX TestClient deprecation"
+  },
+  "node_tests": {
+    "passed": 12,
+    "failed": 0
+  },
+  "ruff": "PASS",
+  "python_format": "PASS",
+  "frontend_format_syntax": "PASS",
+  "dependency_lock": "PASS",
+  "pip_check": "PASS",
+  "devtool_npm_audit_vulnerabilities": 0,
+  "installed_wheel": {
+    "status": "PASS",
+    "consumer_import_outside_checkout": true,
+    "presentation_assets_from_installed_wheel": true,
+    "archived_proof_integrity": "PASS",
+    "runtime_version": "0.2.0",
+    "synthetic_adapter_seconds": 5,
+    "synthetic_workflow": "Succeeded v4",
+    "synthetic_dispatches": 1,
+    "receipt_persisted": true,
+    "real_operational_routes": "NOT_MOUNTED",
+    "external_network": "FORBIDDEN",
+    "optional_model_module_installed": true,
+    "optional_ai_pipeline": "PASS_WITH_MOCKTRANSPORT",
+    "genuine_inference_in_wheel_test": false
+  },
+  "genuine_local_model": {
+    "status": "PASS",
+    "inference_http": 200,
+    "model": "phi4-mini:latest",
+    "inference_seconds": 5.000926,
+    "source": "REAL_LOCAL_OLLAMA",
+    "synthetic_capture": "DEMO0000000000001",
+    "plan_sha256": "d50fdc9cca0a2ea9872cd39ae6a57f540ab3866dd7f6d03d264fb26840cde09f",
+    "run_id": "07286097-b2ba-473b-84a0-0517177d4912",
+    "action_id": "e3b981c4-c5f0-40cd-bfee-fabaa80f173c",
+    "final_state": "Succeeded v4",
+    "receipt_id": "4d26ae5d-bbbe-4e5f-a66b-493c5766daf5",
+    "receipt_source": "SIMULATED_PROVIDER",
+    "synthetic_dispatches": 1,
+    "real_paypal_dispatches": 0,
+    "gates": "Three separate browser confirmations",
+    "reload_receipt_preserved": true,
+    "negative_binding_checks": 3
+  },
+  "genuine_inference_seconds_observations": [
+    10.240636,
+    5.000926
+  ],
+  "latency_scope": "Two local observations; no guaranteed latency",
+  "browser": {
+    "version": "156.0.8078.4",
+    "existing_e2e_checks": 10,
+    "mocked_model_error_ui_cases": 4,
+    "screen_viewport_combinations": 15,
+    "viewports": [
+      "1440x900",
+      "1920x1080",
+      "390x844"
+    ],
+    "accessibility_scans": 28,
+    "detected_violations": 0,
+    "screenshots": 32,
+    "unexpected_errors": 0,
+    "horizontal_overflow": false,
+    "clipped_critical_elements": false
+  },
+  "screenshot_readiness": {
+    "fonts": "loaded",
+    "finite_animations": "finished",
+    "opacity": 1,
+    "stable_geometry_frames": 3,
+    "navigation_only_reproduced_opacity": 0.4,
+    "original_dimming_cause": "UNDETERMINED; original timing metadata unavailable"
+  },
+  "restart_receipt_verification": {
+    "model_request_on_resume": 0,
+    "new_server_process": true,
+    "simulated_dispatches": 1,
+    "status": "PASS",
+    "genuine_paypal_requests": 0,
+    "action_state": "Succeeded v4",
+    "analysis_source": "REAL_LOCAL_OLLAMA",
+    "receipt_preserved": true,
+    "action_preserved": true,
+    "plan_preserved": true
+  },
+  "integrity": {
+    "historical_private": {
+      "files": 4058,
+      "changed": []
+    },
+    "frozen_backend": {
+      "files": 19,
+      "changed": []
+    },
+    "pinned_contract": {
+      "files": 3,
+      "changed": []
+    },
+    "runtime_files_unchanged": 57,
+    "runtime_commit": "7261fdd2f47d2b15fabe8faac527eeee37338eb1",
+    "head": "04fac090b6aa0a77ef1c50b9e6b451404fccc58f",
+    "freeze_tag": "04fac090b6aa0a77ef1c50b9e6b451404fccc58f",
+    "staged": []
+  },
+  "secret_scan": {
+    "status": "PASS",
+    "files_scanned": 62,
+    "credential_values_exposed": false
+  },
+  "financial_boundary": {
+    "genuine_paypal_requests": 0,
+    "historical_actions_modified": false,
+    "shared_runtime_modified": false,
+    "interactive_payment_provider": "FakePayPal only",
+    "adapter_budget_seconds": 5,
+    "no_automatic_model_fallback": true
+  },
+  "changed_source_files": [
+    "src/refund_sentinel/demo.py",
+    "src/refund_sentinel/demo_ai.py",
+    "src/refund_sentinel/presentation.py",
+    "src/refund_sentinel/presentation_models.py",
+    "src/refund_sentinel/static/console.js",
+    "src/refund_sentinel/static/console.css",
+    "scripts/test_presentation_browser.mjs",
+    "scripts/test_presentation_ai_browser.mjs",
+    "scripts/presentation_ready.mjs",
+    "tests/test_demo_ai.py"
+  ],
+  "changed_documentation": [
+    "docs/PHASE3-UI-DEMO.md",
+    "docs/DEMO-SCRIPT.md",
+    "docs/MASTER-DELIVERY.md"
+  ],
+  "screenshots": [
+    "01-overview.png",
+    "02-ai-review.png",
+    "03-trust-workflow.png",
+    "04-verified-evidence.png",
+    "05-historical-receipt.png",
+    "06-demo-empty.png",
+    "07-plan-approved.png",
+    "08-execute-confirmation.png",
+    "09-demo-completed.png",
+    "10-simulated-receipt.png",
+    "11-demo-unknown.png",
+    "12-demo-failed.png",
+    "13-mobile-overview.png",
+    "14-mobile-demo.png",
+    "15-service-error.png",
+    "16-live-ollama-plan.png",
+    "17-live-ai-simulation-completed.png",
+    "quality-1440-demo.png",
+    "quality-1440-evidence.png",
+    "quality-1440-overview.png",
+    "quality-1440-review.png",
+    "quality-1440-trust.png",
+    "quality-1920-demo.png",
+    "quality-1920-evidence.png",
+    "quality-1920-overview.png",
+    "quality-1920-review.png",
+    "quality-1920-trust.png",
+    "quality-390-demo.png",
+    "quality-390-evidence.png",
+    "quality-390-overview.png",
+    "quality-390-review.png",
+    "quality-390-trust.png"
+  ],
+  "remaining_recording_issues": [
+    "Local Ollama must be available; proposals can fail closed",
+    "Model latency varies; manual deterministic fallback is explicit",
+    "Long Plans and evidence require scrolling",
+    "Independent ChatGPT Work UI review and timed video rehearsal NOT RUN"
+  ],
+  "committed": false,
+  "pushed": false,
+  "tagged": false,
+  "deployed": false
+}

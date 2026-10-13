@@ -1,0 +1,12 @@
+{
+  "model_request_on_resume": 0,
+  "new_server_process": true,
+  "simulated_dispatches": 1,
+  "status": "PASS",
+  "genuine_paypal_requests": 0,
+  "action_state": "Succeeded v4",
+  "analysis_source": "REAL_LOCAL_OLLAMA",
+  "receipt_preserved": true,
+  "action_preserved": true,
+  "plan_preserved": true
+}

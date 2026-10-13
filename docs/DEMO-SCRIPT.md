@@ -1,0 +1,97 @@
+# Refund Sentinel demo script
+
+Run `python -m refund_sentinel.presentation --port 8880` and open
+`http://127.0.0.1:8880`. This presentation ignores `.env`; it needs no payment
+credentials. Record at 1920×1080. Keep the simulation banner visible, choose
+**Completed + verified**, and start a fresh case. Ollama must already serve
+`phi4-mini:latest` locally for the optional live proposal. Rehearse first: the
+two qualifications observed five and ten seconds of inference, not a guarantee per run.
+
+## 2–3 minute demonstration
+
+**0:00–0:20 — Overview, then Interactive demo**
+
+“Refund Sentinel turns a customer refund request into a bounded proposal, explicit
+human decisions and verifiable execution. An AI suggestion should never be enough
+to move money. The overview shows one completed historical PayPal Sandbox pilot.”
+
+Select **Local AI Demo — Live Ollama**, load the sample, then click
+**Generate Live Ollama Plan**. Keep the loading indicator visible.
+
+**0:20–0:55 — Genuine local inference and validation**
+
+“This incident and payment are synthetic. We are calling a real local phi4-mini
+model to interpret the damaged-item request for twenty-five US dollars. The model
+only recommends. It cannot choose credentials, tools, scope or permission.
+
+Here is its recommendation and measured inference time. Strict schema and merchant
+policy validate the amount and currency before the pinned Runtime validates this
+structured Plan. The exact Plan has a fingerprint.”
+
+Scroll to the recommendation, Plan and gate button. If the model fails, show its
+actual error and click **Switch to Deterministic Demo**. Say: “The live proposal
+was unavailable or rejected. I am explicitly switching to an offline fixture.”
+Never call that fallback genuine AI.
+
+**0:55–1:45 — Three separate decisions and synthetic receipt**
+
+Click **Approve Plan**, read and confirm the first dialog; show Pending.
+
+“I approve this exact Plan. The admitted Action is Pending, with no execution grant.”
+
+Click **Authorize Action** and separately confirm; show Authorized.
+
+“I separately authorize this specific Action. No provider dispatch has happened.”
+
+Click **Execute Simulation**, review the third dialog and confirm once.
+Open the simulated receipt, then reload.
+
+“Now I permit one simulation. The real Runtime claims the Action, a local fake
+provider performs the effect, and independent lookup produces a durable receipt.
+Reloading preserves it. This sends no genuine PayPal refund. An Unknown result
+means stop, with no automatic retry.”
+
+**1:45–2:45 — Genuine historical evidence and provenance**
+
+Open **Verified evidence**, show COMPLETED, the HTTP table, provenance and historical
+receipt. Follow public references only if needed after recording.
+
+“This separate screen records the genuine historical Sandbox transaction: five
+New Zealand dollars from a twenty-dollar payment. Refund POST returned 201;
+independent Refund GET returned 200 and COMPLETED. The Action is Succeeded version
+four, with exactly one observed POST. Its receipt was reopened from a separate
+process. Public references identify the frozen sanitized evidence.
+
+Viewing this archive performs no new PayPal verification. It proves one historical
+Sandbox sample, not production readiness or universal exactly-once delivery.
+AI proposes. Humans decide. Receipts prove.”
+
+Main narration: 252 words, about 108 seconds at 140 words per minute, plus model
+waiting and human gate/scrolling time. Timing marks are rehearsal targets; actual
+duration depends on inference and review. No completed recording duration is claimed.
+
+## 60-second pitch
+
+“Refund Sentinel makes AI-assisted refunds understandable and controllable.
+A local model proposes a bounded partial refund. Trusted payment facts and policy
+validate it. A human approves the exact Plan, separately authorizes its admitted
+Action, then permits one execution.
+
+We reuse the pinned Agentic Intent Gate Runtime for durable claiming, scope binding
+and terminal-state protection. A genuine PayPal Sandbox pilot refunded five New
+Zealand dollars, independently verified COMPLETED, with one observed Refund POST
+and a durable receipt.
+
+The interactive UI can run genuine local Ollama inference, but its payment execution
+is always simulated. A clearly labeled deterministic mode supports offline demos.
+The historical provider evidence stays read-only. Unknown means stop without an
+automatic retry.
+
+This is a local Sandbox MVP. AI proposes. Humans decide. Receipts prove.”
+
+## Recording boundary
+
+This Phase 3.1 source checkpoint accompanies the
+[publication qualification](PHASE3.1-PUBLICATION.md). Independent UI review,
+timed recording rehearsal, video, upload and competition submission are **NOT RUN**.
+Use the simulation for recording; do not perform another genuine refund.

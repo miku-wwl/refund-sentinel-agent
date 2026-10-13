@@ -14,6 +14,17 @@ Execution control is provided by the external `agentic-intent-gate` version **0.
 
 Legacy state retains the default five-second adapter budget. A trusted Sandbox-only profile provisions a fresh scope and `refund-binding-v2.exec-15s` identity with a 15-second public Gateway budget, four-second HTTP read ceiling and nine-second pre-dispatch reserve. It uses a separately bound private receipt store. Human Approval, independent Authorization and one-time financial execution permission are required afresh; old Actions/grants/effect keys are never elevated or copied. The pilot uses the direct public Gateway, because the bundled Runtime HTTP routes impose a ten-second parent deadline.
 
+## Local presentation and guided demo
+
+This checkpoint includes the qualified Phase 3/3.1 presentation app; the published `phase2-backend-freeze` tag retains the original financial backend. The independent app shows sanitized historical Sandbox proof and an isolated **DEMO MODE — SIMULATED PAYMENTS** workflow.
+
+```powershell
+uv sync --frozen --all-extras
+.venv\Scripts\python -m refund_sentinel.presentation --port 8880
+```
+
+Open **http://127.0.0.1:8880**. This entrypoint ignores `.env`, forces the payment provider offline and never mounts financial operations routes. **Deterministic Demo** is the default; optional **Local AI Demo** invokes local Ollama `phi4-mini:latest` only to propose the synthetic USD 25.00 refund. Model failure keeps the workflow safe and offers an explicit manual fallback. Approval, Authorization and Execute Simulation remain separate confirmations. See [UI and verification](docs/PHASE3-UI-DEMO.md), [English demo script](docs/DEMO-SCRIPT.md), [delivery record](docs/MASTER-DELIVERY.md) and [publication qualification](docs/PHASE3.1-PUBLICATION.md). The original financial operations app below remains a separate developer workflow.
+
 ## Install and run
 
 Python **>=3.13,<3.14** and Git are required, matching the pinned Runtime. Verified locally with Python 3.13.9 on Windows. Git access to the dependency must be available; never put tokens in URLs. `uv.lock` and the pip dependency snapshot retain the immutable release pin.
@@ -93,4 +104,4 @@ This is a single-operator loopback Sandbox MVP. Policy accepts only USD/NZD part
 
 The default profile limits executor work to five seconds; the separately provisioned trusted Sandbox profile allows fifteen. Claim/finish are outside the adapter timer, and cooperative cancellation cannot preempt blocking Python or recall remote effects. Pending/failed/cancelled provider observations and ambiguous outcomes remain **Unknown**, with no automatic retry or reconciliation. A local receipt and provider completion are distinct. Manual checks only append read-only provider evidence. Cross-store crash consistency and remote activity from other clients have practical limits described in architecture notes.
 
-New competition work is the product, policy, AI/PayPal clients, consumer executor, UI and tests. The shared Runtime remains untouched. Genuine local AI analysis and one human-gated PayPal Sandbox refund have been verified. The app and pinned v0.2.0 Runtime are MIT licensed. The qualified baseline is recoverable through the annotated `phase2-backend-freeze` tag once published; video recording and final competition submission remain separate work. No production-readiness or remote exactly-once guarantee is claimed.
+New competition work is the product, policy, AI/PayPal clients, consumer executor, UI and tests. The shared Runtime remains untouched. Genuine local AI analysis and one human-gated PayPal Sandbox refund have been verified. The app and pinned v0.2.0 Runtime are MIT licensed. The qualified baseline is recoverable through the published annotated `phase2-backend-freeze` tag; video recording and final competition submission remain separate work. No production-readiness or remote exactly-once guarantee is claimed.

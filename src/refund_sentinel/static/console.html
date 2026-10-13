@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#080e1a" />
+    <title>Refund Sentinel — Human control. Verified refunds.</title>
+    <link rel="icon" href="/assets/console-icon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/console.css" />
+    <script type="module" src="/assets/console.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="shell">
+      <aside class="sidebar">
+        <a class="brand" href="#overview" aria-label="Refund Sentinel overview"
+          ><span class="brand-mark">S</span
+          ><span>REFUND<br /><strong>SENTINEL</strong></span></a
+        >
+        <div class="sidebar-label">OPERATIONS CONSOLE</div>
+        <nav aria-label="Main navigation">
+          <a href="#overview" data-screen="overview"
+            ><span data-icon="grid"></span>Overview</a
+          >
+          <a href="#review" data-screen="review"
+            ><span data-icon="brain"></span>AI refund review</a
+          >
+          <a href="#trust" data-screen="trust"
+            ><span data-icon="layers"></span>Trust workflow</a
+          >
+          <a href="#evidence" data-screen="evidence"
+            ><span data-icon="receipt"></span>Verified evidence</a
+          >
+          <a href="#demo" data-screen="demo"
+            ><span data-icon="play"></span>Interactive demo<span class="nav-tag"
+              >SIM</span
+            ></a
+          >
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="runtime-seal">
+            <span data-icon="shield"></span
+            ><span
+              >Agentic Intent Gate<strong>Runtime v0.2.0 · pinned</strong></span
+            >
+          </div>
+          <p>Local Sandbox MVP<br />Human control at every gate.</p>
+        </div>
+      </aside>
+      <div class="workspace">
+        <header class="topbar">
+          <div class="crumb">
+            Workspace <span>/</span>
+            <strong id="page-name">Operations overview</strong>
+          </div>
+          <div class="environment">
+            <i></i>PAYPAL SANDBOX <span>ARCHIVED PROOF</span>
+          </div>
+        </header>
+        <div id="notice" class="notice hidden" role="alert"></div>
+        <main id="main" tabindex="-1" aria-live="polite">
+          <div class="initial-loading">
+            <span class="spinner"></span>
+            <h1>Loading the verified workspace</h1>
+            <p>Reading sanitized historical evidence.</p>
+          </div>
+        </main>
+        <footer class="workspace-footer">
+          <span>AI proposes. Humans decide. Receipts prove.</span
+          ><span>Sandbox qualification · No production-readiness claim</span>
+        </footer>
+      </div>
+    </div>
+    <dialog id="confirmation" aria-labelledby="confirm-title">
+      <div class="modal-eyebrow" id="confirm-kind"></div>
+      <h2 id="confirm-title"></h2>
+      <div id="confirm-content"></div>
+      <div class="modal-actions">
+        <button class="button secondary" id="confirm-cancel" type="button">
+          Cancel</button
+        ><button class="button" id="confirm-accept" type="button"></button>
+      </div>
+    </dialog>
+    <dialog id="receipt-dialog" aria-labelledby="receipt-title">
+      <div class="modal-eyebrow">VERIFICATION RECORD</div>
+      <h2 id="receipt-title">Durable receipt</h2>
+      <div id="receipt-content"></div>
+      <div class="modal-actions">
+        <button class="button secondary" id="receipt-close" type="button">
+          Close receipt
+        </button>
+      </div>
+    </dialog>
+  </body>
+</html>
