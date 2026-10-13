@@ -1,5 +1,5 @@
 # Python >=3.13,<3.14 dependency snapshot; core pinned to its qualified commit.
-agentic-intent-gate @ git+https://github.com/miku-wwl/agentic-intent-gate.git@fd742b783058a53400c465b4ab59c6e80715895a
+agentic-intent-gate @ git+https://github.com/miku-wwl/agentic-intent-gate.git@7261fdd2f47d2b15fabe8faac527eeee37338eb1
 annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.15.1

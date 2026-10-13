@@ -1,0 +1,58 @@
+{
+  "source": "REAL_SANDBOX",
+  "status": "PASS",
+  "requests": [
+    {
+      "operation": "oauth",
+      "method": "POST",
+      "http_status": 200,
+      "elapsed_seconds": 1.005112
+    },
+    {
+      "operation": "capture_get",
+      "method": "GET",
+      "http_status": 200,
+      "elapsed_seconds": 0.976141
+    },
+    {
+      "operation": "order_get",
+      "method": "GET",
+      "http_status": 200,
+      "elapsed_seconds": 0.976267
+    }
+  ],
+  "capture_status": "COMPLETED",
+  "order_status": "COMPLETED",
+  "amount": "20.00",
+  "currency": "NZD",
+  "merchant_matches": true,
+  "single_allowlisted_capture_matches_fixture": true,
+  "order_capture_identity_matches": true,
+  "capture_count": 1,
+  "prior_refunds": "NONE_REPORTED",
+  "candidate_amount": "5.00",
+  "partial_amount_and_limit_checks": "PASS",
+  "reported_balance_basis": "COMPLETED gross NZD 20.00 with no reported refunds; no independent refundable_balance field/complete-history guarantee",
+  "payment_mutation_requests": 0,
+  "env_or_existing_fixture_changed": false,
+  "provider_shape_checks": {
+    "intent": "CAPTURE",
+    "purchase_unit_count": 1,
+    "purchase_unit_amount": {
+      "currency_code": "NZD",
+      "value": "20.00"
+    },
+    "capture_amount_matches_purchase_unit": true,
+    "capture_payee_matches_configuration": true,
+    "order_payee_matches_configuration": true,
+    "related_order_matches_original": true,
+    "capture_entry_matches_original": true,
+    "refund_entries_count": 0,
+    "capture_status": "COMPLETED",
+    "order_status": "COMPLETED",
+    "order_has_only_expected_capture": true,
+    "refund_related_link_origins": [
+      "api.sandbox.paypal.com"
+    ]
+  }
+}

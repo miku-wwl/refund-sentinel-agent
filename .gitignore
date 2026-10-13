@@ -12,4 +12,15 @@ dist/
 .state*/
 *.sqlite3*
 *.lock
+!uv.lock
 evidence/private/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm
+node_modules/
+test-results/
+playwright-report/
+artifacts/private/

@@ -1,5 +1,11 @@
 # Real Sandbox setup and approved smoke test
 
+## Phase 2.2: manually authorized fixture preparation
+
+The isolated developer CLI is `python -m refund_sentinel.fixture`; it is not wired into application startup or the dashboard. It prepares one synthetic Sandbox NZD 20.00 order and capture, with separate human checkpoints for create, buyer checkout, capture and the private capture-allowlist edit. Start with local-only `prepare`; never supply payment authorization flags before the corresponding human approves. No refund is authorized in this phase. See the [Phase 2.2 report and exact commands](phase-2.2-report.md). Existing private credentials/state are preserved, and uncertain payment mutations cannot be retried or reset by the utility.
+
+For **future** local fixtures, start the return-only receiver explicitly with `python -m refund_sentinel.fixture_callback` on the checkout browser's computer and keep it running through checkout. New preparation freezes HTTP loopback return/cancel URLs on port 8766; genuine create admission checks that receiver before contacting PayPal. Old fixtures retain their original URL/body/digest and cannot be re-prepared or retried. Callback navigation triggers no capture/refund; confirm approval with an explicit read-only order GET. See the [buyer approval and callback repair report](phase-2.2-buyer-approval.md).
+
 ## Phase 2.1: OAuth and read-only queries only
 
 Use Python >=3.13,<3.14. Preserve any configured private `.env`; the current Phase 2.1 authorizes no payment creation, capture or refund. With Sandbox credentials configured, run:

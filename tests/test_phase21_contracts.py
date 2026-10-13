@@ -260,8 +260,8 @@ def test_duplicate_provider_error_is_not_no_effect_proof():
 def test_later_gateway_deadline_cannot_extend_five_seconds(tmp_path):
     async def scenario():
         class SlowAcknowledgement(FakePayPal):
-            async def refund(self, *args):
-                response = await super().refund(*args)
+            async def refund(self, *args, **kwargs):
+                response = await super().refund(*args, **kwargs)
                 await asyncio.sleep(15)
                 return response
 

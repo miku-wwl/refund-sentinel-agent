@@ -326,8 +326,8 @@ def test_conflicting_refund_arguments_rejected(environment):
 
 def test_runtime_distribution_is_exact_pin():
     assert verify_distribution() == {
-        "version": "0.1.0",
-        "commit": "fd742b783058a53400c465b4ab59c6e80715895a",
+        "version": "0.2.0",
+        "commit": "7261fdd2f47d2b15fabe8faac527eeee37338eb1",
     }
 
 

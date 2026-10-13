@@ -1,0 +1,47 @@
+{
+  "stage_a": "PASS",
+  "date": "2026-10-14",
+  "timezone": "Pacific/Auckland",
+  "pytest": {
+    "passed": 476,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 468.81
+  },
+  "ruff": "PASS",
+  "format": "PASS",
+  "dependency_check": "PASS",
+  "uv_lock": "PASS",
+  "runtime": {
+    "version": "0.2.0",
+    "commit": "7261fdd2f47d2b15fabe8faac527eeee37338eb1",
+    "record_hashed_files_verified": 57
+  },
+  "package_build": "PASS",
+  "installed_wheel_outside_checkout": "PASS",
+  "wheel_profiles": [
+    {
+      "profile": "legacy-5s",
+      "budget": 5,
+      "binding_revision": "refund-binding-v1",
+      "state": "Succeeded",
+      "mock_posts": 1,
+      "durable_receipt": true,
+      "restart_duplicate_posts": 0
+    },
+    {
+      "profile": "paypal-sandbox-15s",
+      "budget": 15,
+      "binding_revision": "refund-binding-v2.exec-15s",
+      "state": "Succeeded",
+      "mock_posts": 1,
+      "durable_receipt": true,
+      "restart_duplicate_posts": 0
+    }
+  ],
+  "historical_private_files_unchanged": 4058,
+  "new_genuine_paypal_requests": 0,
+  "shared_runtime_modified": false,
+  "head_secret_audit": "PASS"
+}

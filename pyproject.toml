@@ -9,7 +9,7 @@ description = "Sandbox-only AI refund incident responder using Agentic Intent Ga
 requires-python = ">=3.13,<3.14"
 license = "MIT"
 dependencies = [
-  "agentic-intent-gate @ git+https://github.com/miku-wwl/agentic-intent-gate.git@fd742b783058a53400c465b4ab59c6e80715895a",
+  "agentic-intent-gate @ git+https://github.com/miku-wwl/agentic-intent-gate.git@7261fdd2f47d2b15fabe8faac527eeee37338eb1",
   "fastapi==0.143.0",
   "uvicorn==0.54.0",
   "pydantic==2.14.1",

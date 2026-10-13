@@ -1,0 +1,56 @@
+{
+  "source": "REAL_LOCAL_OLLAMA",
+  "model": "phi4-mini:latest",
+  "ai_mode": "real in isolated preflight only; .env unchanged",
+  "model_calls": [
+    {
+      "status": "PASS",
+      "seconds": 13.019331,
+      "proposal": {
+        "recommendation": "REFUND",
+        "requested_amount": "5.00",
+        "currency": "NZD",
+        "explanation": "Customer reported a damaged item, requesting a partial refund in accordance with product damage policies.",
+        "reason_code": "DAMAGED_ITEM",
+        "uncertainty": "LOW"
+      }
+    }
+  ],
+  "analysis_state": "READY",
+  "policy": "PASS",
+  "run_state": "AwaitingApproval",
+  "action_count": 0,
+  "approved": false,
+  "authorized": false,
+  "pay_pal_requests": [
+    {
+      "operation": "oauth",
+      "method": "POST",
+      "http_status": 200,
+      "elapsed_seconds": 0.850505
+    },
+    {
+      "operation": "capture_get",
+      "method": "GET",
+      "http_status": 200,
+      "elapsed_seconds": 0.871025
+    },
+    {
+      "operation": "order_get",
+      "method": "GET",
+      "http_status": 200,
+      "elapsed_seconds": 0.980105
+    }
+  ],
+  "real_refund_posts": 0,
+  "plan_identity_saved_privately": true,
+  "sanitized_plan": {
+    "target": "paypal-sandbox-refunds",
+    "risk_class": "SIDE_EFFECT",
+    "tool_name": "paypal_partial_refund",
+    "tool_version": "1",
+    "amount": "5.00",
+    "currency": "NZD",
+    "capture_id_matches_allowlist": true
+  }
+}

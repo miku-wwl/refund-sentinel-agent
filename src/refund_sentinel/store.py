@@ -1,6 +1,7 @@
 import json
 import sqlite3
-from contextlib import contextmanager
+from contextlib import closing, contextmanager
+from dataclasses import asdict
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -14,21 +15,43 @@ def now():
 class Store:
     """Product facts and provider observations only. Runtime owns Runs/Actions and claiming."""
 
-    def __init__(self, path):
+    def __init__(self, path, *, binding=None, profile=None):
         self.path = path
+        if (binding is None) != (profile is None):
+            raise Problem("STORE_IDENTITY_MISMATCH")
+        self.expected_identity = (
+            json.dumps(
+                {"binding": asdict(binding), "execution_profile": asdict(profile)},
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            if binding is not None and profile is not None
+            else None
+        )
 
     @contextmanager
     def db(self):
-        connection = sqlite3.connect(self.path, timeout=2)
+        connection = (
+            sqlite3.connect(self.path.resolve().as_uri() + "?mode=rw", uri=True, timeout=2)
+            if self.expected_identity is not None
+            else sqlite3.connect(self.path, timeout=2)
+        )
         connection.row_factory = sqlite3.Row
         try:
             with connection:
+                if self.expected_identity is not None:
+                    try:
+                        rows = connection.execute("SELECT identity FROM store_identity").fetchall()
+                        if len(rows) != 1 or rows[0][0] != self.expected_identity:
+                            raise Problem("STORE_IDENTITY_MISMATCH")
+                    except sqlite3.DatabaseError:
+                        raise Problem("STORE_IDENTITY_MISMATCH") from None
                 yield connection
         finally:
             connection.close()
 
     def provision(self):
-        with self.db() as db:
+        with closing(sqlite3.connect(self.path, timeout=2)) as db, db:
             db.executescript("""
                 CREATE TABLE incidents (id TEXT PRIMARY KEY, capture_id TEXT UNIQUE NOT NULL,
                     data TEXT NOT NULL, created_at TEXT NOT NULL) STRICT;
@@ -36,6 +59,13 @@ class Store:
                     payload_digest TEXT NOT NULL, data TEXT NOT NULL,
                     created_at TEXT NOT NULL) STRICT;
             """)
+            if self.expected_identity is not None:
+                db.execute("CREATE TABLE store_identity (identity TEXT NOT NULL UNIQUE) STRICT")
+                db.execute("INSERT INTO store_identity VALUES (?)", (self.expected_identity,))
+
+    def check_identity(self):
+        with self.db():
+            pass
 
     def reserve(self, capture_id, message, modes):
         incident_id = str(uuid4())

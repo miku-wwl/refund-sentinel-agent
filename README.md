@@ -2,17 +2,21 @@
 
 **AI-Powered Refund Incident Responder** — a local merchant dashboard that turns a synthetic customer refund message into a reviewed, bounded PayPal Sandbox partial-refund proposal.
 
+The Phase 2 backend is qualified and frozen as a **local Sandbox MVP**. One genuine NZD 5.00 partial refund is independently verified COMPLETED, with one observed Refund POST, a durable financial Receipt and terminal Succeeded v4. See [backend freeze](docs/PHASE2-BACKEND-FREEZE.md) and [sanitized qualification](evidence/phase2-freeze/verified-refund.json). Earlier phase reports and screenshots describe historical checkpoints.
+
 AI interprets the request, amount and reason. Trusted capture/order facts and deterministic merchant policy decide whether a Plan is eligible. The merchant approves the exact Plan, separately authorizes execution, and inspects the provider's status and durable receipt. PayPal is central: the real adapter reads Payments v2/Orders v2 facts, refunds the original capture, and verifies the refund through an independent GET.
 
 Default mode is **simulated payments + deterministic analysis**, which needs no external credentials. Real model and real PayPal Sandbox modes are independent and visibly labeled. Simulation is not a real refund.
 
 ## Reused Runtime
 
-Execution control is provided by the external `agentic-intent-gate` version **0.1.0**, pinned to `fd742b783058a53400c465b4ab59c6e80715895a`. Runtime validation, Runs, exact approval, authorization, durable claiming, CAS, effect identity and duplicate/Unknown behavior are not reimplemented here. Startup verifies the installed distribution's Git provenance. One explicitly registered `SIDE_EFFECT` tool executes one refund step. Payment reads belong to this application; the bundled Demo UI/prompt is not used.
+Execution control is provided by the external `agentic-intent-gate` version **0.2.0**, pinned to `7261fdd2f47d2b15fabe8faac527eeee37338eb1` (annotated Git release, Python 3.13, MIT). Runtime validation, Runs, exact approval, authorization, durable claiming, CAS, effect identity and duplicate/Unknown behavior are not reimplemented here. Startup verifies the installed distribution's Git provenance. One explicitly registered `SIDE_EFFECT` tool executes one refund step. Payment reads belong to this application; the bundled Demo UI/prompt is not used.
+
+Legacy state retains the default five-second adapter budget. A trusted Sandbox-only profile provisions a fresh scope and `refund-binding-v2.exec-15s` identity with a 15-second public Gateway budget, four-second HTTP read ceiling and nine-second pre-dispatch reserve. It uses a separately bound private receipt store. Human Approval, independent Authorization and one-time financial execution permission are required afresh; old Actions/grants/effect keys are never elevated or copied. The pilot uses the direct public Gateway, because the bundled Runtime HTTP routes impose a ten-second parent deadline.
 
 ## Install and run
 
-Python **>=3.13,<3.14** and Git are required, matching the pinned Runtime. Verified locally with Python 3.13.9 on Windows. Git access to the dependency must be available; never put tokens in URLs. Before public judging, resolve the dependency licensing gap in [competition notes](docs/competition.md).
+Python **>=3.13,<3.14** and Git are required, matching the pinned Runtime. Verified locally with Python 3.13.9 on Windows. Git access to the dependency must be available; never put tokens in URLs. `uv.lock` and the pip dependency snapshot retain the immutable release pin.
 
 ```powershell
 python -m venv .venv
@@ -87,6 +91,6 @@ Offline tests use the genuine installed Runtime, persisted fake provider calls/e
 
 This is a single-operator loopback Sandbox MVP. Policy accepts only USD/NZD partial refunds on completed captures without previous refunds; malformed IDs, merchant mismatches, excessive amounts and insufficient evidence are rejected. There is no live payment support, SaaS authentication, multi-step orchestration or guaranteed exactly-once remote delivery.
 
-The pinned Runtime limits executor work to five seconds and has no Pending terminal state. Pending/failed/cancelled provider observations and ambiguous outcomes remain **Unknown**, with no automatic retry or reconciliation. A local receipt and provider completion are distinct. Manual checks only append read-only provider evidence. Cross-store crash consistency and remote activity from other clients have practical limits described in architecture notes.
+The default profile limits executor work to five seconds; the separately provisioned trusted Sandbox profile allows fifteen. Claim/finish are outside the adapter timer, and cooperative cancellation cannot preempt blocking Python or recall remote effects. Pending/failed/cancelled provider observations and ambiguous outcomes remain **Unknown**, with no automatic retry or reconciliation. A local receipt and provider completion are distinct. Manual checks only append read-only provider evidence. Cross-store crash consistency and remote activity from other clients have practical limits described in architecture notes.
 
-New competition work is the product, policy, AI/PayPal clients, consumer executor, UI and tests. The shared Runtime remains untouched. Genuine local AI analysis has been exercised; PayPal Sandbox integration is implemented and mock-tested, but a real API refund requires merchant credentials and a specific human-approved case. The app has an MIT license; the pinned dependency's licensing must be clarified before public distribution. The recorded evidence describes the initial implementation before Git delivery; Sandbox execution, video upload and final submission remain pending.
+New competition work is the product, policy, AI/PayPal clients, consumer executor, UI and tests. The shared Runtime remains untouched. Genuine local AI analysis and one human-gated PayPal Sandbox refund have been verified. The app and pinned v0.2.0 Runtime are MIT licensed. The qualified baseline is recoverable through the annotated `phase2-backend-freeze` tag once published; video recording and final competition submission remain separate work. No production-readiness or remote exactly-once guarantee is claimed.

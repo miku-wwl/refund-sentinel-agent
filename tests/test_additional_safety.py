@@ -64,8 +64,8 @@ def test_concurrent_incident_reservation(browser):
 
 def test_actual_runtime_deadline_after_committed_fake_effect(environment):
     class SlowAcknowledgement(FakePayPal):
-        async def refund(self, *args):
-            response = await super().refund(*args)
+        async def refund(self, *args, **kwargs):
+            response = await super().refund(*args, **kwargs)
             await asyncio.sleep(10)  # The unmodified Runtime cancels after its real 5-second limit.
             return response
 

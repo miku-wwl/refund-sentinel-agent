@@ -3,10 +3,12 @@ import json
 import re
 import sqlite3
 import time
-from contextlib import closing
+from contextlib import closing, contextmanager
+from contextvars import ContextVar
 from copy import deepcopy
 from decimal import Decimal
 from typing import Protocol
+from urllib.parse import urlsplit
 from uuid import UUID, uuid4
 
 import httpx
@@ -23,7 +25,87 @@ class ProviderError(Problem):
 
 
 EXECUTION_HTTP_TIMEOUT_SECONDS = 1.1
+EXECUTION_HTTP_READ_TIMEOUT_SECONDS = 2.0
+EXECUTION_HTTP_TIMEOUT = httpx.Timeout(
+    connect=EXECUTION_HTTP_TIMEOUT_SECONDS,
+    read=EXECUTION_HTTP_READ_TIMEOUT_SECONDS,
+    write=EXECUTION_HTTP_TIMEOUT_SECONDS,
+    pool=EXECUTION_HTTP_TIMEOUT_SECONDS,
+)
 PREFLIGHT_HTTP_TIMEOUT = httpx.Timeout(connect=5.0, read=10.0, write=5.0, pool=5.0)
+_HTTP_ATTEMPT = ContextVar("paypal_http_attempt", default=None)
+_DISPATCH_RESERVE = ContextVar("paypal_dispatch_reserve", default=0.0)
+# Documented Sandbox HATEOAS origins, for response evidence only. Requests stay on SANDBOX_URL.
+SANDBOX_RESPONSE_ORIGINS = frozenset({SANDBOX_URL, "https://api.sandbox.paypal.com"})
+SANDBOX_RESPONSE_HOSTS = frozenset(urlsplit(origin).hostname for origin in SANDBOX_RESPONSE_ORIGINS)
+
+
+def execution_stopped(context):
+    task = asyncio.current_task()
+    return bool(context and context.expired()) or bool(task and task.cancelling())
+
+
+@contextmanager
+def paypal_http_attempt(context, *, dispatch_reserve_seconds=0.0):
+    """Project the public Runtime attempt onto HTTP requests, including parallel children.
+
+    This sets no Runtime deadline, authorization or Action state. The Runtime remains
+    responsible for its immutable total timeout and cancellation; HTTPX phase limits
+    are separately capped by the remaining public deadline at each request start.
+    """
+    token = _HTTP_ATTEMPT.set(context)
+    reserve = _DISPATCH_RESERVE.set(dispatch_reserve_seconds)
+    try:
+        yield
+    finally:
+        _HTTP_ATTEMPT.reset(token)
+        _DISPATCH_RESERVE.reset(reserve)
+
+
+async def refund_dispatch_checkpoint(context):
+    """Observe both the public attempt deadline and cancellation before dispatch, never retry."""
+    task = asyncio.current_task()
+    if task and task.cancelling():
+        raise asyncio.CancelledError
+    if execution_stopped(context):
+        raise ProviderError("REFUND_DISPATCH_STOPPED")
+    # Deliver queued task cancellation/deadline callbacks before a new financial request.
+    await asyncio.sleep(0)
+    if execution_stopped(context):
+        raise ProviderError("REFUND_DISPATCH_STOPPED")
+
+
+async def refund_budget_checkpoint(context):
+    """Before wire dispatch: reserve ACK 4s + independent GET 4s + persistence/margin 1s."""
+    await refund_dispatch_checkpoint(context)
+    reserve = _DISPATCH_RESERVE.get()
+    if reserve and (
+        context is None or context.deadline - asyncio.get_running_loop().time() < reserve
+    ):
+        raise ProviderError("REFUND_BUDGET_RESERVE_INSUFFICIENT", no_effect=True)
+
+
+class RefundDeadlineTransport(httpx.AsyncBaseTransport):
+    """Check the trusted attempt after HTTPX preparation, before entering the transport."""
+
+    def __init__(self, inner=None):
+        self.inner = inner if inner is not None else httpx.AsyncHTTPTransport(retries=0)
+
+    async def handle_async_request(self, request):
+        context = request.extensions.pop("refund_attempt_context", None)
+        if context is not None or (
+            request.method == "POST"
+            and re.fullmatch(r"/v2/payments/captures/[A-Z0-9]{17}/refund", request.url.path)
+        ):
+            await refund_dispatch_checkpoint(context)
+        if request.method == "POST" and re.fullmatch(
+            r"/v2/payments/captures/[A-Z0-9]{17}/refund", request.url.path
+        ):
+            await refund_budget_checkpoint(context)
+        return await self.inner.handle_async_request(request)
+
+    async def aclose(self):
+        await self.inner.aclose()
 
 
 class SandboxReadOnlyTransport(httpx.AsyncBaseTransport):
@@ -54,9 +136,9 @@ class SandboxReadOnlyTransport(httpx.AsyncBaseTransport):
 
 
 class PayPalClient(Protocol):
-    async def capture(self, capture_id: str) -> CaptureFacts: ...
+    async def capture(self, capture_id: str, *, expected_order_id=None) -> CaptureFacts: ...
     async def refund(
-        self, capture_id: str, amount: str, currency: str, request_id: str
+        self, capture_id: str, amount: str, currency: str, request_id: str, *, context=None
     ) -> dict: ...
     async def lookup_refund(self, refund_id: str) -> dict: ...
     async def close(self) -> None: ...
@@ -81,27 +163,67 @@ def provider_money(data):
     return f"{Decimal(value):.2f}", currency
 
 
-def verify_links(data, resource_path, *, refund_path=None):
+def verify_response_url(href, expected_path):
+    """Accept two exact Sandbox hosts and default HTTPS port; no URL normalization shortcuts."""
+    if (
+        not isinstance(href, str)
+        or len(href) > 2048
+        or not href.startswith("https://")
+        or any(ord(char) < 33 or ord(char) > 126 for char in href)
+        or any(char in href for char in "\\%?#")
+    ):
+        raise ValueError("Invalid provider URL")
+    url = urlsplit(href)
+    if (
+        url.scheme != "https"
+        or url.hostname not in SANDBOX_RESPONSE_HOSTS
+        or url.port not in {None, 443}
+        or url.netloc not in {url.hostname, f"{url.hostname}:443"}
+        or url.username is not None
+        or url.password is not None
+        or url.path != expected_path
+        or url.query
+        or url.fragment
+    ):
+        raise ValueError("Provider URL mismatch")
+
+
+def verify_links(data, resource_path, *, refund_path=None, up_path=None):
     """Validate relevant links when returned; never follow provider-selected URLs."""
     if "links" not in data:
+        if up_path:
+            raise ValueError("Missing capture relationship")
         return False
     links = data["links"]
     if not isinstance(links, list) or len(links) > 32:
         raise ValueError("Invalid provider links")
+    expected = {"self": (resource_path, "GET")}
+    if refund_path:
+        expected["refund"] = (refund_path, "POST")
+    if up_path:
+        expected["up"] = (up_path, "GET")
+    seen = set()
     for link in links:
-        if not isinstance(link, dict):
+        if not isinstance(link, dict) or not isinstance(link.get("rel"), str):
             raise ValueError("Invalid provider link")
-        if link.get("rel") == "self" and (
-            link.get("href") != SANDBOX_URL + resource_path or link.get("method") != "GET"
-        ):
-            raise ValueError("Resource link mismatch")
-        if (
-            refund_path
-            and link.get("rel") == "refund"
-            and (link.get("href") != SANDBOX_URL + refund_path or link.get("method") != "POST")
-        ):
-            raise ValueError("Refund link mismatch")
-    return any(link.get("rel") == "self" for link in links)
+        rel = link["rel"]
+        if rel in expected:
+            path, method = expected[rel]
+            error = {
+                "self": "Resource link mismatch",
+                "refund": "Refund link mismatch",
+                "up": "Capture relationship mismatch",
+            }[rel]
+            if rel in seen or link.get("method") != method:
+                raise ValueError(error)
+            try:
+                verify_response_url(link.get("href"), path)
+            except ValueError:
+                raise ValueError(error) from None
+            seen.add(rel)
+    if up_path and "up" not in seen:
+        raise ValueError("Missing capture relationship")
+    return "self" in seen
 
 
 class SandboxPayPal:
@@ -111,7 +233,7 @@ class SandboxPayPal:
         *,
         transport=None,
         read_only=False,
-        http_timeout=EXECUTION_HTTP_TIMEOUT_SECONDS,
+        http_timeout=EXECUTION_HTTP_TIMEOUT,
     ):
         if settings.environment != "sandbox" or settings.paypal_base_url != SANDBOX_URL:
             raise Problem("LIVE_PAYPAL_FORBIDDEN")
@@ -122,7 +244,11 @@ class SandboxPayPal:
             raise Problem("PAYPAL_CREDENTIALS_MISSING")
         self.settings = settings
         self.read_only = read_only
-        self.source = "MOCK" if isinstance(transport, httpx.MockTransport) else "REAL_SANDBOX"
+        self.source = (
+            "MOCK"
+            if isinstance(transport, httpx.MockTransport) or getattr(transport, "is_mock", False)
+            else "REAL_SANDBOX"
+        )
         self.telemetry = []
         self.token_cache_hits = 0
         self.capture_checks = {}
@@ -131,7 +257,9 @@ class SandboxPayPal:
             timeout=http_timeout,
             follow_redirects=False,
             trust_env=False,
-            transport=SandboxReadOnlyTransport(transport) if read_only else transport,
+            transport=SandboxReadOnlyTransport(transport)
+            if read_only
+            else RefundDeadlineTransport(transport),
         )
         self._token, self._until = None, 0
         self._auth_lock = asyncio.Lock()
@@ -139,6 +267,7 @@ class SandboxPayPal:
     async def _roundtrip(self, method, path, **kwargs):
         start = time.perf_counter()
         response_status = None
+        exception_type = None
         operation = (
             "oauth"
             if path == "/v1/oauth2/token"
@@ -151,9 +280,52 @@ class SandboxPayPal:
             else "capture_get"
         )
         try:
+            context = (
+                kwargs.get("extensions", {}).get("refund_attempt_context") or _HTTP_ATTEMPT.get()
+            )
+            if context is not None:
+                await refund_dispatch_checkpoint(context)
+                remaining = context.deadline - asyncio.get_running_loop().time()
+                if remaining <= 0:
+                    raise ProviderError("REFUND_DISPATCH_STOPPED")
+                # Per-request kwargs avoid mutating the shared client's concurrent GET limits.
+                kwargs["timeout"] = httpx.Timeout(
+                    **{
+                        phase: min(getattr(self.http.timeout, phase) or remaining, remaining)
+                        for phase in ("connect", "read", "write", "pool")
+                    }
+                )
+                kwargs["extensions"] = dict(kwargs.get("extensions", {})) | {
+                    "refund_attempt_context": context
+                }
             response = await self.http.request(method, path, **kwargs)
             response_status = response.status_code
             return response
+        except asyncio.CancelledError:
+            exception_type = "CancelledError"
+            raise
+        except httpx.HTTPError as exc:
+            # Record only known HTTPX classes before capture()/token() fold their causes.
+            # Never record messages, request/response objects, URLs, headers or trace locals.
+            exception_type = next(
+                (
+                    cls.__name__
+                    for cls in (
+                        httpx.ReadTimeout,
+                        httpx.ConnectTimeout,
+                        httpx.WriteTimeout,
+                        httpx.PoolTimeout,
+                        httpx.TimeoutException,
+                        httpx.ConnectError,
+                        httpx.ReadError,
+                        httpx.WriteError,
+                        httpx.HTTPError,
+                    )
+                    if isinstance(exc, cls)
+                ),
+                "HTTPError",
+            )
+            raise
         finally:
             # No URLs, identifiers, headers, credential values or provider bodies in diagnostics.
             self.telemetry.append(
@@ -162,6 +334,7 @@ class SandboxPayPal:
                     "method": method,
                     "http_status": response_status,
                     "elapsed_seconds": round(time.perf_counter() - start, 6),
+                    **({"exception_type": exception_type} if exception_type else {}),
                 }
             )
 
@@ -210,9 +383,11 @@ class SandboxPayPal:
             except (ValueError, KeyError, TypeError, AttributeError):
                 raise ProviderError("PAYPAL_AUTH_INVALID_RESPONSE", no_effect=True) from None
 
-    async def _request(self, method, path, *, body=None, request_id=None):
+    async def _request(self, method, path, *, body=None, request_id=None, context=None):
         if self.read_only and method != "GET":
             raise Problem("PAYPAL_MUTATION_FORBIDDEN")
+        if context is not None:
+            await refund_dispatch_checkpoint(context)
         headers = {"Authorization": "Bearer " + await self.token()}
         if request_id:
             try:
@@ -223,7 +398,11 @@ class SandboxPayPal:
                 raise ProviderError("INVALID_REQUEST_ID", no_effect=True)
             headers |= {"PayPal-Request-Id": request_id, "Prefer": "return=representation"}
         try:
-            response = await self._roundtrip(method, path, headers=headers, json=body)
+            kwargs = {"headers": headers, "json": body}
+            if context is not None:
+                await refund_dispatch_checkpoint(context)
+                kwargs["extensions"] = {"refund_attempt_context": context}
+            response = await self._roundtrip(method, path, **kwargs)
         except httpx.HTTPError:
             raise ProviderError("PAYPAL_TRANSPORT_UNCERTAIN", no_effect=method == "GET") from None
         if response.status_code not in ({200, 201} if method == "POST" else {200}):
@@ -252,11 +431,28 @@ class SandboxPayPal:
         except ValueError:
             raise ProviderError("PAYPAL_INVALID_RESPONSE", no_effect=method == "GET") from None
 
-    async def capture(self, capture_id):
+    async def capture(self, capture_id, *, expected_order_id=None):
         identifier(capture_id)
         if capture_id not in self.settings.capture_ids:
             raise Problem("CAPTURE_NOT_ALLOWED")
-        capture = await self._request("GET", f"/v2/payments/captures/{capture_id}")
+        order = None
+        if expected_order_id is not None:
+            identifier(expected_order_id)
+            try:
+                # The hint comes from host-verified persisted incident facts, never model output.
+                # TaskGroup owns/cancels/joins both read-only requests within the Runtime attempt.
+                async with asyncio.TaskGroup() as reads:
+                    capture_read = reads.create_task(
+                        self._request("GET", f"/v2/payments/captures/{capture_id}")
+                    )
+                    order_read = reads.create_task(
+                        self._request("GET", f"/v2/checkout/orders/{expected_order_id}")
+                    )
+            except ExceptionGroup:
+                raise ProviderError("CAPTURE_READ_UNCERTAIN", no_effect=True) from None
+            capture, order = capture_read.result(), order_read.result()
+        else:
+            capture = await self._request("GET", f"/v2/payments/captures/{capture_id}")
         try:
             if capture["id"] != capture_id:
                 raise ValueError()
@@ -266,7 +462,10 @@ class SandboxPayPal:
                 refund_path=f"/v2/payments/captures/{capture_id}/refund",
             )
             order_id = identifier(capture["supplementary_data"]["related_ids"]["order_id"])
-            order = await self._request("GET", f"/v2/checkout/orders/{order_id}")
+            if expected_order_id is not None and order_id != expected_order_id:
+                raise ValueError()
+            if order is None:
+                order = await self._request("GET", f"/v2/checkout/orders/{order_id}")
             if order["id"] != order_id or order["status"] != "COMPLETED":
                 raise ValueError()
             order_links = verify_links(order, f"/v2/checkout/orders/{order_id}")
@@ -320,7 +519,7 @@ class SandboxPayPal:
         except (KeyError, TypeError, ValueError, AttributeError):
             raise ProviderError("INSUFFICIENT_CAPTURE_EVIDENCE", no_effect=True) from None
 
-    async def refund(self, capture_id, amount, currency, request_id):
+    async def refund(self, capture_id, amount, currency, request_id, *, context=None):
         if self.read_only:
             raise Problem("PAYPAL_MUTATION_FORBIDDEN")
         identifier(capture_id)
@@ -342,6 +541,7 @@ class SandboxPayPal:
             f"/v2/payments/captures/{capture_id}/refund",
             body={"amount": {"value": amount, "currency_code": currency}},
             request_id=request_id,
+            context=context,
         )
 
     async def lookup_refund(self, refund_id):
@@ -383,16 +583,23 @@ class FakePayPal:
                 )
             db.commit()
 
-    async def capture(self, capture_id):
+    async def capture(self, capture_id, *, expected_order_id=None):
         with closing(sqlite3.connect(self.path)) as db:
             row = db.execute("SELECT data FROM captures WHERE id=?", (capture_id,)).fetchone()
         if row is None:
             raise ProviderError("FAKE_CAPTURE_NOT_FOUND", no_effect=True)
-        return CaptureFacts.model_validate_json(row[0])
+        facts = CaptureFacts.model_validate_json(row[0])
+        if expected_order_id is not None and facts.order_id != expected_order_id:
+            raise ProviderError("INSUFFICIENT_CAPTURE_EVIDENCE", no_effect=True)
+        return facts
 
-    async def refund(self, capture_id, amount, currency, request_id):
+    async def refund(self, capture_id, amount, currency, request_id, *, context=None):
+        if context is not None:
+            await refund_dispatch_checkpoint(context)
         if self.delay:
             await asyncio.sleep(self.delay)
+        if context is not None:
+            await refund_dispatch_checkpoint(context)
         with closing(sqlite3.connect(self.path, timeout=2)) as db:
             db.execute("BEGIN IMMEDIATE")
             db.execute(
@@ -466,16 +673,12 @@ def verified_refund(data, args, *, expected_id=None):
         value, currency = provider_money(data["amount"])
         if expected_id and refund_id != expected_id:
             raise ValueError()
-        if (
-            Decimal(value) != Decimal(args.amount)
-            or currency != args.currency
-            or not any(
-                link.get("rel") == "up"
-                and link.get("method") == "GET"
-                and link.get("href") == f"{SANDBOX_URL}/v2/payments/captures/{args.capture_id}"
-                for link in data["links"]
-            )
-        ):
+        verify_links(
+            data,
+            f"/v2/payments/refunds/{refund_id}",
+            up_path=f"/v2/payments/captures/{identifier(args.capture_id)}",
+        )
+        if Decimal(value) != Decimal(args.amount) or currency != args.currency:
             raise ValueError()
         status = data["status"]
         if status not in {"COMPLETED", "PENDING", "FAILED", "CANCELLED"}:

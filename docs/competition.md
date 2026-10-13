@@ -25,6 +25,6 @@ Refund Sentinel contributes the merchant workflow, analysis schema/provider, det
 
 ## Verification gaps
 
-Official competition and API documentation were accessible. Real merchant credentials and a human-approved Sandbox test case were unavailable; no PayPal API smoke test occurred. Public repository visibility, entrant eligibility, YouTube upload and final submission remain unverified.
+The initial implementation lacked a genuine Sandbox test. That checkpoint is superseded by the [Phase 2 freeze](PHASE2-BACKEND-FREEZE.md): one genuine NZD 5.00 refund was independently verified COMPLETED with a durable receipt. Competition rules above are the dated 2026-10-12 observation, not a fresh rules review. Entrant eligibility, YouTube upload and final submission remain unverified.
 
-The pinned Runtime contains no LICENSE file in its Git tree and supplies no License/License-Expression/License-File distribution metadata. The application's MIT license does not grant rights to that dependency. Its owner must clarify licensing and provide judges an authorized reproducible installation path before publication/submission. No core source or release tag was changed.
+The original v0.1.0 licensing gap was resolved by the separately released, immutably pinned Runtime v0.2.0. Its MIT license and distribution metadata were verified during qualification. Judges still need access to the pinned dependency; repository access is not granted by a local successful installation. No core source or release tag was changed by this application task.

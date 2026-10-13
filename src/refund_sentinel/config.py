@@ -10,7 +10,7 @@ from pydantic import Field, SecretStr, field_validator, model_validator
 from .models import CaptureId, Money, Problem, StrictModel
 
 SANDBOX_URL = "https://api-m.sandbox.paypal.com"
-PINNED_COMMIT = "fd742b783058a53400c465b4ab59c6e80715895a"
+PINNED_COMMIT = "7261fdd2f47d2b15fabe8faac527eeee37338eb1"
 PAYPAL_ENV_FIELDS = {
     "payment_mode": "PAYMENT_MODE",
     "environment": "PAYPAL_ENVIRONMENT",

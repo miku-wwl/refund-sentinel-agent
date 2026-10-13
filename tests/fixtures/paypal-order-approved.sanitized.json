@@ -1,0 +1,61 @@
+{
+  "id": "5O190127TN364715T",
+  "intent": "CAPTURE",
+  "status": "APPROVED",
+  "payment_source": {
+    "paypal": {
+      "email_address": "synthetic-account@example.test",
+      "account_id": "BBBBBBBBBBBBB",
+      "account_status": "VERIFIED",
+      "name": {
+        "given_name": "Synthetic",
+        "surname": "Synthetic"
+      },
+      "address": {
+        "country_code": "NZ"
+      }
+    }
+  },
+  "purchase_units": [
+    {
+      "reference_id": "11111111-1111-4111-8111-111111111111",
+      "amount": {
+        "currency_code": "NZD",
+        "value": "20.00"
+      },
+      "payee": {
+        "merchant_id": "MMMMMMMMMMMMM"
+      },
+      "description": "Refund Sentinel synthetic Sandbox fixture; no real goods"
+    }
+  ],
+  "payer": {
+    "name": {
+      "given_name": "Synthetic",
+      "surname": "Synthetic"
+    },
+    "email_address": "synthetic-account@example.test",
+    "payer_id": "BBBBBBBBBBBBB",
+    "address": {
+      "country_code": "NZ"
+    }
+  },
+  "create_time": "2026-10-13T00:00:00Z",
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/5O190127TN364715T",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/5O190127TN364715T",
+      "rel": "update",
+      "method": "PATCH"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v2/checkout/orders/5O190127TN364715T/capture",
+      "rel": "capture",
+      "method": "POST"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "stage_b_validation": "PASS",
+  "public_repository": true,
+  "public_runtime_dependency": true,
+  "release_tag": "phase2-backend-freeze",
+  "fresh_publication_export_install": "uv sync --frozen --all-extras: PASS",
+  "fresh_environment_smoke": {
+    "passed": 37,
+    "seconds": 23.09
+  },
+  "baseline_full_suite": {
+    "passed": 476,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 468.81
+  },
+  "clean_publication_suite": {
+    "passed_initially": 478,
+    "failed_initially": 2,
+    "seconds": 476.56,
+    "failure_cause": "Concurrent validation Python process rejected by unchanged fail-closed process identity guard",
+    "isolated_owner_and_publication_rerun": {
+      "passed": 26,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 15.75
+    },
+    "distinct_enabled_tests_with_passing_result": 480,
+    "no_assertions_weakened": true
+  },
+  "history_secret_scan": {
+    "status": "PASS",
+    "blobs": 109
+  },
+  "explicit_and_staged_scan": "PASS",
+  "historical_private_files_unchanged": 4058,
+  "new_paypal_requests": 0,
+  "private_diagnostics_retained_locally": true,
+  "existing_screenshots_visually_reviewed": 4,
+  "known_warning": "Starlette TestClient HTTPX deprecation"
+}

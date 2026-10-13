@@ -111,7 +111,7 @@ def create_app(directory, settings, *, predecessor_stopped=False, paypal=None, a
         return value
 
     @app.get("/api/config")
-    def config():
+    def config(request: Request):
         return {
             "payment_mode": settings.payment_mode,
             "ai_mode": settings.ai_mode,
@@ -119,6 +119,9 @@ def create_app(directory, settings, *, predecessor_stopped=False, paypal=None, a
             "capture_ids": settings.capture_ids,
             "max_refund": settings.max_refund,
             "runtime": verify_distribution(),
+            "execution_timeout_seconds": (
+                request.app.state.sentinel.runtime.gateway.tool_timeout_seconds
+            ),
         }
 
     @app.get("/api/incidents")

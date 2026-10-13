@@ -13,6 +13,7 @@ from agentic_intent_gate.runtime import (
     ToolBinding,
     ToolCapability,
     ToolOutcome,
+    execution_budget_binding,
     open_runtime,
     provision_capability,
 )
@@ -20,7 +21,17 @@ from agentic_intent_gate.runtime import (
 from .config import PINNED_COMMIT, verify_python_version
 from .llm import ChatCompletionsAnalyst, DeterministicAnalyst
 from .models import CaptureFacts, Problem, Recommendation, RefundInput, validate_policy
-from .paypal import FakePayPal, ProviderError, SandboxPayPal, identifier, verified_refund
+from .paypal import (
+    FakePayPal,
+    ProviderError,
+    SandboxPayPal,
+    execution_stopped,
+    identifier,
+    paypal_http_attempt,
+    refund_budget_checkpoint,
+    verified_refund,
+)
+from .profiles import LEGACY_PROFILE, SANDBOX_15_PROFILE, persisted_profile, validate_profile
 from .store import Store
 
 ARGUMENT_SCHEMA = {
@@ -55,13 +66,14 @@ def verify_distribution():
     verify_python_version()
     dist = importlib.metadata.distribution("agentic-intent-gate")
     direct = json.loads(dist.read_text("direct_url.json") or "{}")
-    if dist.version != "0.1.0" or direct.get("vcs_info", {}).get("commit_id") != PINNED_COMMIT:
+    if dist.version != "0.2.0" or direct.get("vcs_info", {}).get("commit_id") != PINNED_COMMIT:
         raise Problem("RUNTIME_PIN_MISMATCH", 503)
     return {"version": dist.version, "commit": PINNED_COMMIT}
 
 
-def provision(directory, settings):
+def provision(directory, settings, *, profile=LEGACY_PROFILE):
     verify_distribution()
+    validate_profile(profile, settings)
     directory = directory.resolve()
     directory.mkdir(parents=True, exist_ok=True)
     if any(directory.iterdir()):
@@ -70,16 +82,25 @@ def provision(directory, settings):
         "paypal_partial_refund",
         "1",
         "paypal-sandbox-adapter",
-        "refund-binding-v1",
+        profile.base_revision,
         "paypal-sandbox-refunds",
         str(uuid4()),
     )
+    binding = execution_budget_binding(binding, profile.seconds)
     provision_capability(directory / "operator.capability")
     (directory / "identity.json").write_text(
-        json.dumps({"binding": asdict(binding), "configuration": settings.identity()}, indent=2),
+        json.dumps(
+            {"binding": asdict(binding), "configuration": settings.identity()}
+            | ({"execution_profile": asdict(profile)} if profile != LEGACY_PROFILE else {}),
+            indent=2,
+        ),
         "utf-8",
     )
-    Store(directory / "application.sqlite3").provision()
+    Store(
+        directory / "application.sqlite3",
+        binding=binding if profile != LEGACY_PROFILE else None,
+        profile=profile if profile != LEGACY_PROFILE else None,
+    ).provision()
     if settings.payment_mode == "offline":
         FakePayPal.provision(directory / "fake-paypal.sqlite3", settings)
 
@@ -109,8 +130,9 @@ class IncidentPlanProvider:
 
 
 class RefundExecutor:
-    def __init__(self, store, binding, settings, paypal):
+    def __init__(self, store, binding, settings, paypal, *, profile=LEGACY_PROFILE):
         self.store, self.binding, self.settings, self.paypal = store, binding, settings, paypal
+        self.profile = validate_profile(profile, settings)
 
     def validate_arguments(self, arguments):
         args = RefundInput.model_validate(dict(arguments))
@@ -127,18 +149,26 @@ class RefundExecutor:
         return args, incident
 
     async def execute(self, spec, effect_key, context):
+        with paypal_http_attempt(
+            context, dispatch_reserve_seconds=self.profile.dispatch_reserve_seconds
+        ):
+            return await self._execute(spec, effect_key, context)
+
+    async def _execute(self, spec, effect_key, context):
         def outcome(category, receipt=None, reason=None):
             return ToolOutcome(
                 category,
                 effect_key,
                 spec.execution_scope,
                 spec.target,
-                spec.payload_digest(),
+                digest,
                 receipt,
                 reason,
             )
 
         digest = spec.payload_digest()
+        if execution_stopped(context):
+            return outcome(Outcome.UNKNOWN_OUTCOME)
         try:
             if (
                 not self.binding.matches(spec)
@@ -151,12 +181,20 @@ class RefundExecutor:
             ):
                 raise Problem("INVALID_EFFECT_ID")
             args, incident = self.validate_arguments(spec.arguments)
-            latest = await self.paypal.capture(args.capture_id)
+            if execution_stopped(context):
+                return outcome(Outcome.UNKNOWN_OUTCOME)
+            latest = await self.paypal.capture(
+                args.capture_id, expected_order_id=incident["capture"]["order_id"]
+            )
+            if execution_stopped(context):
+                return outcome(Outcome.UNKNOWN_OUTCOME)
             validate_policy(
                 latest, Recommendation.model_validate(incident["recommendation"]), self.settings
             )
             if latest.model_dump() != incident["capture"]:
                 raise Problem("PAYMENT_FACTS_CHANGED")
+            if self.profile.dispatch_reserve_seconds:
+                await refund_budget_checkpoint(context)
         except (Problem, ValueError, TypeError) as exc:
             self.store.observe(
                 effect_key,
@@ -164,8 +202,10 @@ class RefundExecutor:
                 phase="PRECHECK_REJECTED",
                 error=exc.code if isinstance(exc, Problem) else "INPUT_REJECTED",
             )
+            if execution_stopped(context):
+                return outcome(Outcome.UNKNOWN_OUTCOME)
             return outcome(Outcome.CONFIRMED_FAILURE, reason="INPUT_REJECTED")
-        if context.expired():
+        if execution_stopped(context):
             return outcome(Outcome.UNKNOWN_OUTCOME)
         # Observations are evidence, never authorization or a replacement for durable claiming.
         self.store.observe(
@@ -179,8 +219,11 @@ class RefundExecutor:
             currency=args.currency,
         )
         try:
+            # This must follow the synchronous dispatch commit. The client rechecks after OAuth
+            # and HTTPX preparation, using this same public Runtime attempt context.
+            await refund_budget_checkpoint(context)
             response = await self.paypal.refund(
-                args.capture_id, args.amount, args.currency, effect_key
+                args.capture_id, args.amount, args.currency, effect_key, context=context
             )
         except ProviderError as exc:
             self.store.observe(
@@ -190,6 +233,8 @@ class RefundExecutor:
                 error=exc.code,
                 definitive_no_effect=exc.no_effect,
             )
+            if execution_stopped(context):
+                return outcome(Outcome.UNKNOWN_OUTCOME)
             return outcome(
                 Outcome.CONFIRMED_FAILURE if exc.no_effect else Outcome.UNKNOWN_OUTCOME,
                 reason="INPUT_REJECTED" if exc.no_effect else None,
@@ -209,13 +254,15 @@ class RefundExecutor:
                     else "UNRECOGNIZED"
                 ),
             )
+            if execution_stopped(context):
+                return outcome(Outcome.UNKNOWN_OUTCOME)
             verified = verified_refund(
                 await self.paypal.lookup_refund(refund_id), args, expected_id=refund_id
             )
             receipt = self.store.observe(
                 effect_key, digest, phase="VERIFIED_REFUND", source=latest.source, **verified
             )
-            if context.expired() or verified["provider_status"] != "COMPLETED":
+            if execution_stopped(context) or verified["provider_status"] != "COMPLETED":
                 return outcome(Outcome.UNKNOWN_OUTCOME)
             return outcome(Outcome.SUCCESS, receipt=receipt)
         except (Problem, ValueError, KeyError, TypeError):
@@ -225,26 +272,45 @@ class RefundExecutor:
 
 @contextmanager
 def composition(
-    directory, settings, *, paypal=None, analyst=None, provider=None, predecessor_stopped=False
+    directory,
+    settings,
+    *,
+    paypal=None,
+    analyst=None,
+    provider=None,
+    predecessor_stopped=False,
+    profile=None,
 ):
     verify_distribution()
     directory = directory.resolve()
     identity = json.loads((directory / "identity.json").read_text("utf-8"))
+    stored_profile = persisted_profile(identity, settings)
+    if profile is not None and validate_profile(profile, settings) != stored_profile:
+        raise Problem("PERSISTED_EXECUTION_PROFILE_MISMATCH")
+    profile = stored_profile
     if identity["configuration"] != settings.identity():
         raise Problem("PERSISTED_CONFIGURATION_MISMATCH", 503)
     binding = ToolBinding(**identity["binding"])
-    store = Store(directory / "application.sqlite3")
+    if profile == SANDBOX_15_PROFILE and binding.binding_revision != "refund-binding-v2.exec-15s":
+        raise Problem("PERSISTED_EXECUTION_PROFILE_MISMATCH")
+    store = Store(
+        directory / "application.sqlite3",
+        binding=binding if profile != LEGACY_PROFILE else None,
+        profile=profile if profile != LEGACY_PROFILE else None,
+    )
+    if profile != LEGACY_PROFILE:
+        store.check_identity()
     paypal = paypal or (
         FakePayPal(directory / "fake-paypal.sqlite3")
         if settings.payment_mode == "offline"
-        else SandboxPayPal(settings)
+        else SandboxPayPal(settings, http_timeout=profile.http_timeout())
     )
     analyst = analyst or (
         DeterministicAnalyst()
         if settings.ai_mode == "deterministic"
         else ChatCompletionsAnalyst(settings)
     )
-    executor = RefundExecutor(store, binding, settings, paypal)
+    executor = RefundExecutor(store, binding, settings, paypal, profile=profile)
 
     def semantics(arguments, target):
         try:
@@ -274,5 +340,6 @@ def composition(
         verifier=verifier,
         policy=BoundCapabilityAuthorization(verifier, policy_revision="refund-policy-v1"),
         predecessor_stopped=predecessor_stopped,
+        execution_timeout_seconds=profile.seconds,
     ) as runtime:
         yield runtime, store, paypal, analyst, executor
