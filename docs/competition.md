@@ -1,30 +1,54 @@
-# PayPal AI Hackathon 2026
+# PayPal AI Hackathon submission preparation
 
-Verified on 2026-10-12 from the [official overview](https://paypalaihackathon.devpost.com/) and [official rules](https://paypalaihackathon.devpost.com/rules).
+The [official overview](https://paypalaihackathon.devpost.com/) and
+[rules](https://paypalaihackathon.devpost.com/rules) were checked on 14 October 2026.
+The deadline is **12 November 2026, 12:00 PST**, equivalent to **13 November,
+09:00 NZDT**. Check the official pages again before submission.
 
-The rules require a functioning application meaningfully using PayPal Sandbox and an AI tool/model. A public open-source repository must include a license and complete run instructions; a hosted demo is optional. The public YouTube demonstration must be under three minutes and show the working application. Submission materials require English or English translations. Existing projects must document significant new work during the submission period; permitted reused software remains subject to its licenses. Judges must retain access through judging.
+The entry must meaningfully combine PayPal Sandbox with AI, provide a functioning
+build and complete run instructions or a hosted demo, and link a public open-source
+repository with a visible license. A public YouTube demonstration under three
+minutes must show the application working. Materials must be English or translated.
+Existing projects need significant progress during the competition; reused software
+remains subject to its license. Eligibility and access through judging are the
+entrant's responsibility. These requirements come from the linked official rules.
 
-Deadline: **2026-11-12 12:00 PST / 2026-11-13 09:00 NZDT**. Judging uses five equally weighted criteria: Technological Implementation, Design, Potential Impact, Innovation/Idea, Presentation. Additional sponsor tools are optional unless entering their specific prize categories. Individual eligibility, ownership and excluded jurisdictions require entrant verification.
+Judging criteria are equally weighted: Technological Implementation, Design,
+Potential Impact, Innovation/Idea and Presentation. Sponsor tools are optional
+unless pursuing an award with specific sponsor requirements.
 
-Refund Sentinel contributes the merchant workflow, analysis schema/provider, deterministic refund policy, PayPal adapter, browser UI, and product tests. Agentic Intent Gate remains an external pinned dependency. Offline fixtures demonstrate engineering behavior; they do not prove PayPal Sandbox execution or satisfy the real-integration demonstration on their own.
+## This project's contribution
 
-## API sources used
+Refund Sentinel contributes the merchant workflow, strict recommendation schema,
+real local Ollama provider, deterministic policy, Sandbox API adapter, consumer
+executor/observations, isolated five-screen presentation and regression suites.
+Agentic Intent Gate is reused externally at a fixed MIT-licensed v0.2.0 Git release;
+its execution framework is not copied into the submission.
 
-| Official source | Implementation decision |
-|---|---|
-| [OAuth authentication](https://developer.paypal.com/api/rest/authentication/) | Client credentials exchanged for a cached Bearer token; no token logging. |
-| [Capture details](https://developer.paypal.com/api/payments/v2/captures-get) | Look up the selected capture with merchant credentials. |
-| [Order details](https://developer.paypal.com/api/orders/v2/orders-get) | Cross-check capture association, merchant, amount, status and existing refunds. |
-| [Capture refund](https://developer.paypal.com/api/payments/v2/captures-refund) | Explicit partial amount/currency; `PayPal-Request-Id`; representation response. |
-| [Refund details](https://developer.paypal.com/api/payments/v2/refunds-get) | Independently read the returned refund ID before confirming completion. |
-| [Payments schema](https://developer.paypal.com/api/payments/v2/schema.json) | Documented refund states: COMPLETED, PENDING, FAILED, CANCELLED. |
-| [PayPal idempotency](https://developer.paypal.com/api/rest/reference/idempotency/) | Retention and endpoint support are limited; simultaneous requests can fail. No universal exactly-once claim or automatic retry. |
-| [Create order](https://developer.paypal.com/api/orders/v2/orders-create), [capture order](https://developer.paypal.com/api/orders/v2/orders-capture) | Developer-operated Sandbox fixture preparation, separate from this application's refund tool. |
-| [OpenAI Structured Outputs](https://developers.openai.com/api/docs/guides/structured-outputs) | Configurable Chat Completions JSON object/schema mode; independently validate outputs. JSON mode alone does not establish schema compliance. |
-| [Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility) | Local model option using `/v1/chat/completions`; actual model compatibility must be tested. |
+The genuine [historical Sandbox proof](../evidence/phase2-freeze/verified-refund.json)
+records a NZD 5.00 partial refund verified COMPLETED with a durable Receipt and one
+observed POST. The interactive UI separately runs genuine local Ollama on synthetic
+input, while financial execution remains FakePayPal. A deterministic fallback is
+clearly labeled. Simulation alone is not presented as proof of Sandbox integration.
 
-## Verification gaps
+Judges can run the credential-free [local presentation](PHASE3-UI-DEMO.md).
+The README identifies Python 3.13, Git dependency access and optional Ollama setup.
+No private PayPal credentials or historical grants need to be shared to run it.
 
-The initial implementation lacked a genuine Sandbox test. That checkpoint is superseded by the [Phase 2 freeze](PHASE2-BACKEND-FREEZE.md): one genuine NZD 5.00 refund was independently verified COMPLETED with a durable receipt. Competition rules above are the dated 2026-10-12 observation, not a fresh rules review. Entrant eligibility, YouTube upload and final submission remain unverified.
+## Remaining entrant work
 
-The original v0.1.0 licensing gap was resolved by the separately released, immutably pinned Runtime v0.2.0. Its MIT license and distribution metadata were verified during qualification. Judges still need access to the pinned dependency; repository access is not granted by a local successful installation. No core source or release tag was changed by this application task.
+Rehearse the [English demo script](DEMO-SCRIPT.md), record and publish the under-three-
+minute video, verify entrant eligibility/rights, maintain judge access, and complete
+the final entry. No recording, upload, hosted deployment or Devpost submission is
+claimed completed by repository cleanup.
+
+## Primary integration references
+
+- [PayPal OAuth](https://developer.paypal.com/api/rest/authentication/)
+- [Capture GET](https://developer.paypal.com/api/payments/v2/captures-get) and
+  [Order GET](https://developer.paypal.com/api/orders/v2/orders-get)
+- [Partial Refund POST](https://developer.paypal.com/api/payments/v2/captures-refund)
+  and [Refund GET](https://developer.paypal.com/api/payments/v2/refunds-get)
+- [PayPal idempotency](https://developer.paypal.com/api/rest/reference/idempotency/)
+- [Ollama OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility)
+- [Pinned Runtime adapter guide](https://github.com/miku-wwl/agentic-intent-gate/blob/7261fdd2f47d2b15fabe8faac527eeee37338eb1/docs/ADAPTER_GUIDE.md)

@@ -1,50 +1,114 @@
-# Real Sandbox setup and approved smoke test
+# Advanced Sandbox developer workflow
 
-## Phase 2.2: manually authorized fixture preparation
+Judges should use the credential-free [presentation](PHASE3-UI-DEMO.md). This guide
+describes the separate financial-capable operations app; it grants no authority
+for new PayPal requests or money movements. The preserved genuine sample is already
+complete and must never be replayed.
 
-The isolated developer CLI is `python -m refund_sentinel.fixture`; it is not wired into application startup or the dashboard. It prepares one synthetic Sandbox NZD 20.00 order and capture, with separate human checkpoints for create, buyer checkout, capture and the private capture-allowlist edit. Start with local-only `prepare`; never supply payment authorization flags before the corresponding human approves. No refund is authorized in this phase. See the [Phase 2.2 report and exact commands](phase-2.2-report.md). Existing private credentials/state are preserved, and uncertain payment mutations cannot be retried or reset by the utility.
+## Independent configuration
 
-For **future** local fixtures, start the return-only receiver explicitly with `python -m refund_sentinel.fixture_callback` on the checkout browser's computer and keep it running through checkout. New preparation freezes HTTP loopback return/cancel URLs on port 8766; genuine create admission checks that receiver before contacting PayPal. Old fixtures retain their original URL/body/digest and cannot be re-prepared or retried. Callback navigation triggers no capture/refund; confirm approval with an explicit read-only order GET. See the [buyer approval and callback repair report](phase-2.2-buyer-approval.md).
+The operations CLI loads private `.env`; the presentation does not. Preserve any
+existing configuration/state. Use an isolated checkout/configuration for offline
+development, not a fresh directory to retry an unresolved real effect.
 
-## Phase 2.1: OAuth and read-only queries only
+| Variable | Trusted configuration |
+| --- | --- |
+| `PAYMENT_MODE` | `offline` or `sandbox`; never Live |
+| `AI_MODE` | `deterministic` or `real`, independent of payment mode |
+| `PAYPAL_ENVIRONMENT`, `PAYPAL_BASE_URL` | `sandbox`, fixed `https://api-m.sandbox.paypal.com` |
+| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` | Private Sandbox app credentials |
+| `PAYPAL_MERCHANT_ID` | Verified Business merchant identity; `DEMO-MERCHANT` offline |
+| `PAYPAL_CAPTURE_IDS` | Explicit Capture allowlist; synthetic default only offline |
+| `MAX_REFUND` | Positive two-decimal policy maximum, default `100.00` |
+| `SENTINEL_STATE_DIR` | Private state; default `.state-offline` |
+| `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | Trusted model endpoint including `/v1`, model, optional private key |
+| `LLM_FORMAT` | `json_object` or compatible `json_schema` |
 
-Use Python >=3.13,<3.14. Preserve any configured private `.env`; the current Phase 2.1 authorizes no payment creation, capture or refund. With Sandbox credentials configured, run:
+Conflicting inherited environment variables fail closed; the loader does not
+overwrite private `.env`. Settings, merchant, allowlist, mode and policy bind to
+persisted state. Empty or mismatched Sandbox configuration blocks startup.
+
+## Offline operations UI on port 8879
+
+For a new isolated **offline** developer configuration, install Python 3.13
+dependencies using the README. Keep `PAYMENT_MODE=offline` and `AI_MODE=deterministic`
+in its private configuration before initializing new state:
 
 ```powershell
-.\.venv\Scripts\refund-sentinel.exe check-auth
-.\.venv\Scripts\refund-sentinel.exe check-capture --capture-id YOUR_ACTUAL_ALLOWLISTED_CAPTURE_ID
+.venv\Scripts\refund-sentinel.exe init --state .state-offline-developer
+.venv\Scripts\refund-sentinel.exe serve --state .state-offline-developer --port 8879 --predecessor-stopped
 ```
 
-Auth-only does not require a capture ID, merchant ID, model or state provisioning. Capture-specific verification requires the actual Business merchant identity and an explicit eligible capture allowlist; an empty list reports `BLOCKED_NO_CAPTURE_ID` before any HTTP call. Sanitized reports omit credentials, tokens, payment identifiers and amounts. Differing inherited environment variables cause an explicit configuration conflict; the loader neither overwrites `.env` nor silently switches modes. Do not initialize or start a Sandbox state directory until its capture configuration is ready.
+Open **http://127.0.0.1:8879** and load that state's `operator.capability` using the
+local file selector. It stays in browser memory, never URLs/localStorage. Confirm
+the old owner stopped before asserting `--predecessor-stopped`. Initialization
+accepts only new empty state; one process/worker owns it. Do not use an existing
+financial directory for this example.
 
-Genuine OAuth passed on 2026-10-13. Merchant-ID format was valid, but merchant ownership cannot be independently confirmed by client-credentials OAuth alone. Capture/order verification remains blocked until a real capture is provided. See [Phase 2.1 report](phase-2.1-report.md).
+The operations workflow is analyze → exact Plan decision → durable admission →
+separate authorization → execution → receipt/status. Each Capture permits one
+incident, including rejected/interrupted cases. Unknown remains terminal. GET-only
+manual status checking appends observations but never retries POST or changes the
+Runtime outcome. The generic CLI uses the default five-second adapter profile.
 
-## Later phase: separately authorized payment preparation
+## Read-only Sandbox preflight
 
-The following workflow describes a later, explicitly authorized phase. No order, capture or refund operation below was executed in Phase 2.1.
+If separately authorized to inspect a real Sandbox Capture, obtain private app
+credentials and the verified Business merchant ID through the Developer Dashboard.
+An independent Sandbox Personal buyer is needed for a new payment fixture.
 
-1. Create/use a PayPal Developer account and a **Sandbox Business** account plus a separate **Sandbox Personal** buyer. Obtain your Sandbox app's client ID/secret and the Business merchant ID through the developer dashboard. Keep credentials private.
-2. Prepare a completed Sandbox order/capture with no prior refunds. Record its capture ID and associated order ID. Use a small synthetic USD/NZD amount greater than the proposed partial refund. The application's policy needs capture/order association and merchant evidence.
-3. Configure `.env`: `PAYMENT_MODE=sandbox`, `AI_MODE=real`, `PAYPAL_MERCHANT_ID`, `PAYPAL_CAPTURE_IDS` (explicit comma-separated allowlist), `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `SENTINEL_STATE_DIR=.state-sandbox`, plus a real `LLM_BASE_URL`, `LLM_MODEL` and optional `LLM_API_KEY`. Keep `PAYPAL_ENVIRONMENT=sandbox` and the fixed Sandbox URL. Use `LLM_FORMAT=json_schema` with a compatible model.
-4. Install and initialize using the README. Verify credentials/payment facts with the read-only command:
+```powershell
+.venv\Scripts\refund-sentinel.exe check-auth
+.venv\Scripts\refund-sentinel.exe check-capture --capture-id YOUR_ACTUAL_ALLOWLISTED_CAPTURE_ID
+```
 
-   ```powershell
-   .\.venv\Scripts\refund-sentinel.exe check-capture --capture-id YOUR17CHARCAPTURE
-   ```
+These commands perform OAuth/token exchange and, for capture verification, fixed
+Capture/Order GETs. They do not open Runtime state, approve/authorize Actions, create
+orders, capture payments or refund. Empty allowlists stop before the request.
+OAuth alone cannot prove merchant ownership. Sanitized results omit credentials,
+tokens and raw provider bodies. Never publish private buyer data or capabilities.
 
-   This performs OAuth authentication and capture/order GETs. It creates no order, captures no payment and issues no refund. A failed check prints a redacted code. Do not put OAuth output in screenshots.
+Eligibility requires a COMPLETED USD/NZD Capture, exact associated Order/merchant,
+valid money and no reported previous refund. Missing reported history is explicitly
+not a complete authoritative balance ledger; foreign clients can change PayPal
+state. The historical already-refunded Capture is not eligible for another pilot
+under the current conservative policy.
 
-5. Start the local Sandbox dashboard, load its private operator capability, and enter synthetic customer text. Review the exact capture, merchant, amount, policy and Plan. **Stop before approval/authorization/execution until the human approves the specific capture ID, currency and refund amount.** No automatic Sandbox refund has been performed by this implementation session.
-6. The human then approves the exact Plan, prepares the Action, separately authorizes, and executes the approved test case. Save redacted evidence of the Runtime Action, PayPal refund ID, lookup status and local receipt. COMPLETED is provider confirmation at that read, not a broader settlement guarantee. For Pending/Unknown, inspect the provider; never create a fresh incident/state directory or request ID to retry.
+## Future fixtures and financial gates
 
-## Explicit fixture preparation, outside the refund tool
+Fixture preparation is developer-operated and never runs at startup. The isolated
+`python -m refund_sentinel.fixture --help` describes supported commands. Local
+preparation, a genuine Create Order, manual buyer checkout, Capture and the private
+allowlist change are distinct steps requiring their own exact permissions. A
+refund needs fresh exact Plan Approval, Action admission, independent Authorization
+and separate one-time Execute permission. Neither documentation nor cleanup grants it.
 
-No fixture-creation program runs during startup or tests. Use the official [Orders create reference](https://developer.paypal.com/api/orders/v2/orders-create) in an authenticated developer REST tool to explicitly POST an `intent=CAPTURE` order with one Sandbox purchase unit. Sign in as the Sandbox buyer and complete the returned approval flow. Only after buyer approval, explicitly POST `/v2/checkout/orders/{order_id}/capture` as documented in [Orders capture](https://developer.paypal.com/api/orders/v2/orders-capture). Read the returned purchase-unit capture ID and check it using `check-capture`.
+For a future fixture, start `python -m refund_sentinel.fixture_callback` on the
+checkout browser's computer. New preparation freezes HTTP loopback return/cancel
+URLs at port 8766 and checks receiver readiness before Create. Callback navigation
+does not capture/refund; explicit Order GET establishes approval. Earlier HTTPS
+localhost callbacks had no TLS receiver; changing future configuration never
+rewrites, recreates or retries the original Order.
 
-These create/capture operations are developer-operated test preparation, not additional registered Runtime tools. They must be deliberate actions; never automate buyer login, fixture payments, or a refund as a normal startup task. An existing eligible Sandbox capture may be used instead.
+The fixed Runtime permits a separately reviewed fifteen-second profile through
+trusted host composition and the public Gateway, with fresh binding/scope/private
+store identity and fresh human gates. There is no generic CLI profile flag. Old
+Actions, grants and effects cannot gain that budget. See
+[architecture](architecture.md) and the unchanged
+[backend freeze](PHASE2-BACKEND-FREEZE.md) for deadline/reserve and Unknown rules.
 
-## Local AI option
+Lost acknowledgment or ambiguous verification means preserve evidence and STOP:
+no second POST, new request ID, new Action or state reset to retry. Provider request
+IDs have bounded documented semantics, not universal exactly-once guarantees.
 
-A pre-existing Ollama server can use `LLM_BASE_URL=http://127.0.0.1:11434/v1`, `LLM_MODEL=phi4-mini:latest`, `LLM_FORMAT=json_schema`, blank API key. This repository does not install/start Ollama or download a model. Its real mode must be tested with the selected model; deterministic mode is always labeled separately. Only synthetic request data and amount/currency/status are sent to the model. Hosted endpoints require HTTPS.
+## Historical proof and AI
 
-Initial implementation verified local Ollama interpretation and Plan creation with fake payment facts. Phase 2.1 subsequently verified Sandbox OAuth only; no Sandbox refund has occurred. A separate `.state-*` directory is required when changing provider/merchant configuration; this is for distinct environments, never for retrying an unresolved capture.
+One genuine NZD 5.00 refund was verified on 13 October 2026 with independent GET
+and durable Receipt; [the sanitized archive](../evidence/phase2-freeze/verified-refund.json)
+records it. It is not today's balance or a new provider observation.
+
+The existing local AI option is `LLM_BASE_URL=http://127.0.0.1:11434/v1`,
+`LLM_MODEL=phi4-mini:latest`, `LLM_FORMAT=json_schema`, blank key. Only synthetic
+request context and bounded payment facts reach the model; credentials and private
+grants do not. Hosted model endpoints require HTTPS. The presentation's local
+model option is independently fixed and its payment executor is always fake.

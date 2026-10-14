@@ -1,109 +1,107 @@
 # Refund Sentinel
 
-**AI-Powered Refund Incident Responder** — a local merchant dashboard that turns a synthetic customer refund message into a reviewed, bounded PayPal Sandbox partial-refund proposal.
+**AI proposes. Humans decide. Receipts prove.**
 
-The Phase 2 backend is qualified and frozen as a **local Sandbox MVP**. One genuine NZD 5.00 partial refund is independently verified COMPLETED, with one observed Refund POST, a durable financial Receipt and terminal Succeeded v4. See [backend freeze](docs/PHASE2-BACKEND-FREEZE.md) and [sanitized qualification](evidence/phase2-freeze/verified-refund.json). Earlier phase reports and screenshots describe historical checkpoints.
+Refund Sentinel is a local merchant console for AI-assisted partial refunds. It
+turns a damaged-item request into a bounded Plan, lets a human review each decision,
+and presents the evidence behind the result. An AI recommendation should not, by
+itself, move money.
 
-AI interprets the request, amount and reason. Trusted capture/order facts and deterministic merchant policy decide whether a Plan is eligible. The merchant approves the exact Plan, separately authorizes execution, and inspects the provider's status and durable receipt. PayPal is central: the real adapter reads Payments v2/Orders v2 facts, refunds the original capture, and verifies the refund through an independent GET.
+The working five-screen app combines genuine local Ollama inference, three separate
+human gates and durable execution through an external pinned Runtime. Interactive
+payments are isolated simulations. A read-only archive records one genuine PayPal
+Sandbox refund: **NZD 5.00 from NZD 20.00**, independently verified **COMPLETED**,
+with one observed Refund POST and a durable Receipt.
 
-Default mode is **simulated payments + deterministic analysis**, which needs no external credentials. Real model and real PayPal Sandbox modes are independent and visibly labeled. Simulation is not a real refund.
+## Run the demo
 
-## Reused Runtime
-
-Execution control is provided by the external `agentic-intent-gate` version **0.2.0**, pinned to `7261fdd2f47d2b15fabe8faac527eeee37338eb1` (annotated Git release, Python 3.13, MIT). Runtime validation, Runs, exact approval, authorization, durable claiming, CAS, effect identity and duplicate/Unknown behavior are not reimplemented here. Startup verifies the installed distribution's Git provenance. One explicitly registered `SIDE_EFFECT` tool executes one refund step. Payment reads belong to this application; the bundled Demo UI/prompt is not used.
-
-Legacy state retains the default five-second adapter budget. A trusted Sandbox-only profile provisions a fresh scope and `refund-binding-v2.exec-15s` identity with a 15-second public Gateway budget, four-second HTTP read ceiling and nine-second pre-dispatch reserve. It uses a separately bound private receipt store. Human Approval, independent Authorization and one-time financial execution permission are required afresh; old Actions/grants/effect keys are never elevated or copied. The pilot uses the direct public Gateway, because the bundled Runtime HTTP routes impose a ten-second parent deadline.
-
-## Local presentation and guided demo
-
-This checkpoint includes the qualified Phase 3/3.1 presentation app; the published `phase2-backend-freeze` tag retains the original financial backend. The independent app shows sanitized historical Sandbox proof and an isolated **DEMO MODE — SIMULATED PAYMENTS** workflow.
+Use **Python 3.13**, Git and [uv](https://docs.astral.sh/uv/). Initial installation
+needs package/Git access. The exact Runtime Git release is pinned in `pyproject.toml`
+and `uv.lock`; it is not a PyPI release.
 
 ```powershell
 uv sync --frozen --all-extras
 .venv\Scripts\python -m refund_sentinel.presentation --port 8880
 ```
 
-Open **http://127.0.0.1:8880**. This entrypoint ignores `.env`, forces the payment provider offline and never mounts financial operations routes. **Deterministic Demo** is the default; optional **Local AI Demo** invokes local Ollama `phi4-mini:latest` only to propose the synthetic USD 25.00 refund. Model failure keeps the workflow safe and offers an explicit manual fallback. Approval, Authorization and Execute Simulation remain separate confirmations. See [UI and verification](docs/PHASE3-UI-DEMO.md), [English demo script](docs/DEMO-SCRIPT.md), [delivery record](docs/MASTER-DELIVERY.md) and [publication qualification](docs/PHASE3.1-PUBLICATION.md). The original financial operations app below remains a separate developer workflow.
+Open **http://127.0.0.1:8880**. No PayPal credentials, login, capability upload or
+`.env` setup is needed. The presentation ignores existing `.env` and never mounts
+financial execution routes. On macOS/Linux use `.venv/bin/python`; Windows is the
+qualified demo platform.
 
-The [UI acceptance fixes](docs/UI-ACCEPTANCE-FIX-REPORT.md) cover keyboard navigation, narrow-screen reflow, accurate model/simulation labels and visible next-step controls. The [pre-cleanup checkpoint](docs/UI-ACCEPTANCE-CHECKPOINT.md) records fresh regression, browser, privacy and integrity qualification with reproducible QA commands.
+**Deterministic Demo** works offline after installation. For genuine AI, install
+Ollama separately, provide `phi4-mini:latest` at its default local endpoint, and
+select **Local AI Demo — Live Ollama**. This repository does not install Ollama or
+download a model. Unavailable/invalid model output is shown honestly; deterministic
+fallback requires an explicit choice.
 
-## Install and run
+## What is real?
 
-Python **>=3.13,<3.14** and Git are required, matching the pinned Runtime. Verified locally with Python 3.13.9 on Windows. Git access to the dependency must be available; never put tokens in URLs. `uv.lock` and the pip dependency snapshot retain the immutable release pin.
+| Component | Boundary |
+| --- | --- |
+| Local AI proposal | Genuine `phi4-mini:latest` on a synthetic incident; strict schema and policy validation |
+| Deterministic proposal | Labeled offline fixture; no model call |
+| Interactive payment | FakePayPal only: synthetic USD 25.00 refund from USD 120.00; no PayPal request |
+| Execution control | Genuine installed Agentic Intent Gate v0.2.0: exact Approval, independent Authorization, durable claim and result |
+| Historical evidence | Genuine past Sandbox POST 201, independent GET 200 / COMPLETED and durable Receipt; viewing it performs no current verification |
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.lock.txt
-.\.venv\Scripts\python.exe -m pip install -e '.[dev]' --no-deps
-if (-not (Test-Path -LiteralPath .env)) { Copy-Item -LiteralPath .env.example -Destination .env }
-.\.venv\Scripts\refund-sentinel.exe init
-.\.venv\Scripts\refund-sentinel.exe serve --port 8879 --predecessor-stopped
-```
+PayPal is the backend integration, not a decorative label. The separate Sandbox
+adapter reads Payments v2 captures and Orders v2 facts, validates merchant, money
+and association, submits an explicitly authorized partial refund with a durable
+request ID, and independently reads the Refund before claiming completion. See
+the [original sanitized proof](evidence/phase2-freeze/verified-refund.json) and
+[frozen backend contract](docs/PHASE2-BACKEND-FREEZE.md).
 
-Open **http://127.0.0.1:8879**. On macOS/Linux use `.venv/bin/python` and `.venv/bin/refund-sentinel`; platform execution there has not been verified. `pip install -e '.[dev]'` can install directly from pyproject instead of the tested lock snapshot.
+## Walk through the product
 
-`init` accepts only a new empty state directory; it provisions the operator capability, persisted trusted configuration, and the explicitly fake payment fixture. Startup never creates or captures a PayPal payment. `--predecessor-stopped` confirms the previous owner stopped; do not use multiple workers or simultaneous processes against the same state. Stop with Ctrl+C before restarting. The CLI loads `.env` without changing its contents. Identical inherited values are preserved; conflicting inherited variables stop execution with `ENVIRONMENT_OVERRIDE_CONFLICT` and variable names only. Clear unintended shell overrides before retrying.
+1. **Overview:** the product and historical qualified result.
+2. **AI refund review:** archived genuine recommendation and exact Plan.
+3. **Trust workflow:** separate Approval, Authorization and execution permission.
+4. **Verified evidence:** original Sandbox HTTP results and historical Receipt.
+5. **Interactive demo:** load a case, generate a Plan, then separately confirm
+   **Approve Plan → Authorize Action → Execute Simulation**. Open its Receipt and reload.
 
-The startup example applies to an offline configuration or a fully configured Sandbox capture workflow. If your existing private `.env` enables Sandbox with no capture IDs, use the independent preflight commands below; normal `init`/`serve` still requires a valid merchant and explicit capture allowlist.
+Approval and Authorization each leave dispatch count at zero. Only the third
+confirmation executes the simulation. Unknown and Failed remain terminal, with
+no retry or automatic reconciliation. Reset retains earlier synthetic cases and
+creates a fresh scope.
 
-## Sandbox read-only preflight
+![Refund Sentinel overview](evidence/submission/overview.png)
 
-```powershell
-.\.venv\Scripts\refund-sentinel.exe check-auth
-.\.venv\Scripts\refund-sentinel.exe check-capture --capture-id YOUR_ACTUAL_ALLOWLISTED_CAPTURE_ID
-```
+## Documentation
 
-`check-auth` requires Sandbox mode and private client credentials, but no merchant/capture/model configuration or Runtime state. It prints a sanitized status and latency, validates the Bearer response, demonstrates token cache reuse, and permits only the OAuth POST. Invalid credentials, timeouts, connections and response errors have distinct codes. An empty capture allowlist causes `check-capture` to print `BLOCKED_NO_CAPTURE_ID` without any request. Protected preflight transport permits only OAuth and fixed-origin capture/order/refund GETs; all payment-changing requests are rejected before dispatch. These commands do not open or provision state databases.
+| Guide | Purpose |
+| --- | --- |
+| [UI setup and QA](docs/PHASE3-UI-DEMO.md) | Ollama, state, browser regressions, packaging and platform limits |
+| [Demo script](docs/DEMO-SCRIPT.md) | English 2–3 minute walkthrough and 60-second pitch |
+| [Architecture](docs/architecture.md) | Runtime reuse, trusted policy, identities, budgets and outcomes |
+| [Sandbox developer guide](docs/sandbox-setup.md) | Separate 8879 workflow, configuration and financial authorization boundaries |
+| [Backend freeze](docs/PHASE2-BACKEND-FREEZE.md) | Immutable financial implementation and original Sandbox qualification |
+| [Competition requirements](docs/competition.md) | Official sources, contribution and remaining submission work |
+| [Curated evidence](evidence/submission/README.md) | Screenshots, qualification summary and historical archive |
 
-On 2026-10-13, genuine Sandbox OAuth passed; capture/order reads remained blocked and no refund was authorized or attempted. See the [Phase 2.1 report](docs/phase-2.1-report.md) for redacted evidence, compatibility tests, deadline limits and required human actions. Refund endpoint tests use isolated mocks only.
+Earlier engineering reports remain in the
+[pre-cleanup checkpoint](https://github.com/miku-wwl/refund-sentinel-agent/tree/86a179fc6ca02568a849c51e765d6dca123dced7).
 
-## Demo workflow
+## Runtime and license
 
-1. Load `.state-offline/operator.capability` using the dashboard's local file selector. Keep it private; it remains in browser memory.
-2. Choose `DEMO0000000000001` and enter: **The item arrived damaged. Please refund USD 25.00.**
-3. Inspect the simulated USD 120.00 capture, merchant, recommendation, policy and exact persisted Plan.
-4. Click **Approve this exact plan** (or Reject). Approval alone has no refund effect.
-5. Click **Prepare durable action**, then **Authorize execution**. Neither calls the refund provider.
-6. Click **Execute refund**. Inspect SIMULATED completion, refund ID, Runtime receipt and persisted observations.
-7. Reload, load the capability again, and reopen the saved incident. Restart preserves the result. The read-only status button does not issue another refund.
+The application reuses **Agentic Intent Gate 0.2.0**, pinned to
+[`7261fdd2f47d2b15fabe8faac527eeee37338eb1`](https://github.com/miku-wwl/agentic-intent-gate/commit/7261fdd2f47d2b15fabe8faac527eeee37338eb1).
+It does not copy or modify Runtime validation, Runs, exact approval binding,
+Authorization, claiming, CAS, effect identity or Unknown handling. Startup verifies
+installed Git provenance. The application and pinned Runtime are MIT licensed;
+see [LICENSE](LICENSE) and the pinned Runtime's license. Credentials never belong
+in installation URLs or public artifacts.
 
-Each capture permits **one incident** in this MVP, including rejected/interrupted cases. Repeat submission is blocked. For another isolated offline demonstration, explicitly initialize a separate directory with `--state .state-demo2`; never use a new directory to retry unresolved real refunds. A server at `.state-browser` was used for the recorded browser evidence, separate from the untouched default demo state.
+## Limits and remaining work
 
-## Configuration
+This is a single-operator, loopback Sandbox MVP. One historical sample establishes
+neither today's refund balance, a latency distribution, production readiness nor
+universal exactly-once delivery. The default adapter budget is five seconds; the
+separately reviewed historical Sandbox profile has fifteen seconds and a distinct
+binding/state identity. Remote success can still coincide with a local Unknown.
+Existing Actions are never elevated to a longer budget or replayed.
 
-| Variable | Default / purpose |
-|---|---|
-| `PAYMENT_MODE` | `offline` (simulated) or `sandbox` (real Sandbox API client) |
-| `AI_MODE` | `deterministic` test fixture or `real` Chat Completions provider |
-| `PAYPAL_ENVIRONMENT`, `PAYPAL_BASE_URL` | Only `sandbox`, `https://api-m.sandbox.paypal.com` accepted |
-| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` | Private Sandbox app credentials; required for sandbox mode |
-| `PAYPAL_MERCHANT_ID` | Trusted merchant identity; offline default `DEMO-MERCHANT` |
-| `PAYPAL_CAPTURE_IDS` | Explicit allowlist; default `DEMO0000000000001` |
-| `MAX_REFUND` | Two-decimal maximum, default `100.00` |
-| `SENTINEL_STATE_DIR` | Default `.state-offline`; mode/merchant/allowlist/policy persist here |
-| `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | Trusted endpoint including `/v1`, configured model, optional private credential |
-| `LLM_FORMAT` | `json_object` or `json_schema`; use schema mode when supported |
-
-Real model mode sends synthetic customer text and minimal payment facts to the configured endpoint. It has no tool-calling privileges. Strict outputs reject extra keys, incorrect types, malformed money, refusal and truncation; no automatic fallback to deterministic mode. Interpretation uncertainty does not grant execution authority.
-
-For local Ollama already running: set `AI_MODE=real`, `LLM_BASE_URL=http://127.0.0.1:11434/v1`, `LLM_MODEL=phi4-mini:latest`, `LLM_FORMAT=json_schema`, and a separate state directory. [Sandbox setup](docs/sandbox-setup.md) covers the real PayPal workflow and deliberate Orders v2 fixture preparation.
-
-## Validate
-
-```powershell
-.\.venv\Scripts\python.exe -m pytest -q --junitxml=evidence/pytest.xml
-.\.venv\Scripts\ruff.exe check src tests scripts
-.\.venv\Scripts\ruff.exe format --check src tests scripts
-.\.venv\Scripts\python.exe -m pip check
-.\.venv\Scripts\python.exe scripts/collect_evidence.py
-```
-
-Offline tests use the genuine installed Runtime, persisted fake provider calls/effects and HTTPX mock transports. They do not contact PayPal or a model. Evidence collection uses explicit synthetic offline cases. See [test report](docs/test-report.md), [implementation status](docs/implementation-status.md) and [architecture](docs/architecture.md).
-
-## Current limits and submission status
-
-This is a single-operator loopback Sandbox MVP. Policy accepts only USD/NZD partial refunds on completed captures without previous refunds; malformed IDs, merchant mismatches, excessive amounts and insufficient evidence are rejected. There is no live payment support, SaaS authentication, multi-step orchestration or guaranteed exactly-once remote delivery.
-
-The default profile limits executor work to five seconds; the separately provisioned trusted Sandbox profile allows fifteen. Claim/finish are outside the adapter timer, and cooperative cancellation cannot preempt blocking Python or recall remote effects. Pending/failed/cancelled provider observations and ambiguous outcomes remain **Unknown**, with no automatic retry or reconciliation. A local receipt and provider completion are distinct. Manual checks only append read-only provider evidence. Cross-store crash consistency and remote activity from other clients have practical limits described in architecture notes.
-
-New competition work is the product, policy, AI/PayPal clients, consumer executor, UI and tests. The shared Runtime remains untouched. Genuine local AI analysis and one human-gated PayPal Sandbox refund have been verified. The app and pinned v0.2.0 Runtime are MIT licensed. The qualified baseline is recoverable through the published annotated `phase2-backend-freeze` tag; video recording and final competition submission remain separate work. No production-readiness or remote exactly-once guarantee is claimed.
+Video recording, YouTube upload, hosted deployment and final Hackathon entry are
+separate work and are not claimed completed. No new financial operation is needed
+to demonstrate the application.

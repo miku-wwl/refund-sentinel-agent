@@ -1,67 +1,123 @@
 # Architecture and safety boundary
 
+The judge-facing presentation and advanced operations app are separate entrypoints.
+They share the installed public Runtime API, not financial state.
+
 ```mermaid
 flowchart TD
-  UI[Local merchant dashboard] --> APP[FastAPI consumer]
-  APP --> READ[Trusted capture + order lookup]
-  APP --> AI[Model recommendation]
-  READ --> POLICY[Deterministic refund policy]
-  AI --> POLICY
-  POLICY --> PLAN[Consumer ModelProvider proposes a single refund Plan]
-  PLAN --> GATE[Installed Agentic Intent Gate v0.1.0]
-  GATE --> APPROVAL[Exact merchant approval]
-  APPROVAL --> ADMIT[Durable Action admission]
-  ADMIT --> AUTH[Separate capability authorization]
-  AUTH --> CLAIM[Runtime claims Action]
-  CLAIM --> EXEC[Registered PayPal refund executor]
-  EXEC --> POST[Sandbox refund POST with durable effect UUID]
-  POST --> GET[Refund verification GET]
-  GET --> OUTCOME[Runtime outcome + separate provider observations]
+  UI[Five-screen presentation] --> ARCHIVE[Typed read-only PayPal archive]
+  UI --> AI[Local Ollama or labeled deterministic proposal]
+  AI --> POLICY[Strict schema + trusted merchant policy]
+  POLICY --> PLAN[Persistent structured Plan]
+  PLAN --> APPROVE[Exact human Approval]
+  APPROVE --> ADMIT[Durable Action admission]
+  ADMIT --> AUTH[Independent Authorization]
+  AUTH --> PERMIT[Separate Execute Simulation confirmation]
+  PERMIT --> CLAIM[Agentic Intent Gate v0.2.0 durable claim]
+  CLAIM --> FAKE[FakePayPal effect + independent lookup]
+  FAKE --> RESULT[Durable Receipt or terminal Unknown/Failed]
 ```
 
-## Ownership
+## Ownership and identity
 
-- Runtime owns validation of the single-step Plan, persistent Runs, exact approval binding, compilation, capability verification, independent authorization, durable claiming, CAS, duplicate command handling, effect identity, recovery and Action result recording. Consumer code imports **only** `agentic_intent_gate.runtime`; it neither imports internal modules nor patches the Runtime.
-- Consumer owns recommendation parsing, merchant policy, provider credentials, capture/order lookup, concrete executor, product observations and frontend. `IncidentPlanProvider.generate_plan` constructs a Plan from a schema-checked recommendation with trusted tool/target constants. Model text cannot register tools or select credentials, adapters, targets or scopes.
-- `application.sqlite3` stores incident context and append-only provider observations. It is not an execution-control store. `gate.sqlite3` belongs to the Runtime. `fake-paypal.sqlite3` is an explicitly simulated provider store, including attempted calls and effects.
+The pinned external Runtime owns validation, persistent Runs, exact Plan binding,
+compilation, capability verification, Authorization, claiming, CAS, effect identity
+and terminal recovery. The consumer imports only `agentic_intent_gate.runtime` and
+registers one reviewed SIDE_EFFECT tool. It does not copy or monkeypatch core code.
 
-## Trusted composition
+The consumer owns recommendation parsing, deterministic policy, provider clients,
+receipt observations and UI. `IncidentPlanProvider` constructs the Plan from the
+validated recommendation and trusted constants. The model cannot choose credentials,
+code, target, binding, scope, budget or grant decisions. Tool identity is
+`paypal_partial_refund@1`, target `paypal-sandbox-refunds`, adapter `paypal-sandbox-adapter`.
 
-Startup registers `paypal_partial_refund/1` with `ToolBinding`, `ToolCapability` and `ExecutableRegistry`. Binding identity includes `paypal-sandbox-adapter`, `refund-binding-v1`, `paypal-sandbox-refunds` and a persisted UUID scope. A semantic rule validates arguments against the incident and merchant policy. `CapabilityVerifier` and `BoundCapabilityAuthorization` enforce the trusted operator/scope; the model sees neither capability nor credentials.
+`application.sqlite3` stores incidents/observations; `gate.sqlite3` belongs to the
+Runtime; `fake-paypal.sqlite3` is explicitly simulated. Observations are not an
+execution-control store. Success requires the Runtime's exact receipt reference
+and matching payload binding, not just an observation written locally.
 
-Public commands used: `Intent`, `run_service.create/get/decide`, `ApprovalDecisionRequest`, `ApprovalChoice`, `AdmissionCommand`, `ActionCommand`, `gateway.admit/authorize/execute/get/list_for_run`, `ToolOutcome`, `Outcome`, `open_runtime`, `provision_capability`. Reads use the supported repository/gateway snapshots. No bundled Demo UI or service-demo prompt is reused.
+## Presentation isolation
 
-## Narrow policy
+The presentation ignores `.env`, forces FakePayPal, binds loopback and serves fixed
+assets plus closed-schema `/presentation/` projections/commands. Real
+`/api/incidents/` routes and operations assets are absent. Historical proof is
+hash-pinned and schema checked before serving.
 
-An immutable persisted configuration fixes provider mode, merchant, capture allowlist, interpretation mode and maximum amount. Policy permits USD/NZD only, two-decimal strings parsed with Decimal, a positive partial amount strictly below the captured amount and at most the configured maximum (default 100.00). Capture and associated order must agree; merchant identity must match; no previous refunds are allowed. High interpretation uncertainty or REVIEW/REJECT produces no executable Plan.
+Each case has fresh synthetic state under `.state-presentation-demo/`. Browser
+input cannot select a private directory, Capture, merchant, credentials or profile.
+Reset retains records and never copies grants. Restart uses the OS owner-fence
+probe and public Runtime lock; competing owners fail closed. Windows resume is
+qualified; cross-platform owner behavior is not.
 
-Each capture has one product incident per state directory, including rejected/interrupted incidents. This conservative business boundary prevents creating a fresh incident to bypass an Unknown Action. It is not a remote exactly-once guarantee; do not use fresh state directories or another client to retry unresolved refunds. Capture facts are rechecked immediately before POST. External concurrent activity remains outside local guarantees; PayPal remains authoritative.
+Local proposals use a fixed loopback endpoint/model, bounded output and a 45-second
+total planning limit. Invalid/unavailable output preserves safe state. Only an
+explicit fallback creates a deterministic case. Planning limits never increase
+the five-second simulation execution budget.
 
-## Outcome semantics
+## Sandbox policy and request path
 
-| Evidence | Runtime result | Product display |
-|---|---|---|
-| Refund GET matches ID, capture link, exact amount/currency and COMPLETED | Succeeded, UUID observation receipt | Provider confirmed completion at lookup time |
-| Policy rejected before POST or documented definitive HTTP rejection | Failed | No-effect diagnostic; external call count shown in tests |
-| Timeout, transport error, 5xx, malformed response, mismatch or failed lookup | Unknown | Available observations; no retry |
-| GET returns PENDING, FAILED or CANCELLED | Unknown | Exact provider state shown separately; completion not confirmed |
+The separate operations app reads the allowlisted Capture and associated Order,
+validating merchant, status, exact Decimal money/currency and association. Policy
+permits positive two-decimal USD/NZD partial refunds below captured total and the
+configured maximum, with no reported prior refund. High uncertainty, REVIEW or
+REJECT creates no executable Plan. Missing reported history is not an authoritative
+complete refund-balance ledger.
 
-The baseline has a **five-second executor deadline**, no Pending Action terminal state, and a limited no-effect result vocabulary. A provider FAILED/CANCELLED observation is conservatively retained as Unknown because it does not establish the baseline's supported no-effect proof. Receipts reference a local observation UUID, not a PayPal refund ID. A refund ID is stored separately. Manual status checks issue GET only, append observations, and never rewrite Unknown or dispatch POST.
+Each Capture permits one product incident per state directory, including rejected
+or interrupted cases. A new directory must never bypass an unresolved real effect.
+Facts are freshly revalidated before POST. Outbound URLs are fixed and locally
+constructed; HATEOAS links are never followed. Only `api-m.sandbox.paypal.com` and
+`api.sandbox.paypal.com` are accepted as strictly verified metadata, with correct
+HTTPS/port/path/ID/relation/method and no credential-bearing or malformed URL.
 
-The executor performs fresh capture/order reads, POST and refund GET inside the unchanged deadline. Slow Sandbox responses may therefore yield Unknown even if PayPal applied the refund. There are no background helpers, retries or reconciliation endpoints.
+The executor preserves durable effect identity, synchronous dispatch fencing,
+deadline/cancellation rechecks and `PayPal-Request-Id`. Capture/Order reads can
+use the trusted saved association concurrently, sharing OAuth cache and client.
+No facts validation is dropped to reduce latency. Independent Refund GET and
+adapter-side durable receipt persistence are required before confirmed success.
 
-## Local application restrictions
+## Budgets and outcomes
 
-Explicit `init` provisions private operator credentials and state. Startup performs no payment fixture creation. Serve holds the Runtime single-owner fence for the complete lifespan; one process, one worker, loopback binding. `--predecessor-stopped` is an operator assertion and must only be used after the prior owner stops. State survives restart. Cross-store writes are not one atomic transaction: a crash during analysis can leave an interrupted incident or orphan Run; the incident remains reserved and must be inspected rather than retried.
+| Property | Default / presentation | Reviewed historical Sandbox profile |
+| --- | --- | --- |
+| Adapter budget | 5 seconds | 15 seconds |
+| Binding revision | `refund-binding-v1` | `refund-binding-v2.exec-15s` |
+| HTTP read ceiling | 2 seconds | 4 seconds |
+| Connect/write/pool ceiling | 1.1 seconds | 1.1 seconds |
+| Extra pre-dispatch reserve | Existing deadline/cancel checks | 9 seconds remaining |
 
-The capability is loaded from a selected local file into browser memory, not localStorage or URLs. Protected HTTP routes require the Bearer capability. Local host and origin checks, no CORS, no-store responses, CSP and no external assets reduce exposure. This is not multi-user identity, production authentication or a defense against a compromised local OS. PayPal endpoints are fixed to Sandbox, redirects are disabled, and diagnostic codes omit remote bodies/tokens.
+Trusted host code alone selects the profile. Extended identity uses public
+`execution_budget_binding`, a fresh base revision/scope and separate private
+gate/receipt-store identity. Old Plans, Approvals, Actions or grants cannot be
+elevated. The direct public Gateway supports the full extended profile; bundled
+Runtime HTTP routes retain a ten-second parent deadline. The general developer
+CLI defaults to five seconds and has no profile-selection flag.
 
-## Read-only preflight and compatibility hardening
+The adapter timer starts after claim; synchronous claim/finish are outside it.
+Caller deadlines only shorten it. Rechecks after persistence and immediately before
+POST prevent new dispatch after observed expiry/cancellation. Blocking Python and
+already-dispatched remote effects cannot necessarily be preempted.
 
-Python >=3.13,<3.14 matches the installed qualified Runtime. `SandboxOAuthSettings` provides an independent auth-only path; it does not relax normal `Settings`, which requires the actual merchant-ID format and explicit non-DEMO capture IDs in Sandbox mode. Conflicting inherited `.env` values fail closed before loading any file values. Both preflight commands bypass state composition entirely, perform no Runtime admission, and never issue payment mutations.
+| Evidence | Result |
+| --- | --- |
+| Refund GET verifies COMPLETED, exact IDs/capture/money and durable receipt binding | Succeeded |
+| Proven pre-dispatch no-effect rejection or supported definitive provider rejection | Failed |
+| Lost acknowledgment, ambiguous transport/verification, late outcome or uncertain persistence | Unknown; preserve evidence and stop |
+| Provider PENDING/FAILED/CANCELLED without supported no-effect proof | Unknown; provider status remains separately visible |
 
-`SandboxReadOnlyTransport` independently restricts the exact HTTPS Sandbox origin, OAuth POST and bounded payment GET paths. It wraps the genuine transport or an isolated test MockTransport. Preflight uses connect/write/pool timeouts of 5 seconds and read timeout of 10 seconds; these read-only diagnostic settings do not extend the Runtime or the normal executor's 1.1-second HTTP phase timeouts.
+Unknown is terminal. No blind retry, new Action to replay an effect, automatic
+reconciliation or background financial execution is provided. A request ID does
+not establish universal exactly-once delivery. Manual verification uses GET and
+appends observations; it neither rewrites Unknown nor dispatches POST.
 
-Capture reads verify order association, normalized exact Decimal money, matching capture statuses and payee consistency; CLI eligibility uses the same trusted capture-policy checks as normal Plan validation. Optional capture payee is accepted only when the associated order supplies the merchant. Returned self/refund links must match the fixed origin/resource/method; absent optional links are reported, not invented. Order refund arrays must have valid shape and money/currency; any reported refund conservatively blocks the narrow policy. Missing history is recorded as NONE_REPORTED, not a guarantee of complete refund history. Capture status must still be COMPLETED.
+## Practical limits
 
-Provider money strings with zero/one/two decimal places are normalized exactly to two decimals for this USD/NZD policy; float inputs and excess precision are rejected without rounding. Outgoing model/refund amounts still require canonical two-decimal strings. Minimal 200/201 refund acknowledgment needs an independent complete refund GET before success. Duplicate/in-progress provider errors do not prove no effect and remain Unknown. No retry, background execution, core timeout change or reconciliation was added.
+One process owns each Runtime state. Protected operations require the private Bearer
+capability. Host/origin checks, CSP and no-store headers are local protections,
+not production multi-user authentication or malicious-Python isolation. Cross-store
+writes are not atomic; interrupted incidents remain reserved. External PayPal
+activity and provider retention limits remain outside local guarantees.
+
+See the unchanged [backend freeze](PHASE2-BACKEND-FREEZE.md),
+[Sandbox developer guide](sandbox-setup.md) and
+[immutable historical proof](../evidence/phase2-freeze/verified-refund.json).

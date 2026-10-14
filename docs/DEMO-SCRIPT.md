@@ -5,7 +5,8 @@ Run `python -m refund_sentinel.presentation --port 8880` and open
 credentials. Record at 1920×1080. Keep the simulation banner visible, choose
 **Completed + verified**, and start a fresh case. Ollama must already serve
 `phi4-mini:latest` locally for the optional live proposal. Rehearse first: the
-two qualifications observed five and ten seconds of inference, not a guarantee per run.
+qualified inference times vary; allow for the genuine model's bounded wait and
+rehearse the complete sequence before recording.
 
 ## 2–3 minute demonstration
 
@@ -28,7 +29,7 @@ Here is its recommendation and measured inference time. Strict schema and mercha
 policy validate the amount and currency before the pinned Runtime validates this
 structured Plan. The exact Plan has a fingerprint.”
 
-Scroll to the recommendation, Plan and gate button. If the model fails, show its
+Show the recommendation, Plan and visible next-decision control. If the model fails, show its
 actual error and click **Switch to Deterministic Demo**. Say: “The live proposal
 was unavailable or rejected. I am explicitly switching to an offline fixture.”
 Never call that fallback genuine AI.
@@ -91,7 +92,7 @@ This is a local Sandbox MVP. AI proposes. Humans decide. Receipts prove.”
 
 ## Recording boundary
 
-This Phase 3.1 source checkpoint accompanies the
-[publication qualification](PHASE3.1-PUBLICATION.md). Independent UI review,
-timed recording rehearsal, video, upload and competition submission are **NOT RUN**.
+The [curated qualification](../evidence/submission/qa-summary.json) records actual
+browser/model verification. UI acceptance defects were corrected and revalidated.
+Timed narrated recording, video, upload and competition submission are **NOT RUN**.
 Use the simulation for recording; do not perform another genuine refund.
