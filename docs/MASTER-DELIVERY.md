@@ -152,12 +152,12 @@ change. A known Starlette/HTTPX TestClient deprecation warning remains.
 
 - [UI architecture and safe startup](PHASE3-UI-DEMO.md)
 - [English 2–3 minute demo and 60-second pitch](DEMO-SCRIPT.md)
-- [Overview screenshot](../evidence/phase3-ui/01-overview.png)
-- [Simulation screenshot](../evidence/phase3-ui/09-demo-completed.png)
-- [Mobile screenshot](../evidence/phase3-ui/14-mobile-demo.png)
-- [Browser/accessibility evidence](../evidence/phase3-ui/browser-verification.json)
-- [Installed-wheel verification](../evidence/phase3-ui/wheel-verification.json)
-- [Final integrity/regression result](../evidence/phase3-ui/final-verification.json)
+- [Overview screenshot](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/01-overview.png)
+- [Simulation screenshot](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/09-demo-completed.png)
+- [Mobile screenshot](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/14-mobile-demo.png)
+- [Browser/accessibility evidence](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/browser-verification.json)
+- [Installed-wheel verification](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/wheel-verification.json)
+- [Final integrity/regression result](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/final-verification.json)
 
 The published Phase 2 commit and tag remain the recovery baseline. Stage C
 changes and screenshots remain **local and unstaged**; unrelated original local
@@ -222,8 +222,8 @@ and the [English demo script](DEMO-SCRIPT.md). Updated screenshots and machine-r
 qualification live under `evidence/phase3-ui/`; previous Phase 3 artifacts were
 preserved privately before retaking stable names. No broader evidence was cleaned.
 
-See [Phase 3.1 browser results](../evidence/phase3-ui/phase31-browser-verification.json)
-and [final qualification](../evidence/phase3-ui/phase31-final-verification.json)
+See [Phase 3.1 browser results](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-browser-verification.json)
+and [final qualification](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-final-verification.json)
 for actual counts, timing, integrity, package and security evidence. The original
 Phase 3 record above remains a historical checkpoint. Current readiness and
 remaining limitations are described in the Phase 3.1 section of the UI document.

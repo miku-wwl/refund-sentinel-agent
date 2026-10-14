@@ -49,11 +49,11 @@ The isolated QA preview used new synthetic state. A retained browser cookie from
 
 ## Screenshots and measurements
 
-- [Machine-readable browser regression and request records](../evidence/ui-acceptance/browser-regression.json).
-- [Fixed 320px review](../evidence/ui-acceptance/mobile-320-100-review.png) and [200% text review](../evidence/ui-acceptance/mobile-320-200-review.png).
-- [Visible 1440px live next action](../evidence/ui-acceptance/desktop-1440-local_ai.png) and [1920px equivalent](../evidence/ui-acceptance/desktop-1920-local_ai.png).
-- [Keyboard skip result](../evidence/ui-acceptance/skip-review.png).
-- [Manual browser evidence](../evidence/ui-acceptance/manual-verification.json).
+- [Machine-readable browser regression and request records](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/browser-regression.json).
+- [Fixed 320px review](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-100-review.png) and [200% text review](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-200-review.png).
+- [Visible 1440px live next action](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/desktop-1440-local_ai.png) and [1920px equivalent](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/desktop-1920-local_ai.png).
+- [Keyboard skip result](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/skip-review.png).
+- [Manual browser evidence](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-verification.json).
 
 ## Safety, limitations and acceptance
 

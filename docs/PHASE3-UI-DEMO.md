@@ -136,7 +136,7 @@ and Unknown never offer replay or reauthorization.
 
 Final full-suite counts, integrity results and publication status are recorded in
 [delivery report](MASTER-DELIVERY.md) and
-[final verification](../evidence/phase3-ui/final-verification.json).
+[final verification](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/final-verification.json).
 The known Starlette/HTTPX TestClient deprecation warning remains; it is not a test
 failure and was not used to change frozen dependencies.
 
@@ -166,15 +166,15 @@ competing Python consumer is alive.
 
 ## Screenshots and presentation handoff
 
-See [overview](../evidence/phase3-ui/01-overview.png),
-[AI review](../evidence/phase3-ui/02-ai-review.png),
-[trust workflow](../evidence/phase3-ui/03-trust-workflow.png),
-[genuine evidence](../evidence/phase3-ui/04-verified-evidence.png),
-[completed simulation](../evidence/phase3-ui/09-demo-completed.png),
-[Unknown](../evidence/phase3-ui/11-demo-unknown.png), and
-[mobile demo](../evidence/phase3-ui/14-mobile-demo.png).
+See [overview](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/01-overview.png),
+[AI review](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/02-ai-review.png),
+[trust workflow](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/03-trust-workflow.png),
+[genuine evidence](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/04-verified-evidence.png),
+[completed simulation](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/09-demo-completed.png),
+[Unknown](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/11-demo-unknown.png), and
+[mobile demo](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/14-mobile-demo.png).
 The complete 15-image set and
-[browser verification](../evidence/phase3-ui/browser-verification.json) are local
+[browser verification](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/browser-verification.json) are local
 artifacts. [Demo script](DEMO-SCRIPT.md) supplies a natural English 2–3 minute
 walkthrough and a 60-second pitch.
 
@@ -235,13 +235,13 @@ Actual Chromium qualification includes deterministic gates/receipt/reset/reload,
 genuine Ollama inference followed by synthetic gates, stale/mismatched bindings,
 mocked error UI and manual fallback. Five screens are rendered at **1440×900,
 1920×1080 and 390×844**. See
-[Phase 3.1 browser evidence](../evidence/phase3-ui/phase31-browser-verification.json),
-[real local AI Plan](../evidence/phase3-ui/16-live-ollama-plan.png),
-[synthetic completion](../evidence/phase3-ui/17-live-ai-simulation-completed.png) and
-[mobile provenance](../evidence/phase3-ui/quality-390-evidence.png).
+[Phase 3.1 browser evidence](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-browser-verification.json),
+[real local AI Plan](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/16-live-ollama-plan.png),
+[synthetic completion](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/17-live-ai-simulation-completed.png) and
+[mobile provenance](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-390-evidence.png).
 Negative model contracts use HTTP mocks and do not prove real inference. Final
 regression, installed-wheel, integrity and audit results appear in
-[Phase 3.1 final verification](../evidence/phase3-ui/phase31-final-verification.json).
+[Phase 3.1 final verification](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-final-verification.json).
 
 **Phase 3.1 PASS; GO for independent UI review in ChatGPT Work.** Full pytest:
 **535 passed**, no failures/errors/skips, 494.96 seconds; **12 Node tests passed**.

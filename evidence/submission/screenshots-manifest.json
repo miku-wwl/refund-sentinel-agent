@@ -1,0 +1,58 @@
+[
+  {
+    "file": "overview.png",
+    "sha256": "593811fa63bf78b1550af32258315668641a5ca51636360c161d259b1ff87abc",
+    "bytes": 280677,
+    "kind": "ARCHIVED_HISTORICAL_VIEW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  },
+  {
+    "file": "local-ai-proposal.png",
+    "sha256": "43e254b8a2e153857a74347980df4bafe006adafebc0d1921040d614ef77172b",
+    "bytes": 185773,
+    "kind": "SIMULATED_PAYMENT_WORKFLOW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  },
+  {
+    "file": "approve-plan.jpg",
+    "sha256": "21e7e4003540a88d669dac387ac85cfe7eb00ac3e2658feaf68b956b80801955",
+    "bytes": 47568,
+    "kind": "SIMULATED_PAYMENT_WORKFLOW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  },
+  {
+    "file": "authorize-action.jpg",
+    "sha256": "0f8c6e0c747098cf222b4ebac96ec4eedb3efaa8aa52d56bb6a7495f7ef5f0b1",
+    "bytes": 56776,
+    "kind": "SIMULATED_PAYMENT_WORKFLOW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  },
+  {
+    "file": "execute-simulation.jpg",
+    "sha256": "736860b5312a01dfb2d3958cb0247b8252cce9dc7dd1b4a16f3fc1d20022a9df",
+    "bytes": 59342,
+    "kind": "SIMULATED_PAYMENT_WORKFLOW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  },
+  {
+    "file": "simulated-receipt.jpg",
+    "sha256": "a39074da87326fe2693000e80d71706420ed86719587df65e443bd33004b4c25",
+    "bytes": 52722,
+    "kind": "SIMULATED_PAYMENT_WORKFLOW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  },
+  {
+    "file": "historical-evidence.png",
+    "sha256": "4a736114ccf2b8c532181d9534667e6748b565cb1bf69ec7005f3329b1a4b70a",
+    "bytes": 242719,
+    "kind": "ARCHIVED_HISTORICAL_VIEW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  },
+  {
+    "file": "mobile-review.png",
+    "sha256": "3cdc2aef40716c11fbc5c31e0460d23419d266d36401e5f424a8a325a96d1195",
+    "bytes": 121489,
+    "kind": "ARCHIVED_HISTORICAL_VIEW",
+    "provenance": "Reviewed pre-cleanup browser qualification, 14 October 2026"
+  }
+]

@@ -37,7 +37,7 @@ remains a warning, not a test failure. Other platforms and browsers are not qual
 The exact proposed checkpoint has **62 changed files**: 10 presentation source/assets,
 4 browser/verification scripts, 3 test files, 4 documents, README, 32 reviewed PNGs
 and 8 sanitized JSON records. The complete list is in
-[publication validation](../evidence/phase3-ui/publication-validation.json).
+[publication validation](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/publication-validation.json).
 Existing package configuration, LICENSE, placeholder `.env.example`, AGENTS.md
 and ignore rules remain present in the tree without dependency changes.
 

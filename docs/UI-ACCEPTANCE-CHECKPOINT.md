@@ -7,7 +7,7 @@ genuine PayPal operation is part of this checkpoint.
 
 The [acceptance report](UI-ACCEPTANCE-FIX-REPORT.md) retains the original manual
 browser review and its measurements. The
-[checkpoint verification summary](../evidence/ui-acceptance/checkpoint-validation.json)
+[checkpoint verification summary](https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/checkpoint-validation.json)
 records the fresh tests below; the older screenshot/model measurements remain
 historical evidence and are not relabeled as this rerun.
 

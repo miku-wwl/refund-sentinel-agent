@@ -1,0 +1,971 @@
+{
+  "baseline": "86a179fc6ca02568a849c51e765d6dca123dced7",
+  "batch": 1,
+  "deleted_files": 117,
+  "retained_critical_paths": [
+    "evidence/phase-2.3/readonly-real.json",
+    "evidence/phase-2.3/real-model-plan.json",
+    "evidence/phase2-freeze/manifest.json",
+    "evidence/phase2-freeze/publication-validation.json",
+    "evidence/phase2-freeze/validation.json",
+    "evidence/phase2-freeze/verified-refund.json"
+  ],
+  "retained_screenshots": [
+    "approve-plan.jpg",
+    "authorize-action.jpg",
+    "execute-simulation.jpg",
+    "historical-evidence.png",
+    "local-ai-proposal.png",
+    "mobile-review.png",
+    "overview.png",
+    "simulated-receipt.jpg"
+  ],
+  "deletions": [
+    {
+      "deleted_path": "evidence/browser-dashboard.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/browser-dashboard.jpg"
+    },
+    {
+      "deleted_path": "evidence/browser-header.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/browser-header.jpg"
+    },
+    {
+      "deleted_path": "evidence/browser-mobile.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/browser-mobile.jpg"
+    },
+    {
+      "deleted_path": "evidence/browser-result.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/browser-result.jpg"
+    },
+    {
+      "deleted_path": "evidence/browser-workflow.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/browser-workflow.json"
+    },
+    {
+      "deleted_path": "evidence/offline-workflows.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/offline-workflows.json"
+    },
+    {
+      "deleted_path": "evidence/packaging.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/packaging.json"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/capture-order-real.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/capture-order-real.json"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/deadline-mock.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "tests/test_phase21_contracts.py"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/deadline-mock.json"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/environment-status.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/phase-2.1-report.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/environment-status.json"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/oauth-real.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/oauth-real.json"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/packaging.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/packaging.json"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/pytest.xml",
+      "reason": "Transient regression XML; current totals are summarized without raw logs",
+      "references_checked": [
+        "docs/phase-2.1-report.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/pytest.xml"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/runtime-license-audit.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/runtime-license-audit.json"
+    },
+    {
+      "deleted_path": "evidence/phase-2.1/verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase-2.1/verification.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/01-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/01-overview.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/02-ai-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/02-ai-review.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/03-trust-workflow.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/03-trust-workflow.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/04-verified-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/04-verified-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/05-historical-receipt.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/05-historical-receipt.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/06-demo-empty.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/06-demo-empty.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/07-plan-approved.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/07-plan-approved.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/08-execute-confirmation.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/08-execute-confirmation.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/09-demo-completed.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/09-demo-completed.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/10-simulated-receipt.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/10-simulated-receipt.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/11-demo-unknown.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/11-demo-unknown.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/12-demo-failed.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/12-demo-failed.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/13-mobile-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/13-mobile-overview.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/14-mobile-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/14-mobile-demo.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/15-service-error.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/15-service-error.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/16-live-ollama-plan.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/16-live-ollama-plan.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/17-live-ai-simulation-completed.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/17-live-ai-simulation-completed.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/browser-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/browser-verification.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/final-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/final-verification.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/phase31-browser-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-browser-verification.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/phase31-final-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-final-verification.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/phase31-resume-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-resume-verification.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/phase31-wheel-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/phase31-wheel-verification.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/publication-validation.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/PHASE3.1-PUBLICATION.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/publication-validation.json"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1440-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1440-demo.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1440-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1440-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1440-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1440-overview.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1440-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1440-review.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1440-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1440-trust.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1920-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1920-demo.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1920-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1920-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1920-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1920-overview.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1920-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1920-review.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-1920-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-1920-trust.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-390-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-390-demo.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-390-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/PHASE3-UI-DEMO.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-390-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-390-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-390-overview.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-390-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-390-review.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/quality-390-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/quality-390-trust.png"
+    },
+    {
+      "deleted_path": "evidence/phase3-ui/wheel-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/MASTER-DELIVERY.md",
+        "evidence/phase3-ui/publication-validation.json"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/phase3-ui/wheel-verification.json"
+    },
+    {
+      "deleted_path": "evidence/pytest.xml",
+      "reason": "Transient regression XML; current totals are summarized without raw logs",
+      "references_checked": [
+        "README.md",
+        "docs/test-report.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/pytest.xml"
+    },
+    {
+      "deleted_path": "evidence/real-ai-schema-smoke.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/real-ai-schema-smoke.json"
+    },
+    {
+      "deleted_path": "evidence/real-ai-smoke.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/real-ai-smoke.json"
+    },
+    {
+      "deleted_path": "evidence/real-ai-validated-smoke.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/real-ai-validated-smoke.json"
+    },
+    {
+      "deleted_path": "evidence/runtime-api.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/runtime-api.json"
+    },
+    {
+      "deleted_path": "evidence/runtime-integrity.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/runtime-integrity.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/acceptance-validation.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/acceptance-validation.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/artifact-manifest.json",
+      "reason": "Historical snapshot manifest, archived at the baseline; not an active integrity contract",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/artifact-manifest.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/browser-regression.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-FIX-REPORT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/browser-regression.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/checkpoint-validation.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-CHECKPOINT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/checkpoint-validation.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/desktop-1440-deterministic.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/desktop-1440-deterministic.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/desktop-1440-local_ai.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-FIX-REPORT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/desktop-1440-local_ai.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/desktop-1920-deterministic.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/desktop-1920-deterministic.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/desktop-1920-local_ai.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-FIX-REPORT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/desktop-1920-local_ai.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/live-ai-e2e.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/live-ai-e2e.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-gate1.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-gate1.jpg"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-gate2.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-gate2.jpg"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-gate3.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-gate3.jpg"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-historical-receipt.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-historical-receipt.jpg"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-mobile-360-review.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-mobile-360-review.jpg"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-mobile-360.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-mobile-360.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-mobile-widths.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-mobile-widths.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-simulated-receipt.jpg",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-simulated-receipt.jpg"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-skip-checks.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-skip-checks.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/manual-verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-FIX-REPORT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/manual-verification.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-100-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-100-demo.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-100-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-100-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-100-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-100-overview.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-100-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-FIX-REPORT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-100-review.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-100-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-100-trust.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-200-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-200-demo.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-200-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-200-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-200-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-200-overview.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-200-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-FIX-REPORT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-200-review.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-320-200-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-320-200-trust.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-100-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-100-demo.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-100-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-100-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-100-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-100-overview.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-100-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-100-review.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-100-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-100-trust.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-200-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-200-demo.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-200-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-200-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-200-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-200-overview.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-200-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-200-review.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-360-200-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-360-200-trust.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-100-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-100-demo.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-100-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-100-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-100-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-100-overview.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-100-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-100-review.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-100-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-100-trust.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-200-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-200-demo.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-200-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-200-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-200-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-200-overview.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-200-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-200-review.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/mobile-390-200-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/mobile-390-200-trust.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/preserved-e2e.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/preserved-e2e.json"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/skip-demo.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/skip-demo.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/skip-evidence.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/skip-evidence.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/skip-overview.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/skip-overview.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/skip-review.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [
+        "docs/UI-ACCEPTANCE-FIX-REPORT.md"
+      ],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/skip-review.png"
+    },
+    {
+      "deleted_path": "evidence/ui-acceptance/skip-trust.png",
+      "reason": "Superseded screenshot; retain eight representative current UI captures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/ui-acceptance/skip-trust.png"
+    },
+    {
+      "deleted_path": "evidence/verification.json",
+      "reason": "Superseded intermediate diagnostic/qualification; preserve immutable financial proof and consumed latency fixtures",
+      "references_checked": [],
+      "replacement": "evidence/submission/qa-summary.json",
+      "historical_archive": "https://github.com/miku-wwl/refund-sentinel-agent/blob/86a179fc6ca02568a849c51e765d6dca123dced7/evidence/verification.json"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "qualification_kind": "ARCHIVED_PRE_CLEANUP_CHECKPOINT",
+  "source_commit": "86a179fc6ca02568a849c51e765d6dca123dced7",
+  "date": "2026-10-14",
+  "status": "PASS",
+  "pytest": {
+    "passed": 535,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "warnings": 1,
+    "seconds": 533.31
+  },
+  "node": {
+    "passed": 12,
+    "failures": 0
+  },
+  "browser": {
+    "engine_version": "156.0.8078.4",
+    "preserved_e2e_checks": 10,
+    "skip_navigation_cases": 5,
+    "unknown_route_cases": 3,
+    "mobile_layout_cases": 30,
+    "desktop_action_mode_cases": 4,
+    "ai_visual_cases": 15,
+    "mocked_negative_model_cases": 4,
+    "axe_scans": 67,
+    "axe_violations": 0,
+    "external_requests": 0,
+    "genuine_paypal_operations": 0
+  },
+  "genuine_ollama": {
+    "status": "PASS",
+    "inference_http": 200,
+    "model": "phi4-mini:latest",
+    "inference_seconds": 16.348125,
+    "source": "REAL_LOCAL_OLLAMA",
+    "final_state": "Succeeded v4",
+    "receipt_source": "SIMULATED_PROVIDER",
+    "synthetic_dispatches": 1,
+    "real_paypal_dispatches": 0,
+    "reload_receipt_preserved": true
+  },
+  "genuine_paypal_operations_during_ui_qualification": 0,
+  "limitations": [
+    "Native Firefox text zoom NOT RUN; Chromium QA font-size emulation",
+    "Physical mobile device and full screen reader NOT RUN",
+    "Fresh dependency environment installation NOT RUN",
+    "No new genuine PayPal verification or transaction"
+  ],
+  "financial_archive": "../phase2-freeze/verified-refund.json",
+  "screenshots": "Representative captures from multiple isolated synthetic or read-only archive sessions; not one payment transaction. Final cleanup qualification will replace this summary only after actual execution."
+}
