@@ -256,7 +256,7 @@ function evidence() {
       ["Observed Refund POST count", "Exactly 1"],
     ],
   )}</section>
-  <section class="panel"><div class="panel-head"><h2>Measured execution evidence</h2>${icon("clock")}</div><div class="table-wrap"><table><thead><tr><th>Operation</th><th>HTTP</th><th>Elapsed</th><th>Result</th></tr></thead><tbody><tr><td>Refund POST</td><td>201</td><td>${seconds(x.post_seconds)}</td><td>COMPLETED</td></tr><tr><td>Independent Refund GET</td><td>200</td><td>${seconds(x.verification_seconds)}</td><td>VERIFIED</td></tr><tr><td>Public Runtime Gateway</td><td>—</td><td>${seconds(x.gateway_seconds)}</td><td>SUCCEEDED</td></tr></tbody></table></div><div class="callout"><strong>15-second trusted Sandbox profile.</strong> This genuine sample finished in 4.766604 seconds. One sample establishes neither p95 latency nor a universal exactly-once guarantee.</div><div class="section-label"><h2>Durable receipt</h2>${badge("PERSISTED", "success")}</div><p class="mono">${e(x.receipt_id)}</p><p>Reopened and independently checked in a new process after execution.</p>${button("Inspect receipt", 'data-receipt="historical"', "secondary", "receipt")}</section></div>
+  <section class="panel"><div class="panel-head"><h2>Measured execution evidence</h2>${icon("clock")}</div><div class="table-wrap" role="region" aria-label="Measured execution evidence table" tabindex="0"><table><thead><tr><th>Operation</th><th>HTTP</th><th>Elapsed</th><th>Result</th></tr></thead><tbody><tr><td>Refund POST</td><td>201</td><td>${seconds(x.post_seconds)}</td><td>COMPLETED</td></tr><tr><td>Independent Refund GET</td><td>200</td><td>${seconds(x.verification_seconds)}</td><td>VERIFIED</td></tr><tr><td>Public Runtime Gateway</td><td>—</td><td>${seconds(x.gateway_seconds)}</td><td>SUCCEEDED</td></tr></tbody></table></div><div class="callout"><strong>15-second trusted Sandbox profile.</strong> This genuine sample finished in 4.766604 seconds. One sample establishes neither p95 latency nor a universal exactly-once guarantee.</div><div class="section-label"><h2>Durable receipt</h2>${badge("PERSISTED", "success")}</div><p class="mono">${e(x.receipt_id)}</p><p>Reopened and independently checked in a new process after execution.</p>${button("Inspect receipt", 'data-receipt="historical"', "secondary", "receipt")}</section></div>
   <section class="panel provenance"><div class="panel-head"><h2>Evidence provenance</h2>${badge("VERIFIED SANDBOX EVIDENCE", "success")}</div><p>The original transaction used genuine PayPal Sandbox APIs. This dashboard presents sanitized recorded evidence; viewing it makes <strong>no current live PayPal query</strong>.</p>${rows(
     [
       [
@@ -327,6 +327,7 @@ function demoScreen() {
     `<div class="demo-banner"><strong>DEMO MODE — SIMULATED PAYMENTS</strong><span>Synthetic USD 25.00 of USD 120.00 · No real PayPal requests · ${live ? "Local AI proposal / fake execution" : "Deterministic Demo / no AI call"}</span></div>
   <div class="demo-controls"><div class="control-field"><label for="planning-mode">Proposal mode</label><select id="planning-mode" ${busy ? "disabled" : ""}><option value="deterministic" ${!live ? "selected" : ""}>Deterministic Demo — offline</option><option value="local_ai" ${live ? "selected" : ""}>Local AI Demo — Live Ollama</option></select></div><div class="control-field"><label for="scenario">Simulation outcome</label><select id="scenario" ${busy ? "disabled" : ""}><option value="completed" ${demo?.scenario === "completed" ? "selected" : ""}>Completed + verified</option><option value="unknown" ${demo?.scenario === "unknown" ? "selected" : ""}>Lost acknowledgment → Unknown</option><option value="rejected" ${demo?.scenario === "rejected" ? "selected" : ""}>Definitive rejection → Failed</option></select></div>${button(demo ? "Start new simulation" : "Load sample incident", 'data-demo="load" ' + (busy ? "disabled" : ""), "secondary", "refresh")}${button("Refresh saved state", 'data-demo="refresh" ' + (busy ? "disabled" : ""), "ghost", "refresh")}</div><p class="mode-hint">Mode applies to a new simulation. ${live ? "Current case: Local AI Demo. Inference has a 45-second total limit; no automatic fallback." : "Deterministic Demo is the safe default; it does not call a model."}</p>
   <div class="demo-stage"><div><h2>${demo ? e(state) : "Open a synthetic incident"}</h2><p>${demo ? "Fresh synthetic scope. Original financial Actions remain untouched." : "Load the sample to begin. Each decision is explicit."}</p></div>${demo ? badge(state, ["Unknown", "Failed"].includes(state) ? "warning" : state === "Succeeded" ? "success" : "info") : ""}</div>
+  ${demo && next && !uncertain ? `<section class="demo-next-step" aria-label="Next simulation step"><div><strong>Your next decision</strong><p>${e(instructions[next])}</p></div>${button(gateLabel[next], `data-demo="${next}" ${busy ? "disabled" : ""}`, next === "execute" ? "amber" : "", next === "generate" ? "brain" : next === "execute" ? "play" : "lock")}</section>` : ""}
   ${demo ? flow(progress.complete, progress.stopped) : ""}
   ${busy ? `<div class="processing" role="status"><span class="spinner"></span><div><strong>${busyOperation === "execute" ? "Executing synthetic refund through the public Runtime" : busyOperation === "generate" && live ? "Generating a genuine local Ollama proposal" : "Recording the simulation step"}</strong><p>${busyOperation === "generate" && live ? "phi4-mini:latest · synthetic incident only · bounded output · no gate is automatically approved" : "Durable claiming and verification use the pinned Runtime. This payment provider is entirely local."}</p></div></div>` : ""}
   ${uncertain ? '<div class="callout warning"><strong>Response unavailable.</strong> No automatic resend. Refresh saved state to inspect the simulation before taking another step.</div>' : ""}
@@ -347,7 +348,6 @@ function demoScreen() {
   )}
   ${demo?.recommendation ? `<div class="callout model-result" data-source="${e(demo.analysis_source)}">${badge(inferred ? "REAL LOCAL OLLAMA" : "DETERMINISTIC FIXTURE", inferred ? "success" : "info")}<h3>Recommendation: REFUND USD 25.00</h3><p>${e(demo.recommendation.explanation)}</p>${inferred ? `<p>Model: <strong>phi4-mini:latest</strong> · inference ${seconds(demo.model_seconds)} · schema and trusted policy passed</p>` : ""}</div>` : ""}
   ${live ? `<div class="step-actions">${button("Switch to Deterministic Demo", 'data-demo="fallback" ' + (busy ? "disabled" : ""), "ghost", "refresh")}<small>Manual fallback creates a new synthetic case and retains this record.</small></div>` : ""}
-  ${demo && next && !uncertain ? `<div class="step-actions">${button(gateLabel[next], `data-demo="${next}" ${busy ? "disabled" : ""}`, next === "execute" ? "amber" : "", next === "generate" ? "brain" : next === "execute" ? "play" : "lock")}<small>${e(instructions[next])}</small></div>` : ""}
   ${!demo ? `<div class="step-actions">${button("Load sample incident", 'data-demo="load" ' + (busy ? "disabled" : ""), "", "play")}</div>` : ""}
   </section><section class="panel"><div class="panel-head"><h2>${demo?.plan ? "Exact synthetic Plan" : "Your Plan will appear here"}</h2>${demo?.plan ? badge("VALIDATED", "success") : icon("brain")}</div>
   ${
@@ -366,7 +366,7 @@ function demoScreen() {
             ["Synthetic dispatches", String(demo.simulated_dispatches)],
           ],
         )}`
-      : `<div class="empty-card"><span class="icon-box">${icon("layers")}</span><h3>Begin with a proposal</h3><p>Load the sample and generate a simulated recommendation. The genuine Runtime validates and persists the Plan.</p><span class="tag">NO FINANCIAL AUTHORITY</span></div>`
+      : `<div class="empty-card"><span class="icon-box">${icon("layers")}</span><h3>Begin with a proposal</h3><p>${live ? "Generate a genuine local Ollama recommendation for this synthetic incident. Payment execution remains simulated." : "Load the sample and generate a deterministic recommendation. No model is called; payment execution remains simulated."} The genuine Runtime validates and persists the Plan.</p><span class="tag">NO FINANCIAL AUTHORITY</span></div>`
   }
   </section></div>
   ${demo?.action && ["Unknown", "Failed"].includes(demo.action.state) ? `<div class="callout warning"><strong>${e(demo.action.state)} — this Action is terminal.</strong> ${demo.action.state === "Unknown" ? "An effect may exist, but the Runtime outcome was not confirmed as successful. No successful receipt is claimed." : "A definitive failure was recorded. No completed effect is claimed."} No retry, reauthorization or automatic reconciliation is offered. A new simulation creates a different synthetic scope and retains this record.</div>` : ""}
@@ -388,7 +388,7 @@ function render() {
   environment.classList.toggle("simulated", screen === "demo");
   environment.innerHTML =
     screen === "demo"
-      ? "<i></i>OFFLINE SIMULATION <span>NO PAYPAL REQUESTS</span>"
+      ? "<i></i>SIMULATED PAYMENTS <span>NO PAYPAL REQUESTS</span>"
       : "<i></i>PAYPAL SANDBOX <span>ARCHIVED PROOF</span>";
   document.querySelectorAll("nav a").forEach((a) => {
     if (a.dataset.screen === screen) a.setAttribute("aria-current", "page");
@@ -619,6 +619,12 @@ async function runDemo(operation) {
     )?.focus({ preventScroll: true });
   }
 }
+document.querySelector(".skip-link").addEventListener("click", (event) => {
+  // Native anchor Enter activation also emits click. Keep the screen/history intact.
+  event.preventDefault();
+  main.focus({ preventScroll: true });
+  main.scrollIntoView({ block: "start", behavior: "instant" });
+});
 document.addEventListener("click", (event) => {
   const target = event.target.closest("button");
   if (!target) return;

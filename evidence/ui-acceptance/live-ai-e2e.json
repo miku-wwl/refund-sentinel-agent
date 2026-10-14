@@ -1,0 +1,391 @@
+{
+  "status": "PASS",
+  "browser": "156.0.8078.4",
+  "live_ollama": {
+    "status": "PASS",
+    "inference_http": 200,
+    "model": "phi4-mini:latest",
+    "inference_seconds": 5.05839,
+    "source": "REAL_LOCAL_OLLAMA",
+    "synthetic_capture": "DEMO0000000000001",
+    "plan_sha256": "82ad42823e79247f4b73849ad8136bddccc3b0b62086b2888ebce87113c15f29",
+    "run_id": "e7c2d206-2db8-4266-b1b8-1a922f573c5a",
+    "action_id": "e7604601-6b82-44d8-a8c0-0f215b65e1a5",
+    "final_state": "Succeeded v4",
+    "receipt_id": "d5aef528-d16e-408d-a0f5-bb3b7e3400ef",
+    "receipt_source": "SIMULATED_PROVIDER",
+    "synthetic_dispatches": 1,
+    "real_paypal_dispatches": 0,
+    "gates": "Three separate browser confirmations",
+    "reload_receipt_preserved": true,
+    "negative_binding_checks": 3
+  },
+  "negative_ui": [
+    {
+      "case": "invalid-output",
+      "transport": "MOCKED_BROWSER_HTTP",
+      "state_preserved": true,
+      "manual_fallback": true,
+      "automatic_gates": 0,
+      "financial_dispatches": 0
+    },
+    {
+      "case": "unavailable",
+      "transport": "MOCKED_BROWSER_HTTP",
+      "state_preserved": true,
+      "manual_fallback": true,
+      "automatic_gates": 0,
+      "financial_dispatches": 0
+    },
+    {
+      "case": "expired",
+      "transport": "MOCKED_BROWSER_HTTP",
+      "state_preserved": true,
+      "manual_fallback": true,
+      "automatic_gates": 0,
+      "financial_dispatches": 0
+    },
+    {
+      "case": "unapproved-proposal",
+      "transport": "MOCKED_BROWSER_HTTP",
+      "state_preserved": true,
+      "manual_fallback": true,
+      "automatic_gates": 0,
+      "financial_dispatches": 0
+    }
+  ],
+  "visuals": [
+    {
+      "screen": "overview",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "44.64px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "review",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "trust",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": null,
+        "evidence_row": null
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "evidence",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "demo",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "overview",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "48px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "review",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "trust",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": null,
+        "evidence_row": null
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "evidence",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "demo",
+      "viewport": {
+        "width": 1920,
+        "height": 1080
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "30px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "overview",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "36px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "review",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "28px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "trust",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "28px",
+        "button": null,
+        "evidence_row": null
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "evidence",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "28px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    },
+    {
+      "screen": "demo",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "opacity": 1,
+      "fonts": "loaded",
+      "stable_frames": 3,
+      "horizontal_overflow": false,
+      "sizes": {
+        "title": "28px",
+        "button": "14px",
+        "evidence_row": "13px"
+      },
+      "clipped_critical_elements": []
+    }
+  ],
+  "accessibility": [
+    {
+      "screen": "live-ollama-awaiting-approval",
+      "violations": []
+    },
+    {
+      "screen": "live-ai-synthetic-receipt",
+      "violations": []
+    },
+    {
+      "screen": "quality-1440-overview",
+      "violations": []
+    },
+    {
+      "screen": "quality-1440-review",
+      "violations": []
+    },
+    {
+      "screen": "quality-1440-trust",
+      "violations": []
+    },
+    {
+      "screen": "quality-1440-evidence",
+      "violations": []
+    },
+    {
+      "screen": "quality-1440-demo",
+      "violations": []
+    },
+    {
+      "screen": "quality-1920-overview",
+      "violations": []
+    },
+    {
+      "screen": "quality-1920-review",
+      "violations": []
+    },
+    {
+      "screen": "quality-1920-trust",
+      "violations": []
+    },
+    {
+      "screen": "quality-1920-evidence",
+      "violations": []
+    },
+    {
+      "screen": "quality-1920-demo",
+      "violations": []
+    },
+    {
+      "screen": "quality-390-overview",
+      "violations": []
+    },
+    {
+      "screen": "quality-390-review",
+      "violations": []
+    },
+    {
+      "screen": "quality-390-trust",
+      "violations": []
+    },
+    {
+      "screen": "quality-390-evidence",
+      "violations": []
+    },
+    {
+      "screen": "quality-390-demo",
+      "violations": []
+    }
+  ],
+  "unexpected_errors": [],
+  "external_browser_requests": 0,
+  "genuine_paypal_requests": 0,
+  "public_evidence_references": [
+    "https://github.com/miku-wwl/refund-sentinel-agent/blob/04fac090b6aa0a77ef1c50b9e6b451404fccc58f/evidence/phase2-freeze/verified-refund.json",
+    "https://github.com/miku-wwl/refund-sentinel-agent/blob/04fac090b6aa0a77ef1c50b9e6b451404fccc58f/docs/PHASE2-BACKEND-FREEZE.md"
+  ]
+}

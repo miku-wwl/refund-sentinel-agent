@@ -1,0 +1,90 @@
+{
+  "status": "PASS",
+  "decision": "GO for separately scoped Submission Cleanup",
+  "baseline_commit": "096b89eff51db9aa2dc5a6b04fe3ff19506a8c63",
+  "issues": {
+    "RS_UI_04": "FIXED",
+    "RS_UI_01": "FIXED",
+    "RS_UI_02": "FIXED",
+    "RS_UI_03": "FIXED"
+  },
+  "pytest": {
+    "passed": 535,
+    "existing_warnings": 1,
+    "seconds": 481.46,
+    "failures": 0
+  },
+  "node": {
+    "passed": 12,
+    "failures": 0
+  },
+  "browser_regression": {
+    "next_actions": 4,
+    "unknown_routes": 3,
+    "navigation": 5,
+    "mobile_layouts": 30,
+    "status": "PASS"
+  },
+  "axe_scans": 67,
+  "axe_violations": 0,
+  "genuine_ollama": {
+    "status": "PASS",
+    "inference_http": 200,
+    "model": "phi4-mini:latest",
+    "inference_seconds": 5.05839,
+    "source": "REAL_LOCAL_OLLAMA",
+    "synthetic_capture": "DEMO0000000000001",
+    "plan_sha256": "82ad42823e79247f4b73849ad8136bddccc3b0b62086b2888ebce87113c15f29",
+    "run_id": "e7c2d206-2db8-4266-b1b8-1a922f573c5a",
+    "action_id": "e7604601-6b82-44d8-a8c0-0f215b65e1a5",
+    "final_state": "Succeeded v4",
+    "receipt_id": "d5aef528-d16e-408d-a0f5-bb3b7e3400ef",
+    "receipt_source": "SIMULATED_PROVIDER",
+    "synthetic_dispatches": 1,
+    "real_paypal_dispatches": 0,
+    "gates": "Three separate browser confirmations",
+    "reload_receipt_preserved": true,
+    "negative_binding_checks": 3
+  },
+  "manual_ollama_seconds_ui": 8.936,
+  "integrity": {
+    "historical_private": {
+      "verified_files": 4058,
+      "changed_files": 0
+    },
+    "frozen_backend": {
+      "verified_files": 19,
+      "changed_files": 0
+    },
+    "dependency_contract": {
+      "verified_files": 3,
+      "changed_files": 0
+    },
+    "regenerated_mock_records_preserved": 34,
+    "status": "PASS",
+    "runtime_version": "0.2.0",
+    "runtime_commit": "7261fdd2f47d2b15fabe8faac527eeee37338eb1",
+    "runtime_files_unchanged": 57,
+    "core_clean": true,
+    "freeze_tag_unchanged": true
+  },
+  "wheel": {
+    "status": "PASS",
+    "wheel": "refund_sentinel-0.1.0-py3-none-any.whl",
+    "assets_match_source": {
+      "console.js": "dc3d784b92a82ea0492e1011c3e09ea60338843044782b2deb4a230fbabcb7ab",
+      "console.css": "28da0527c8f02f21b64ab9b95f54756f2336cecda2b9e80f893db1f1c47f7d0b",
+      "console.html": "5b46a651bd30c474fd3505e52fdc9737f1a728bc5c41a97cc9e6a93e6c2d303f",
+      "console-state.mjs": "c734cd492c238130a8c649a8aa819e0d9fee76fa0d9df8315df9333182ff32bf",
+      "qualified-case.json": "1c50dd2f86d63905b69dad4d3b83e3b37a77f7495d3ba1a1c4fee9a7c56f9853"
+    },
+    "runtime_pin_unchanged": true,
+    "new_environment_install": "NOT RUN; UI-only artifact verification"
+  },
+  "preview_http": 200,
+  "genuine_paypal_operations": 0,
+  "commit_push_tag_deploy": false,
+  "full_screen_reader": "NOT RUN",
+  "native_firefox_text_zoom": "NOT RUN; Chromium QA text sizing emulation qualified",
+  "new_environment_install": "NOT RUN"
+}

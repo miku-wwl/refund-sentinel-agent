@@ -1,0 +1,272 @@
+[
+  {
+    "file": "acceptance-validation.json",
+    "sha256": "10cf4616eb5efe51a2220e0215a339f8886ac3eef20f1969350b308950390b10",
+    "bytes": 2891
+  },
+  {
+    "file": "browser-regression.json",
+    "sha256": "36f5147457b5e02ac6309acd2ab3f0366ecf68b4b6f2447c72ebc38462b29db3",
+    "bytes": 28085
+  },
+  {
+    "file": "checkpoint-validation.json",
+    "sha256": "df00df86d9ae032eed1bd2dd21667597cb893e086e26f60c2015e5b53824bd0a",
+    "bytes": 3700
+  },
+  {
+    "file": "desktop-1440-deterministic.png",
+    "sha256": "8ad402dc3550d5c3a82b22edf015509aea55d698fd2a6b2430c8ad2507f3fcf9",
+    "bytes": 126540
+  },
+  {
+    "file": "desktop-1440-local_ai.png",
+    "sha256": "4a8241aa306b3d34de4574a9644b604a245f0c846f8b4779186d2633e55c3276",
+    "bytes": 133922
+  },
+  {
+    "file": "desktop-1920-deterministic.png",
+    "sha256": "a065a6ec648938beba5b2fe755e7166b306f27293b3e4dd4e01447efdb6b9790",
+    "bytes": 128464
+  },
+  {
+    "file": "desktop-1920-local_ai.png",
+    "sha256": "9af637b9c76dc13b11b3c523e288f2a95db6bc1c98007fc83dfb0677c3a29d55",
+    "bytes": 136364
+  },
+  {
+    "file": "live-ai-e2e.json",
+    "sha256": "b65627c2fecbcfb3bc924546c117d794bb8ee7d0f9eba002205727476415d156",
+    "bytes": 8878
+  },
+  {
+    "file": "manual-gate1.jpg",
+    "sha256": "21e7e4003540a88d669dac387ac85cfe7eb00ac3e2658feaf68b956b80801955",
+    "bytes": 47568
+  },
+  {
+    "file": "manual-gate2.jpg",
+    "sha256": "0f8c6e0c747098cf222b4ebac96ec4eedb3efaa8aa52d56bb6a7495f7ef5f0b1",
+    "bytes": 56776
+  },
+  {
+    "file": "manual-gate3.jpg",
+    "sha256": "736860b5312a01dfb2d3958cb0247b8252cce9dc7dd1b4a16f3fc1d20022a9df",
+    "bytes": 59342
+  },
+  {
+    "file": "manual-historical-receipt.jpg",
+    "sha256": "e0543e1435341b7e09e5369deecee7f5a188c373d2bc12cad0aeec6da1861d69",
+    "bytes": 31599
+  },
+  {
+    "file": "manual-mobile-360-review.jpg",
+    "sha256": "131746460f0deebfe6e6c71af02e4d5c7c03d0803b3fc2a9386764b766e12f90",
+    "bytes": 34021
+  },
+  {
+    "file": "manual-mobile-360.json",
+    "sha256": "6af75a2d19f01d75b55a128059e79c4e82cc6f5753ddb8d2e52397195e80554f",
+    "bytes": 563
+  },
+  {
+    "file": "manual-mobile-widths.json",
+    "sha256": "0abe03bbfb1bc066528b83b43325f0304bd72e18926ebf53c23a0dbcdb9b8e64",
+    "bytes": 130
+  },
+  {
+    "file": "manual-simulated-receipt.jpg",
+    "sha256": "a39074da87326fe2693000e80d71706420ed86719587df65e443bd33004b4c25",
+    "bytes": 52722
+  },
+  {
+    "file": "manual-skip-checks.json",
+    "sha256": "b47bd24945ca5be5e8353d4e6f9b4bdd44ef90c9ce23a7d2d7de78a8703e9303",
+    "bytes": 1353
+  },
+  {
+    "file": "manual-verification.json",
+    "sha256": "d2c7806df80e6113e8e6ca53bf8c120e8d3798ef1c4a2b3f1c216067473217bb",
+    "bytes": 902
+  },
+  {
+    "file": "mobile-320-100-demo.png",
+    "sha256": "47cf73d72453e21c441322c0c15713dd16ee82584f0a9432b1da6390c2e64313",
+    "bytes": 85727
+  },
+  {
+    "file": "mobile-320-100-evidence.png",
+    "sha256": "789a4bd59944cbe5bd67d4a562f80cab1bb2b3e22ec0a63ba7cc11936e5d197a",
+    "bytes": 200448
+  },
+  {
+    "file": "mobile-320-100-overview.png",
+    "sha256": "e8fec257bf5e5578ba70bb5771291c810006a89d8d83faf8bf587b9da84aa715",
+    "bytes": 179925
+  },
+  {
+    "file": "mobile-320-100-review.png",
+    "sha256": "a29f803d59b7e39b36c71fe81ae43ce8b73fed72fc97953c263799cd2f0ca3d7",
+    "bytes": 121831
+  },
+  {
+    "file": "mobile-320-100-trust.png",
+    "sha256": "2d79fc56b793be9d2c02dbec25b3c1387efdbec4e53541e5acefaacfb746d9b2",
+    "bytes": 104409
+  },
+  {
+    "file": "mobile-320-200-demo.png",
+    "sha256": "5c8ef4361b7290e43f280a6f0054ab8f3514fd3fce098e697525cd4528c190d7",
+    "bytes": 269936
+  },
+  {
+    "file": "mobile-320-200-evidence.png",
+    "sha256": "e8eeb8cdcc2858bbb3f56fa4de697a48c7b9735aee934039bc1c211cf786d937",
+    "bytes": 615061
+  },
+  {
+    "file": "mobile-320-200-overview.png",
+    "sha256": "2e4274f07a0a295a76b7fb0ab8825d6df9ce44870bfaf71733bd6f9a3b7dbc9d",
+    "bytes": 494450
+  },
+  {
+    "file": "mobile-320-200-review.png",
+    "sha256": "b637850de62774180d9833d272f10ca82bd9de0ff5df0b84890873e551f6eaf9",
+    "bytes": 379898
+  },
+  {
+    "file": "mobile-320-200-trust.png",
+    "sha256": "127e131e29a99dce61a7a6c4b9d3b0736dfa418b9c060a84143914ea323f89d4",
+    "bytes": 347245
+  },
+  {
+    "file": "mobile-360-100-demo.png",
+    "sha256": "66f9b915a9f0af9efd4936e2b8d67885a7afe76e12c62a56a4dfc8da4bcc1040",
+    "bytes": 85036
+  },
+  {
+    "file": "mobile-360-100-evidence.png",
+    "sha256": "47c45c150ed2504c693777936d7d939338ff960c0a65cbb01f5baa1f2e8d7fe3",
+    "bytes": 196717
+  },
+  {
+    "file": "mobile-360-100-overview.png",
+    "sha256": "2ec8cbc932a084bbc888c53b1f039215649db78b1d63f3cd5b200ae95c1dd44e",
+    "bytes": 184828
+  },
+  {
+    "file": "mobile-360-100-review.png",
+    "sha256": "578fe751c6e1ee269fcc9660e3acbcbf040c6aa875db98b987eb78ec7cc359f8",
+    "bytes": 121342
+  },
+  {
+    "file": "mobile-360-100-trust.png",
+    "sha256": "5d3c1b82834d3f02d47867d55555f8e5628fb9506f132f3cc3432b1f96a27443",
+    "bytes": 101916
+  },
+  {
+    "file": "mobile-360-200-demo.png",
+    "sha256": "27ed349af5fc3d27021f3beb112306c4cbed2a9199cc5d13093b633ad4f5ecd5",
+    "bytes": 273619
+  },
+  {
+    "file": "mobile-360-200-evidence.png",
+    "sha256": "d93303306fe04c03aa99e6ca7da2d58f19808c4af78745c8df716437a8f30970",
+    "bytes": 606255
+  },
+  {
+    "file": "mobile-360-200-overview.png",
+    "sha256": "ecbe870fd068330df0d44e3da567d6c905d396568655df33b8c4b47524f5beb0",
+    "bytes": 483789
+  },
+  {
+    "file": "mobile-360-200-review.png",
+    "sha256": "a634ccf6079937e93c94a5e6a64429238b18932fc6a8da96fa796a017184dfa0",
+    "bytes": 373360
+  },
+  {
+    "file": "mobile-360-200-trust.png",
+    "sha256": "e4e4ec41def17cec7451fa7c55c09de04c486dad83f6eb00067a307bd43cd04d",
+    "bytes": 342415
+  },
+  {
+    "file": "mobile-390-100-demo.png",
+    "sha256": "759291b7933a4a33affa5a7f5c5d99b5765daf4e85f2ac468369546478443cbf",
+    "bytes": 86086
+  },
+  {
+    "file": "mobile-390-100-evidence.png",
+    "sha256": "8dbd98ebce8c3a7204ca72563337e8bacda5663cc29ec7afe5cd828f41261802",
+    "bytes": 195104
+  },
+  {
+    "file": "mobile-390-100-overview.png",
+    "sha256": "d5c9c9928b8efbb1dc7969147c5cf622ec4ac480bbaf48c8c5ae9584d69e098d",
+    "bytes": 191133
+  },
+  {
+    "file": "mobile-390-100-review.png",
+    "sha256": "3cdc2aef40716c11fbc5c31e0460d23419d266d36401e5f424a8a325a96d1195",
+    "bytes": 121489
+  },
+  {
+    "file": "mobile-390-100-trust.png",
+    "sha256": "0091c9428f1e64362680be4b0e5416c4b84efa515b329af279dc045a4de1dcf7",
+    "bytes": 103471
+  },
+  {
+    "file": "mobile-390-200-demo.png",
+    "sha256": "c0e4c3bfebe27bdd36cbac044f13615d886b0c2069aa9e7534b7aabc2e60ae7e",
+    "bytes": 272378
+  },
+  {
+    "file": "mobile-390-200-evidence.png",
+    "sha256": "b5ca0239fb89301d8a6944b922cb3d19bb7a5b7454889d6b311fcc05eee5875e",
+    "bytes": 599526
+  },
+  {
+    "file": "mobile-390-200-overview.png",
+    "sha256": "f0b9ba2dd937b6c3fc45933c3352b24ab51a33b0b1a56515e80bb7b061b2140d",
+    "bytes": 485811
+  },
+  {
+    "file": "mobile-390-200-review.png",
+    "sha256": "f1f0353577597b65451e25f8178eab2e7d988fcdb8e92cf61ce190f1fcc75f4c",
+    "bytes": 366579
+  },
+  {
+    "file": "mobile-390-200-trust.png",
+    "sha256": "46c49eadc06b7089097811c6834f3ac995da5af01eaa86012a516a0de557795e",
+    "bytes": 338358
+  },
+  {
+    "file": "preserved-e2e.json",
+    "sha256": "b01eac19c0fdc0e053de15844bfbf0f26cc8149007e052ae34f14f1d66b8eb81",
+    "bytes": 8086
+  },
+  {
+    "file": "skip-demo.png",
+    "sha256": "1c05b7f10709015bf2d37a44fab5f9aa483ed15e6f828a892f4b1dd8e112b891",
+    "bytes": 105442
+  },
+  {
+    "file": "skip-evidence.png",
+    "sha256": "4a736114ccf2b8c532181d9534667e6748b565cb1bf69ec7005f3329b1a4b70a",
+    "bytes": 242719
+  },
+  {
+    "file": "skip-overview.png",
+    "sha256": "593811fa63bf78b1550af32258315668641a5ca51636360c161d259b1ff87abc",
+    "bytes": 280677
+  },
+  {
+    "file": "skip-review.png",
+    "sha256": "ef00d86b46566134e807a710da3c80f5f62c52ff267e79ccd25ca3d4b3705aae",
+    "bytes": 142628
+  },
+  {
+    "file": "skip-trust.png",
+    "sha256": "4d37e6da6f1b0ac33a938d91db3d2f5dcbe360c14ec4c4ff80a6c0167061c853",
+    "bytes": 110550
+  }
+]

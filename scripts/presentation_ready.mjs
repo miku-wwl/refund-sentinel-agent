@@ -54,7 +54,8 @@ export async function presentationReady(page) {
           fonts: document.fonts.status,
           stable_frames: stable,
           horizontal_overflow:
-            document.documentElement.scrollWidth > innerWidth + 1,
+            document.documentElement.scrollWidth >
+            document.documentElement.clientWidth + 1,
         };
     }
     throw new Error("Presentation geometry did not stabilize");

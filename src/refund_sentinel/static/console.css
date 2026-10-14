@@ -507,10 +507,11 @@ main {
 }
 .grid-two {
   display: grid;
-  grid-template-columns: 1.35fr 1fr;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
   gap: 20px;
 }
 .panel {
+  min-width: 0;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--panel);
@@ -867,6 +868,10 @@ pre {
 }
 .table-wrap {
   overflow-x: auto;
+}
+.table-wrap:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
 }
 table {
   border-collapse: collapse;
@@ -1243,7 +1248,7 @@ dialog p {
 @media (max-width: 850px) {
   .grid-two,
   .demo-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .flow {
     grid-template-columns: repeat(3, 1fr);
@@ -1272,6 +1277,20 @@ dialog p {
   }
 }
 @media (max-width: 700px) {
+  main,
+  .crumb {
+    overflow-wrap: anywhere;
+  }
+  .page-intro > div,
+  .evidence-banner > div,
+  .crumb {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .metric-grid {
+    /* Font-relative minimums reflow cards when text is magnified. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 8em), 1fr));
+  }
   .shell {
     display: block;
   }
@@ -1324,8 +1343,10 @@ dialog p {
     margin-left: 0;
   }
   .topbar {
-    height: 56px;
-    padding: 0 19px;
+    height: auto;
+    min-height: 56px;
+    padding: 12px 19px;
+    flex-wrap: wrap;
     gap: 8px;
   }
   .crumb {
@@ -1545,6 +1566,26 @@ dialog p {
 .provenance-note {
   color: var(--muted);
 }
+.demo-next-step {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px;
+  margin: 0 0 22px;
+  border: 1px solid #334962;
+  border-radius: 9px;
+  background: #132137;
+}
+.demo-next-step p {
+  margin: 5px 0 0;
+  font-size: var(--reading);
+  line-height: 1.65;
+  color: var(--muted);
+}
+.demo-next-step .button {
+  flex-shrink: 0;
+}
 .model-result h3 {
   margin: 12px 0 6px;
   font-size: 17px;
@@ -1580,9 +1621,35 @@ dialog p {
     flex-wrap: wrap;
     gap: 12px;
   }
-  .provenance .panel-head {
+  .panel-head,
+  .section-label,
+  .demo-next-step {
     flex-wrap: wrap;
     gap: 12px;
+  }
+  .panel-head > *,
+  .tag,
+  .badge {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .data-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 12px;
+  }
+  .data-row dt,
+  .data-row dd {
+    min-width: 0;
+    max-width: none;
+    overflow-wrap: anywhere;
+  }
+  .demo-next-step .button {
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
   }
   .page-intro h1 {
     font-size: 28px;

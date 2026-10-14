@@ -1,0 +1,27 @@
+{
+  "status": "PASS",
+  "browser": "Codex in-app browser",
+  "skip_routes": 5,
+  "live_model": "phi4-mini:latest",
+  "inference_seconds_ui": 8.936,
+  "payment_provider": "local simulated provider",
+  "run_id": "b3b95151-90ad-418e-866d-60cfe72aa4dd",
+  "action_id": "7bcba657-578b-4899-88a3-3aeaab26fd50",
+  "receipt_id": "79dbc3d1-14ac-48b1-9874-a42c89e135c7",
+  "three_distinct_dialogs": true,
+  "authorization_before_dispatch": true,
+  "receipt_survives_refresh_reload": true,
+  "unknown_terminal_after_refresh_reload": true,
+  "failed_terminal_after_refresh_reload": true,
+  "unknown_failed_execute_or_receipt_buttons": 0,
+  "historical_receipt_id": "e1415750-0971-4347-a88d-a3704dbb79c8",
+  "historical_evidence_read_only": true,
+  "genuine_paypal_operations": 0,
+  "mobile_css_widths": [
+    320,
+    360,
+    390
+  ],
+  "physical_mobile_test": "NOT RUN",
+  "full_screen_reader_test": "NOT RUN"
+}

@@ -25,6 +25,8 @@ uv sync --frozen --all-extras
 
 Open **http://127.0.0.1:8880**. This entrypoint ignores `.env`, forces the payment provider offline and never mounts financial operations routes. **Deterministic Demo** is the default; optional **Local AI Demo** invokes local Ollama `phi4-mini:latest` only to propose the synthetic USD 25.00 refund. Model failure keeps the workflow safe and offers an explicit manual fallback. Approval, Authorization and Execute Simulation remain separate confirmations. See [UI and verification](docs/PHASE3-UI-DEMO.md), [English demo script](docs/DEMO-SCRIPT.md), [delivery record](docs/MASTER-DELIVERY.md) and [publication qualification](docs/PHASE3.1-PUBLICATION.md). The original financial operations app below remains a separate developer workflow.
 
+The [UI acceptance fixes](docs/UI-ACCEPTANCE-FIX-REPORT.md) cover keyboard navigation, narrow-screen reflow, accurate model/simulation labels and visible next-step controls. The [pre-cleanup checkpoint](docs/UI-ACCEPTANCE-CHECKPOINT.md) records fresh regression, browser, privacy and integrity qualification with reproducible QA commands.
+
 ## Install and run
 
 Python **>=3.13,<3.14** and Git are required, matching the pinned Runtime. Verified locally with Python 3.13.9 on Windows. Git access to the dependency must be available; never put tokens in URLs. `uv.lock` and the pip dependency snapshot retain the immutable release pin.

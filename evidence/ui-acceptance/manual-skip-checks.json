@@ -1,0 +1,62 @@
+[
+  {
+    "page": "Overview",
+    "before": {
+      "hash": "#overview",
+      "title": "Operations overview — Refund Sentinel"
+    },
+    "after": {
+      "focus": "main",
+      "hash": "#overview",
+      "title": "Operations overview — Refund Sentinel"
+    }
+  },
+  {
+    "page": "AI refund review",
+    "before": {
+      "hash": "#review",
+      "title": "AI refund review — Refund Sentinel"
+    },
+    "after": {
+      "focus": "main",
+      "hash": "#review",
+      "title": "AI refund review — Refund Sentinel"
+    }
+  },
+  {
+    "page": "Trust workflow",
+    "before": {
+      "hash": "#trust",
+      "title": "Trust workflow — Refund Sentinel"
+    },
+    "after": {
+      "focus": "main",
+      "hash": "#trust",
+      "title": "Trust workflow — Refund Sentinel"
+    }
+  },
+  {
+    "page": "Verified evidence",
+    "before": {
+      "hash": "#evidence",
+      "title": "Verified execution evidence — Refund Sentinel"
+    },
+    "after": {
+      "focus": "main",
+      "hash": "#evidence",
+      "title": "Verified execution evidence — Refund Sentinel"
+    }
+  },
+  {
+    "page": "Interactive demo SIM",
+    "before": {
+      "hash": "#demo",
+      "title": "Interactive demo — Refund Sentinel"
+    },
+    "after": {
+      "focus": "main",
+      "hash": "#demo",
+      "title": "Interactive demo — Refund Sentinel"
+    }
+  }
+]
