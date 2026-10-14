@@ -11,11 +11,13 @@ The four files in `phase2-freeze/` are unchanged historical integrity contracts.
 The two files in `phase-2.3/` are sanitized historical read-latency inputs actually
 consumed by offline regression tests; their presence never causes network access.
 
-The [qualification summary](qa-summary.json) identifies its actual tested commit,
-model inference and mock/simulation boundaries. It is replaced with final cleanup
-results only after those checks execute. [Screenshot hashes](screenshots-manifest.json)
-cover the original image bytes. Screenshots represent multiple isolated synthetic
-or read-only historical sessions, not another PayPal transaction.
+The [final qualification summary](qa-summary.json) identifies its actual tested code
+commit, fresh model inference, clean installation and mock/simulation boundaries.
+[Screenshot hashes](screenshots-manifest.json) cover the original representative
+pre-cleanup image bytes; the UI source is unchanged and was revalidated after cleanup.
+Screenshots represent multiple isolated synthetic or read-only historical sessions,
+not another PayPal transaction. Their displayed model time is their own observation,
+not the later qualification run's measurement.
 
 | Capture | Purpose |
 | --- | --- |

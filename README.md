@@ -79,6 +79,7 @@ creates a fresh scope.
 | [Backend freeze](docs/PHASE2-BACKEND-FREEZE.md) | Immutable financial implementation and original Sandbox qualification |
 | [Competition requirements](docs/competition.md) | Official sources, contribution and remaining submission work |
 | [Curated evidence](evidence/submission/README.md) | Screenshots, qualification summary and historical archive |
+| [Final cleanup report](docs/SUBMISSION-CLEANUP-REPORT.md) | Five batches, actual release qualification, preserved state and remaining work |
 
 Earlier engineering reports remain in the
 [pre-cleanup checkpoint](https://github.com/miku-wwl/refund-sentinel-agent/tree/86a179fc6ca02568a849c51e765d6dca123dced7).

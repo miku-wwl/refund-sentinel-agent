@@ -1,15 +1,31 @@
 {
-  "qualification_kind": "ARCHIVED_PRE_CLEANUP_CHECKPOINT",
-  "source_commit": "86a179fc6ca02568a849c51e765d6dca123dced7",
+  "qualification_kind": "FINAL_CLEANED_SUBMISSION_TREE",
   "date": "2026-10-14",
   "status": "PASS",
+  "baseline_commit": "86a179fc6ca02568a849c51e765d6dca123dced7",
+  "tested_code_commit": "2c7c5f584c0a5f362299293c276116e1d7962f7f",
+  "release_commit": "The commit first adding docs/SUBMISSION-CLEANUP-REPORT.md; resolve with git log for that path",
+  "public_tree": {
+    "before": 220,
+    "after": 98,
+    "evidence_before": 123,
+    "evidence_after": 18,
+    "docs_before": 26,
+    "docs_after": 7,
+    "public_evidence_paths_removed": 117,
+    "public_docs_removed": 20,
+    "scripts_removed": 0,
+    "tests_removed": 0,
+    "scripts_retained": 9,
+    "representative_screenshots": 8
+  },
   "pytest": {
     "passed": 535,
     "failures": 0,
     "errors": 0,
     "skipped": 0,
     "warnings": 1,
-    "seconds": 533.31
+    "seconds": 553.19
   },
   "node": {
     "passed": 12,
@@ -18,36 +34,140 @@
   "browser": {
     "engine_version": "156.0.8078.4",
     "preserved_e2e_checks": 10,
-    "skip_navigation_cases": 5,
+    "skip_history_cases": 5,
     "unknown_route_cases": 3,
     "mobile_layout_cases": 30,
     "desktop_action_mode_cases": 4,
     "ai_visual_cases": 15,
-    "mocked_negative_model_cases": 4,
+    "explicitly_mocked_model_failure_cases": 4,
     "axe_scans": 67,
     "axe_violations": 0,
     "external_requests": 0,
-    "genuine_paypal_operations": 0
+    "genuine_paypal_requests": 0
   },
   "genuine_ollama": {
     "status": "PASS",
-    "inference_http": 200,
-    "model": "phi4-mini:latest",
-    "inference_seconds": 16.348125,
     "source": "REAL_LOCAL_OLLAMA",
+    "model": "phi4-mini:latest",
+    "inference_http": 200,
+    "inference_seconds": 14.525721,
     "final_state": "Succeeded v4",
     "receipt_source": "SIMULATED_PROVIDER",
     "synthetic_dispatches": 1,
     "real_paypal_dispatches": 0,
     "reload_receipt_preserved": true
   },
-  "genuine_paypal_operations_during_ui_qualification": 0,
-  "limitations": [
-    "Native Firefox text zoom NOT RUN; Chromium QA font-size emulation",
-    "Physical mobile device and full screen reader NOT RUN",
-    "Fresh dependency environment installation NOT RUN",
-    "No new genuine PayPal verification or transaction"
-  ],
+  "quality_checks": {
+    "ruff": "PASS",
+    "python_format_files": 47,
+    "prettier": "PASS",
+    "frontend_assets": "PASS",
+    "uv_lock_offline_packages": 31,
+    "pip_check": "PASS",
+    "npm_vulnerabilities": 0
+  },
+  "installation": {
+    "clean_public_export_uv_sync": "PASS",
+    "new_dependency_environment": true,
+    "readme_start": "PASS",
+    "installed_wheel_outside_checkout": "PASS",
+    "installed_mock_profiles": [
+      {
+        "profile": "legacy-5s",
+        "budget": 5,
+        "binding_revision": "refund-binding-v1",
+        "state": "Succeeded",
+        "mock_posts": 1,
+        "durable_receipt": true,
+        "restart_duplicate_posts": 0
+      },
+      {
+        "profile": "paypal-sandbox-15s",
+        "budget": 15,
+        "binding_revision": "refund-binding-v2.exec-15s",
+        "state": "Succeeded",
+        "mock_posts": 1,
+        "durable_receipt": true,
+        "restart_duplicate_posts": 0
+      }
+    ],
+    "packaged_source_assets_byte_matched": 29,
+    "installed_http_routes": [
+      {
+        "path": "/",
+        "http": 200
+      },
+      {
+        "path": "/assets/console.js",
+        "http": 200
+      },
+      {
+        "path": "/assets/console.css",
+        "http": 200
+      },
+      {
+        "path": "/assets/console-state.mjs",
+        "http": 200
+      },
+      {
+        "path": "/assets/console-icon.svg",
+        "http": 200
+      },
+      {
+        "path": "/presentation/proof",
+        "http": 200
+      },
+      {
+        "path": "/api/incidents",
+        "http": 404
+      },
+      {
+        "path": "/.env",
+        "http": 404
+      },
+      {
+        "path": "/assets/app.js",
+        "http": 404
+      }
+    ]
+  },
+  "integrity": {
+    "historical_private": {
+      "files": 4058,
+      "changed": []
+    },
+    "frozen_backend": {
+      "files": 19,
+      "changed": []
+    },
+    "dependency_contract": {
+      "files": 3,
+      "changed": []
+    },
+    "status": "PASS",
+    "runtime_version": "0.2.0",
+    "runtime_commit": "7261fdd2f47d2b15fabe8faac527eeee37338eb1",
+    "runtime_files": 57,
+    "core_clean": true,
+    "freeze_tag_unchanged": true
+  },
+  "privacy": {
+    "reviewed_screenshots": 8,
+    "ocr_tiles": 10,
+    "visual_contact_sheets": 1,
+    "metadata_or_secret_findings": 0,
+    "original_local_untracked_preserved": 130,
+    "original_test_assertions_preserved": 87,
+    "no_private_financial_state_copied_to_export": true,
+    "final_staged_and_reachable_object_scans_required_before_push": true
+  },
   "financial_archive": "../phase2-freeze/verified-refund.json",
-  "screenshots": "Representative captures from multiple isolated synthetic or read-only archive sessions; not one payment transaction. Final cleanup qualification will replace this summary only after actual execution."
+  "genuine_paypal_operations_during_cleanup": 0,
+  "screenshots": "Reviewed representative pre-cleanup UI captures; UI executable source is unchanged. Different isolated cases, not a single financial transaction.",
+  "limitations": [
+    "Native Firefox text zoom NOT RUN; Chromium QA text magnification only",
+    "Physical touch device, full screen reader and other OS/browser qualification NOT RUN",
+    "One historical Sandbox sample, not an authoritative current balance or exactly-once guarantee",
+    "Narrated recording, YouTube upload, deployment and final competition submission NOT RUN"
+  ]
 }
