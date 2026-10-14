@@ -77,6 +77,7 @@ All HTTP payment tests use ASGI/FakePayPal/MockTransport and forbid real transpo
 .venv\Scripts\python.exe -m pytest -q
 node --test tests/presentation-state.test.mjs
 node scripts/verify_presentation.mjs
+.venv\Scripts\python.exe scripts/check_submission.py
 .venv\Scripts\ruff.exe check src tests scripts
 .venv\Scripts\ruff.exe format --check src tests scripts
 uv lock --check --offline
@@ -95,13 +96,16 @@ $env:AXE_CORE_PATH = Join-Path $qa 'tools/node_modules/axe-core/axe.min.js'
 $env:PLAYWRIGHT_BROWSERS_PATH = Join-Path $qa 'browsers'
 node "$qa/tools/node_modules/playwright/cli.js" install chromium --only-shell
 $env:SENTINEL_PRESENTATION_URL = 'http://127.0.0.1:8880'
-Push-Location $qa
-try {
-  node "$projectRoot/scripts/test_presentation_browser.mjs"
-  node "$projectRoot/scripts/test_ui_acceptance_browser.mjs"
-  node "$projectRoot/scripts/test_presentation_ai_browser.mjs"
-} finally { Pop-Location }
+$env:SENTINEL_QA_OUTPUT_DIR = Join-Path $qa 'results'
+node "$projectRoot/scripts/test_presentation_browser.mjs"
+node "$projectRoot/scripts/test_ui_acceptance_browser.mjs"
+node "$projectRoot/scripts/test_presentation_ai_browser.mjs"
 ```
+
+All browser and mock-timing outputs default to ignored `.state-qa/`; the optional
+`SENTINEL_QA_OUTPUT_DIR` chooses a new local QA destination. `collect_evidence.py`
+also defaults to ignored `.state-qa/consumer-evidence`, with an explicit `--output`
+override. Generated reports never overwrite the curated public archive by default.
 
 Run those browser suites against a fresh synthetic presentation server, never the
 advanced operations app. Set up a separate ignored working directory before

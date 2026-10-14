@@ -1,5 +1,6 @@
 import asyncio
 import json
+import os
 import sqlite3
 import time
 from pathlib import Path
@@ -282,8 +283,9 @@ def test_later_gateway_deadline_cannot_extend_five_seconds(tmp_path):
             assert 4.8 <= elapsed < 10 and result.action.state.value == "Unknown"
             assert len(fake.persisted_refunds()) == len(fake.recorded_calls()) == 1
             assert (await runtime.gateway.execute(command, principal)).replayed
-            Path("evidence/phase-2.1").mkdir(exist_ok=True)
-            Path("evidence/phase-2.1/deadline-mock.json").write_text(
+            destination = Path(os.getenv("SENTINEL_QA_OUTPUT_DIR", ".state-qa")) / "phase-2.1"
+            destination.mkdir(parents=True, exist_ok=True)
+            (destination / "deadline-mock.json").write_text(
                 json.dumps(
                     {
                         "source": "ISOLATED_FAKE_PROVIDER",

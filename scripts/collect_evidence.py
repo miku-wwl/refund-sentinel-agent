@@ -100,8 +100,8 @@ async def real_ai_case(directory, base_url, model_name):
 
 
 async def collect(args):
-    output = Path("evidence")
-    output.mkdir(exist_ok=True)
+    output = args.output
+    output.mkdir(parents=True, exist_ok=True)
     signatures = {
         name: str(inspect.signature(obj))
         for name, obj in {
@@ -139,6 +139,7 @@ def main():
     parser.add_argument("--real-ai", action="store_true")
     parser.add_argument("--base-url", default="http://127.0.0.1:11434/v1")
     parser.add_argument("--model", default="phi4-mini:latest")
+    parser.add_argument("--output", type=Path, default=Path(".state-qa/consumer-evidence"))
     asyncio.run(collect(parser.parse_args()))
 
 

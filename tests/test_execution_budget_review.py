@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import os
 import time
 from pathlib import Path
 from uuid import uuid4
@@ -193,7 +194,9 @@ def test_model_full_consumer_path_without_gateway(tmp_path, name):
             "no_duplicate_or_late_dispatch": True,
             "actual_refund_latency_measured": False,
         }
-        destination = Path("evidence/execution-budget-review/mock")
+        destination = (
+            Path(os.getenv("SENTINEL_QA_OUTPUT_DIR", ".state-qa")) / "execution-budget-review/mock"
+        )
         destination.mkdir(parents=True, exist_ok=True)
         (destination / f"{name}.json").write_text(json.dumps(evidence, indent=2) + "\n", "utf-8")
         await client.close()

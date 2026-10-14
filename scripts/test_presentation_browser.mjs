@@ -8,7 +8,10 @@ const { chromium } = await import(
 );
 const base = process.env.SENTINEL_PRESENTATION_URL || "http://127.0.0.1:8880";
 assert.equal(new URL(base).hostname, "127.0.0.1");
-const output = resolve("evidence/phase3-ui");
+const output = resolve(
+  process.env.SENTINEL_QA_OUTPUT_DIR || ".state-qa",
+  "presentation",
+);
 mkdirSync(output, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({

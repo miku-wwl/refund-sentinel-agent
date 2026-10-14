@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -196,7 +197,7 @@ def test_full_gateway_timeout_and_failure_safety(tmp_path, monkeypatch, case):
             "no_duplicate_or_late_dispatch": True,
             "real_refund_latency_measured": False,
         }
-        destination = Path("evidence/phase-2.3.4/mock")
+        destination = Path(os.getenv("SENTINEL_QA_OUTPUT_DIR", ".state-qa")) / "phase-2.3.4/mock"
         destination.mkdir(parents=True, exist_ok=True)
         (destination / f"{case}.json").write_text(json.dumps(evidence, indent=2) + "\n", "utf-8")
 

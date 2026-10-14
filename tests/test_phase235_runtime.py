@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import os
 import sqlite3
 import subprocess
 import sys
@@ -299,7 +300,9 @@ def test_extended_actual_gateway_financial_path(tmp_path, monkeypatch, case):
                 "requests": client.telemetry,
                 "binding_revision": action.spec.binding_revision,
             }
-            destination = Path("evidence/phase-2.3.5/mock")
+            destination = (
+                Path(os.getenv("SENTINEL_QA_OUTPUT_DIR", ".state-qa")) / "phase-2.3.5/mock"
+            )
             destination.mkdir(parents=True, exist_ok=True)
             (destination / f"{case}.json").write_text(
                 json.dumps(evidence, indent=2) + "\n", "utf-8"
