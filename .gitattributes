@@ -1,0 +1,16 @@
+# Normalize known text types in Git; retain the checkout's native line-ending policy.
+# No mass renormalization or protected financial-source rewrite is required.
+*.py text
+*.md text
+*.js text
+*.mjs text
+*.css text
+*.html text
+*.json text
+*.toml text
+*.lock text
+*.txt text
+*.svg text
+*.png -text
+*.jpg -text
+*.jpeg -text
