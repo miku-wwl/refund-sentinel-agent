@@ -17,9 +17,17 @@ MAX_RESPONSE_BYTES = 65536
 
 
 def demo_settings(planning_mode):
+    if planning_mode == "deepseek":
+        # Identity metadata only. PreparedAnalyst is injected; the dedicated proposal owns auth.
+        return Settings(
+            payment_mode="offline",
+            ai_mode="real",
+            llm_base_url="https://api.deepseek.com",
+            llm_model="deepseek-flash",
+        )
     return Settings(
         payment_mode="offline",
-        ai_mode="real" if planning_mode == "local_ai" else "deterministic",
+        ai_mode="real" if planning_mode in {"local_ai", "deepseek"} else "deterministic",
         llm_base_url=OLLAMA_URL if planning_mode == "local_ai" else "",
         llm_model=MODEL if planning_mode == "local_ai" else "",
         llm_format="json_schema" if planning_mode == "local_ai" else "json_object",
@@ -33,6 +41,9 @@ class BoundedOllamaTransport(httpx.AsyncBaseTransport):
         self.inner = inner or httpx.AsyncHTTPTransport(retries=0)
         self.model_output = None
         self.output_truncated = False
+        self.returned_model = None
+        self.refused = False
+        self.finish_reason = None
 
     async def handle_async_request(self, request):
         if request.method != "POST" or str(request.url) != OLLAMA_URL + "/chat/completions":
@@ -58,7 +69,13 @@ class BoundedOllamaTransport(httpx.AsyncBaseTransport):
         # transport errors or a raw provider envelope. The original strict parser still decides.
         if response.status_code == 200:
             try:
-                message = json.loads(content)["choices"][0]["message"]
+                data = json.loads(content)
+                choice = data["choices"][0]
+                message = choice["message"]
+                model = data.get("model")
+                self.returned_model = model if model == MODEL else None
+                self.refused = bool(message.get("refusal"))
+                self.finish_reason = choice.get("finish_reason")
                 output = message.get("content") or message.get("refusal")
                 if isinstance(output, str):
                     self.model_output = output[:16384]
@@ -72,11 +89,17 @@ class BoundedOllamaTransport(httpx.AsyncBaseTransport):
 
 
 class LocalProposal:
+    provider = "ollama"
+    requested_model = MODEL
+
     def __init__(self, *, transport=None, timeout=PROPOSAL_SECONDS):
         self.transport, self.timeout = transport, timeout
         self.seconds = None
         self.model_output = None
         self.output_truncated = False
+        self.returned_model = None
+        self.refused = False
+        self.finish_reason = None
 
     async def analyze(self, message, facts):
         transport = BoundedOllamaTransport(self.transport)
@@ -91,6 +114,9 @@ class LocalProposal:
             self.seconds = round(time.perf_counter() - started, 6)
             self.model_output = transport.model_output
             self.output_truncated = transport.output_truncated
+            self.returned_model = transport.returned_model
+            self.refused = transport.refused
+            self.finish_reason = transport.finish_reason
             await analyst.close()
 
 

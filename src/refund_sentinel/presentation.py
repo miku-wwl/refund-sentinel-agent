@@ -12,6 +12,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
+from .deepseek import DeepSeekProposal
 from .demo import DemoController
 from .demo_ai import LocalProposal
 from .integration import verify_distribution
@@ -30,7 +31,9 @@ def archived_proof():
     return HistoricalProof.model_validate_json(body)
 
 
-def create_presentation_app(root=None, *, delay=0.8, proposal_factory=LocalProposal):
+def create_presentation_app(
+    root=None, *, delay=0.8, proposal_factory=LocalProposal, cloud_proposal_factory=DeepSeekProposal
+):
     @asynccontextmanager
     async def lifespan(app):
         verify_distribution()
@@ -39,6 +42,7 @@ def create_presentation_app(root=None, *, delay=0.8, proposal_factory=LocalPropo
             root or Path.cwd() / ".state-presentation-demo",
             delay=delay,
             proposal_factory=proposal_factory,
+            cloud_proposal_factory=cloud_proposal_factory,
         )
         app.state.demo = controller
         try:

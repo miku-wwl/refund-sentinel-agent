@@ -3,6 +3,7 @@ import {
   demoNext,
   commandBody,
   workflowProgress,
+  hasExecutablePlan,
   money,
   seconds,
 } from "./console-state.mjs";
@@ -301,6 +302,14 @@ const labCases = [
   ["unknown_outcome", "E · Lost acknowledgment → Unknown"],
 ];
 const decisionReasons = {
+  DEEPSEEK_KEY_NOT_CONFIGURED:
+    "Configure REFUND_SENTINEL_DEEPSEEK_API_KEY or DEEPSEEK_API_KEY in the server environment, then explicitly start a new case. No .env is read.",
+  DEEPSEEK_AUTHENTICATION_FAILED:
+    "DeepSeek rejected server authentication. No automatic retry or fallback was performed.",
+  DEEPSEEK_REQUEST_EXPIRED:
+    "The cloud request exceeded its bounded deadline. No executable Plan was created.",
+  DEEPSEEK_CASE_NOT_SUPPORTED:
+    "DeepSeek supports synthetic cases A–D. Explicitly select Deterministic Demo for the lost-acknowledgment case E.",
   CASE_AMOUNT_UNSPECIFIED:
     "The customer did not specify an amount. A model-invented amount cannot become an executable refund.",
   AMOUNT_OUTSIDE_POLICY:
@@ -324,6 +333,14 @@ function decisionEvidence() {
   return `<section class="panel decision-evidence" aria-label="Decision explanation"><div class="panel-head"><h2>Explain this decision</h2>${badge(pass ? "POLICY PASS · HUMAN GATES REQUIRED" : "BLOCKED · NO EXECUTABLE ACTION", pass ? "info" : "warning")}</div>
     <div class="decision-grid"><div><h3>AI PROPOSAL — UNTRUSTED</h3>${rows([
       ["Actual source", d.source],
+      ["Provider", d.provider ?? "Legacy evidence"],
+      ["Requested model", d.requested_model ?? "No model"],
+      ["Returned model", d.returned_model ?? "Not supplied"],
+      ["Finish reason", d.finish_reason ?? "Not supplied"],
+      [
+        "Refused / truncated",
+        `${d.refused ? "Yes" : "No"} / ${d.output_truncated ? "Yes" : "No"}`,
+      ],
       ["Schema verdict", d.schema_verdict],
       [
         "Model uncertainty",
@@ -377,8 +394,16 @@ function decisionEvidence() {
     <div class="step-actions"><a class="button secondary" href="/presentation/demo/export" download>Download synthetic evidence</a><small>Sanitized projection only. SHA-256 fingerprints support comparison; no signature or independent authenticity claim.</small></div></section>`;
 }
 function demoScreen() {
-  const live = demo?.planning_mode === "local_ai";
-  const inferred = demo?.analysis_source === "REAL_LOCAL_OLLAMA";
+  const cloud = demo?.planning_mode === "deepseek";
+  const live = cloud || demo?.planning_mode === "local_ai";
+  const inferred = ["REAL_LOCAL_OLLAMA", "REAL_DEEPSEEK_API"].includes(
+    demo?.analysis_source,
+  );
+  const providerLabel = cloud
+    ? "DeepSeek Flash — Live Cloud AI"
+    : "Local AI Demo — Live Ollama";
+  const sourceLabel = cloud ? "REAL DEEPSEEK API" : "REAL LOCAL OLLAMA";
+  const planReady = hasExecutablePlan(demo);
   const next = demoNext(demo),
     progress = workflowProgress(demo, busy);
   const state =
@@ -389,16 +414,22 @@ function demoScreen() {
         ? "Decision blocked"
         : "Sample ready");
   const gateLabel = {
-    generate: live ? "Generate Live Ollama Plan" : "Generate simulated Plan",
+    generate: cloud
+      ? "Generate Live DeepSeek Plan"
+      : live
+        ? "Generate Live Ollama Plan"
+        : "Generate simulated Plan",
     approve: "Approve Plan",
     admit: "Admit approved Action",
     authorize: "Authorize Action",
     execute: "Execute Simulation",
   };
   const instructions = {
-    generate: live
-      ? "Call phi4-mini:latest locally. Validate before creating a Plan. No payment dispatch."
-      : "The simulated recommendation is deterministic. No live AI or PayPal call.",
+    generate: cloud
+      ? "Send this server-owned synthetic case to DeepSeek Flash. Validate before creating a persistent Run. No payment dispatch."
+      : live
+        ? "Call phi4-mini:latest locally. Validate before creating a Plan. No payment dispatch."
+        : "The simulated recommendation is deterministic. No live AI or PayPal call.",
     approve: "Review the exact Plan. This gate cannot execute a refund.",
     admit: "Complete admission of the previously approved Plan.",
     authorize:
@@ -409,15 +440,15 @@ function demoScreen() {
   return (
     intro(
       "AI Decision Lab. Authority stays verified.",
-      "Choose an offline recommendation or a genuine local AI proposal. Payments stay synthetic.",
+      "Choose genuine DeepSeek cloud AI, local Ollama or an offline fixture. Payments stay synthetic.",
       badge("DEMO MODE — SIMULATED", "warning"),
     ) +
-    `<div class="demo-banner"><strong>DEMO MODE — SIMULATED PAYMENTS</strong><span>Synthetic USD 120.00 payment · Refund bounded by case and policy · No real PayPal requests · ${live ? "Local AI proposal / fake execution" : "Deterministic Demo / no AI call"}</span></div>
-  <div class="demo-controls"><div class="control-field"><label for="planning-mode">Proposal mode</label><select id="planning-mode" ${busy ? "disabled" : ""}><option value="deterministic" ${!live ? "selected" : ""}>Deterministic Demo — offline</option><option value="local_ai" ${live ? "selected" : ""}>Local AI Demo — Live Ollama</option></select></div><div class="control-field"><label for="scenario">Synthetic case</label><select id="scenario" ${busy ? "disabled" : ""}><optgroup label="AI Decision Lab — preserved decision evidence">${labCases.map(([id, label]) => `<option value="${id}" ${demo?.scenario === id ? "selected" : ""}>${e(label)}</option>`).join("")}</optgroup><optgroup label="Original demonstrations"><option value="completed" ${demo?.scenario === "completed" ? "selected" : ""}>Completed + verified</option><option value="unknown" ${demo?.scenario === "unknown" ? "selected" : ""}>Lost acknowledgment → Unknown</option><option value="rejected" ${demo?.scenario === "rejected" ? "selected" : ""}>Definitive rejection → Failed</option></optgroup></select></div>${button(demo ? "Start new simulation" : "Load sample incident", 'data-demo="load" ' + (busy ? "disabled" : ""), "secondary", "refresh")}${button("Refresh saved state", 'data-demo="refresh" ' + (busy ? "disabled" : ""), "ghost", "refresh")}</div><p class="mode-hint">Mode applies to a new simulation. ${live ? "Current case: Local AI Demo. Inference has a 45-second total limit; no automatic fallback." : "Deterministic Demo is the safe default; it does not call a model."} Choose cases A–E to inspect allowed, denied and uncertain decisions. <a href="#evidence">Inspect historical PayPal evidence</a>.</p>
+    `<div class="demo-banner"><strong>DEMO MODE — SIMULATED PAYMENTS</strong><span>Synthetic USD 120.00 payment · Refund bounded by case and policy · No real PayPal requests · ${cloud ? "Cloud AI proposal / fake execution" : live ? "Local AI proposal / fake execution" : "Deterministic Demo / no AI call"}</span></div>
+  <div class="demo-controls"><div class="control-field"><label for="planning-mode">Proposal mode</label><select id="planning-mode" ${busy ? "disabled" : ""}><option value="deepseek" ${cloud ? "selected" : ""}>DeepSeek Flash — Live Cloud AI (preferred live)</option><option value="local_ai" ${live && !cloud ? "selected" : ""}>Local AI Demo — Live Ollama</option><option value="deterministic" ${!live ? "selected" : ""}>Deterministic Demo — offline</option></select></div><div class="control-field"><label for="scenario">Synthetic case</label><select id="scenario" ${busy ? "disabled" : ""}><optgroup label="AI Decision Lab — preserved decision evidence">${labCases.map(([id, label]) => `<option value="${id}" ${demo?.scenario === id ? "selected" : ""}>${e(label)}</option>`).join("")}</optgroup><optgroup label="Original demonstrations"><option value="completed" ${demo?.scenario === "completed" ? "selected" : ""}>Completed + verified</option><option value="unknown" ${demo?.scenario === "unknown" ? "selected" : ""}>Lost acknowledgment → Unknown</option><option value="rejected" ${demo?.scenario === "rejected" ? "selected" : ""}>Definitive rejection → Failed</option></optgroup></select></div>${button(demo ? "Start new simulation" : "Load sample incident", 'data-demo="load" ' + (busy ? "disabled" : ""), "secondary", "refresh")}${button("Refresh saved state", 'data-demo="refresh" ' + (busy ? "disabled" : ""), "ghost", "refresh")}</div><p class="mode-hint">Mode applies to a new simulation. ${cloud ? "Current case: DeepSeek V4.1 Flash 1017 (official alias mapping). Cloud inference has a 30-second total limit. The returned model ID does not independently attest to an immutable build." : live ? "Current case: Local AI Demo. Inference has a 45-second total limit." : "Deterministic Demo starts offline; select DeepSeek for the preferred live demonstration."} There is no automatic fallback. Case E uses an explicitly selected deterministic fixture. <a href="#evidence">Inspect historical PayPal evidence</a>.</p>
   <div class="demo-stage"><div><h2>${demo ? e(state) : "Open a synthetic incident"}</h2><p>${demo ? "Fresh synthetic scope. Original financial Actions remain untouched." : "Load the sample to begin. Each decision is explicit."}</p></div>${demo ? badge(state, ["Unknown", "Failed"].includes(state) ? "warning" : state === "Succeeded" ? "success" : "info") : ""}</div>
   ${demo && next && !uncertain ? `<section class="demo-next-step" aria-label="Next simulation step"><div><strong>Your next decision</strong><p>${e(instructions[next])}</p></div>${button(gateLabel[next], `data-demo="${next}" ${busy ? "disabled" : ""}`, next === "execute" ? "amber" : "", next === "generate" ? "brain" : next === "execute" ? "play" : "lock")}</section>` : ""}
   ${demo ? flow(progress.complete, progress.stopped) : ""}
-  ${busy ? `<div class="processing" role="status"><span class="spinner"></span><div><strong>${busyOperation === "execute" ? "Executing synthetic refund through the public Runtime" : busyOperation === "generate" && live ? "Generating a genuine local Ollama proposal" : "Recording the simulation step"}</strong><p>${busyOperation === "generate" && live ? "phi4-mini:latest · synthetic incident only · bounded output · no gate is automatically approved" : "Durable claiming and verification use the pinned Runtime. This payment provider is entirely local."}</p></div></div>` : ""}
+  ${busy ? `<div class="processing" role="status"><span class="spinner"></span><div><strong>${busyOperation === "execute" ? "Executing synthetic refund through the public Runtime" : busyOperation === "generate" && live ? `Generating a genuine ${cloud ? "DeepSeek cloud" : "local Ollama"} proposal` : "Recording the simulation step"}</strong><p>${busyOperation === "generate" && live ? `${cloud ? "deepseek-flash" : "phi4-mini:latest"} · synthetic incident only · bounded output · no gate is automatically approved` : "Durable claiming and verification use the pinned Runtime. This payment provider is entirely local."}</p></div></div>` : ""}
   ${uncertain ? '<div class="callout warning"><strong>Response unavailable.</strong> No automatic resend. Refresh saved state to inspect the simulation before taking another step.</div>' : ""}
   <div class="demo-grid"><section class="panel"><div class="panel-head"><h2>Synthetic refund incident</h2><span class="tag">SAMPLE DATA</span></div><div class="sample-meta"><span>Original payment <strong>USD 120.00</strong></span><span>Requested <strong>${e(demo?.decision ? (demo.decision.facts.requested_amount ? `USD ${demo.decision.facts.requested_amount}` : "Amount unspecified") : demo?.scenario === "ambiguous" ? "Amount unspecified" : demo?.scenario === "excessive" ? "USD 150.00" : "USD 25.00")}</strong></span></div><div class="sample-bubble">${e(demo?.incident_description ?? "Synthetic customer: my item arrived damaged. Please refund USD 25.00.")}</div>${rows(
     [
@@ -428,19 +459,19 @@ function demoScreen() {
         "Recommendation",
         live
           ? inferred
-            ? "Genuine local Ollama inference"
-            : "Local AI selected · not yet generated"
+            ? `Genuine ${cloud ? "DeepSeek cloud" : "local Ollama"} inference`
+            : `${providerLabel} selected · not yet accepted`
           : "Simulated deterministic fixture",
       ],
     ],
   )}
-  ${demo?.recommendation ? `<div class="callout model-result" data-source="${e(demo.analysis_source)}">${badge(inferred ? "REAL LOCAL OLLAMA" : "DETERMINISTIC FIXTURE", inferred ? "success" : "info")}<h3>Recommendation: ${e(demo.recommendation.recommendation)} ${e(demo.recommendation.currency ?? "")} ${e(demo.recommendation.requested_amount ?? "Amount unspecified")}</h3><p>${e(demo.recommendation.explanation)}</p>${inferred ? `<p>Model: <strong>phi4-mini:latest</strong> · inference ${seconds(demo.model_seconds)} · ${demo.decision?.policy_verdict === "BLOCKED" ? "trusted boundary blocked execution" : "schema and trusted policy passed"}</p>` : ""}</div>` : ""}
+  ${demo?.recommendation ? `<div class="callout model-result" data-source="${e(demo.analysis_source)}">${badge(inferred ? sourceLabel : "DETERMINISTIC FIXTURE", inferred ? "success" : "info")}<h3>Recommendation: ${e(demo.recommendation.recommendation)} ${e(demo.recommendation.currency ?? "")} ${e(demo.recommendation.requested_amount ?? "Amount unspecified")}</h3><p>${e(demo.recommendation.explanation)}</p>${inferred ? `<p>Requested model: <strong>${e(demo.model)}</strong> · inference ${seconds(demo.model_seconds)} · ${demo.decision?.policy_verdict === "BLOCKED" ? "trusted boundary blocked execution" : "schema and trusted policy passed"}</p>` : ""}</div>` : ""}
   ${live ? `<div class="step-actions">${button("Switch to Deterministic Demo", 'data-demo="fallback" ' + (busy ? "disabled" : ""), "ghost", "refresh")}<small>Manual fallback creates a new synthetic case and retains this record.</small></div>` : ""}
   ${!demo ? `<div class="step-actions">${button("Load sample incident", 'data-demo="load" ' + (busy ? "disabled" : ""), "", "play")}</div>` : ""}
-  </section><section class="panel"><div class="panel-head"><h2>${demo?.plan ? "Exact synthetic Plan" : "Your Plan will appear here"}</h2>${demo?.plan ? badge("VALIDATED", "success") : icon("brain")}</div>
+  </section><section class="panel"><div class="panel-head"><h2>${planReady ? "Exact synthetic Plan" : "Your Plan will appear here"}</h2>${planReady ? badge("VALIDATED", "success") : icon("brain")}</div>
   ${
-    demo?.plan
-      ? `<div class="plan-box"><div class="code-head"><span>${inferred ? "REAL LOCAL AI" : "DETERMINISTIC FIXTURE"} / REAL VALIDATION</span><span>SIDE_EFFECT</span></div><pre>${e(JSON.stringify(demo.plan, null, 2))}</pre></div><div class="fingerprint">Exact Plan SHA-256<code>${e(demo.plan_sha256)}</code></div>${rows(
+    planReady
+      ? `<div class="plan-box"><div class="code-head"><span>${inferred ? sourceLabel : "DETERMINISTIC FIXTURE"} / REAL VALIDATION</span><span>SIDE_EFFECT</span></div><pre>${e(JSON.stringify(demo.plan, null, 2))}</pre></div><div class="fingerprint">Exact Plan SHA-256<code>${e(demo.plan_sha256)}</code></div>${rows(
           [
             ["Run", demo.run.id, true],
             ["Run state", `${demo.run.state} v${demo.run.version}`],
@@ -454,7 +485,7 @@ function demoScreen() {
             ["Synthetic dispatches", String(demo.simulated_dispatches)],
           ],
         )}`
-      : `<div class="empty-card"><span class="icon-box">${icon("layers")}</span><h3>${demo?.decision ? "No executable refund" : "Begin with a proposal"}</h3><p>${demo?.decision ? e(decisionReasons[demo.decision.reason] ?? "The observed response did not produce an executable Plan. Review the decision evidence below.") : live ? "Generate a genuine local Ollama recommendation for this synthetic incident. Payment execution remains simulated." : "Load the sample and generate a deterministic recommendation. No model is called; payment execution remains simulated."}</p><span class="tag">NO FINANCIAL AUTHORITY</span></div>`
+      : `<div class="empty-card"><span class="icon-box">${icon("layers")}</span><h3>${demo?.decision ? "No executable refund" : "Begin with a proposal"}</h3><p>${demo?.decision ? e(decisionReasons[demo.decision.reason] ?? "The observed response did not produce an executable Plan. Review the decision evidence below.") : live ? `Generate a genuine ${cloud ? "DeepSeek cloud" : "local Ollama"} recommendation for this synthetic incident. Payment execution remains simulated.` : "Load the sample and generate a deterministic recommendation. No model is called; payment execution remains simulated."}</p><span class="tag">NO FINANCIAL AUTHORITY</span></div>`
   }
   </section></div>${decisionEvidence()}
   ${demo?.action && ["Unknown", "Failed"].includes(demo.action.state) ? `<div class="callout warning"><strong>${e(demo.action.state)} — this Action is terminal.</strong> ${demo.action.state === "Unknown" ? "An effect may exist, but the Runtime outcome was not confirmed as successful. No successful receipt is claimed." : "A definitive failure was recorded. No completed effect is claimed."} No retry, reauthorization or automatic reconciliation is offered. A new simulation creates a different synthetic scope and retains this record.</div>` : ""}
@@ -673,7 +704,11 @@ async function runDemo(operation) {
       demo = await api(
         "demo/generate",
         { scenario: demo.scenario, planning_mode: demo.planning_mode },
-        demo.planning_mode === "local_ai" ? 50000 : 12000,
+        demo.planning_mode === "deepseek"
+          ? 35000
+          : demo.planning_mode === "local_ai"
+            ? 50000
+            : 12000,
       );
     else {
       const body = commandBody(demo, operation, crypto.randomUUID());

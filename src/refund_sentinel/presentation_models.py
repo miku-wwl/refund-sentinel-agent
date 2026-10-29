@@ -17,6 +17,8 @@ Scenario = Literal[
     "injection",
     "unknown_outcome",
 ]
+PlanningMode = Literal["deterministic", "local_ai", "deepseek"]
+ModelId = Literal["phi4-mini:latest", "deepseek-flash"]
 
 
 class PlanStep(StrictModel):
@@ -103,7 +105,7 @@ class HistoricalProof(StrictModel):
 
 class NewDemo(StrictModel):
     scenario: Scenario = "completed"
-    planning_mode: Literal["deterministic", "local_ai"] = "deterministic"
+    planning_mode: PlanningMode = "deterministic"
 
 
 class DemoCommand(StrictModel):
@@ -154,7 +156,15 @@ class DecisionFacts(StrictModel):
 
 class DecisionEvidence(StrictModel):
     evidence_kind: Literal["SYNTHETIC_DECISION_EVIDENCE"] = "SYNTHETIC_DECISION_EVIDENCE"
-    source: Literal["SIMULATED_DETERMINISTIC_FIXTURE", "REAL_LOCAL_OLLAMA", "NOT_GENERATED"]
+    source: Literal[
+        "SIMULATED_DETERMINISTIC_FIXTURE", "REAL_LOCAL_OLLAMA", "REAL_DEEPSEEK_API", "NOT_GENERATED"
+    ]
+    provider: Literal["deepseek", "ollama", "deterministic"] | None = None
+    requested_model: ModelId | None = None
+    returned_model: str | None = Field(default=None, max_length=128, pattern=r"^[A-Za-z0-9._:-]+$")
+    http_status: int | None = Field(default=None, ge=100, le=599)
+    finish_reason: str | None = Field(default=None, max_length=40)
+    refused: bool = False
     model_output: str | None = Field(default=None, max_length=16384)
     output_truncated: bool = False
     model_seconds: float | None = None
@@ -173,12 +183,15 @@ class DemoView(StrictModel):
     merchant_id: Literal["DEMO-MERCHANT"] = "DEMO-MERCHANT"
     original_amount: Literal["120.00"] = "120.00"
     amount: Literal["25.00"] = "25.00"
+    amount_semantics: Literal["SIMULATION_DEFAULT_ONLY"] = "SIMULATION_DEFAULT_ONLY"
+    requested_amount: Literal["25.00", "150.00"] | None = None
+    executable_amount: Literal["25.00"] | None = None
     currency: Literal["USD"] = "USD"
-    planning_mode: Literal["deterministic", "local_ai"] = "deterministic"
+    planning_mode: PlanningMode = "deterministic"
     analysis_source: Literal[
-        "SIMULATED_DETERMINISTIC_FIXTURE", "NOT_GENERATED", "REAL_LOCAL_OLLAMA"
+        "SIMULATED_DETERMINISTIC_FIXTURE", "NOT_GENERATED", "REAL_LOCAL_OLLAMA", "REAL_DEEPSEEK_API"
     ] = "SIMULATED_DETERMINISTIC_FIXTURE"
-    model: Literal["phi4-mini:latest"] | None = None
+    model: ModelId | None = None
     model_seconds: float | None = None
     incident_description: str
     recommendation: Recommendation | None = None

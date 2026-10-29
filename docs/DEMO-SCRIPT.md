@@ -3,8 +3,10 @@
 Run `python -m refund_sentinel.presentation --port 8880` and open
 `http://127.0.0.1:8880`. This presentation ignores `.env`; it needs no payment
 credentials. Record at 1920×1080. Keep the simulation banner visible, choose
-**Completed + verified**, and start a fresh case. Ollama must already serve
-`phi4-mini:latest` locally for the optional live proposal. Rehearse first: the
+**A · Valid partial refund**, and start a fresh case. Configure the server's
+DeepSeek API key through its explicit environment variable before startup; no key
+is entered in the browser. DeepSeek is the preferred live provider. Ollama
+`phi4-mini:latest` remains an optional local alternative. Rehearse first: the
 qualified inference times vary; allow for the genuine model's bounded wait and
 rehearse the complete sequence before recording.
 
@@ -16,13 +18,13 @@ rehearse the complete sequence before recording.
 human decisions and verifiable execution. An AI suggestion should never be enough
 to move money. The overview shows one completed historical PayPal Sandbox pilot.”
 
-Select **Local AI Demo — Live Ollama**, load the sample, then click
-**Generate Live Ollama Plan**. Keep the loading indicator visible.
+Select **DeepSeek Flash — Live Cloud AI (preferred live)**, load case A, then click
+**Generate Live DeepSeek Plan**. Keep the loading indicator visible.
 
-**0:20–0:55 — Genuine local inference and validation**
+**0:20–0:55 — Genuine cloud inference and local validation**
 
-“This incident and payment are synthetic. We are calling a real local phi4-mini
-model to interpret the damaged-item request for twenty-five US dollars. The model
+"This incident and payment are synthetic. We are calling the genuine DeepSeek
+cloud API to interpret the damaged-item request for twenty-five US dollars. The model
 only recommends. It cannot choose credentials, tools, scope or permission.
 
 Here is its recommendation and measured inference time. Strict schema and merchant
@@ -67,14 +69,24 @@ Viewing this archive performs no new PayPal verification. It proves one historic
 Sandbox sample, not production readiness or universal exactly-once delivery.
 AI proposes. Humans decide. Receipts prove.”
 
-Main narration: 252 words, about 108 seconds at 140 words per minute, plus model
-waiting and human gate/scrolling time. Timing marks are rehearsal targets; actual
+Timing marks are rehearsal targets and include model waiting plus human gate/scrolling time. Actual
 duration depends on inference and review. No completed recording duration is claimed.
+The displayed requested alias is `deepseek-flash`. Official documentation currently
+maps it to DeepSeek-V4.1-Flash-1017; returned metadata does not independently attest
+to an immutable build. Do not describe this live cloud inference as local execution.
+The historical Sandbox proposal retains its original local Ollama provenance.
+
+For an additional decision example, explicitly load B, C or D in cloud mode and
+show its actual output. Do not promise that injection makes the model fail. B and C
+are blocked by trusted request/policy checks; a compliant D proposal may reach
+AwaitingApproval, with no Action or dispatch. E must be explicitly loaded in
+deterministic mode to demonstrate FakePayPal's terminal Unknown, without another
+cloud inference or a real financial request.
 
 ## 60-second pitch
 
 “Refund Sentinel makes AI-assisted refunds understandable and controllable.
-A local model proposes a bounded partial refund. Trusted payment facts and policy
+A cloud or local model proposes a bounded partial refund. Trusted payment facts and policy
 validate it. A human approves the exact Plan, separately authorizes its admitted
 Action, then permits one execution.
 
@@ -83,7 +95,7 @@ and terminal-state protection. A genuine PayPal Sandbox pilot refunded five New
 Zealand dollars, independently verified COMPLETED, with one observed Refund POST
 and a durable receipt.
 
-The interactive UI can run genuine local Ollama inference, but its payment execution
+The interactive UI can run genuine DeepSeek cloud or optional local Ollama inference, but its payment execution
 is always simulated. A clearly labeled deterministic mode supports offline demos.
 The historical provider evidence stays read-only. Unknown means stop without an
 automatic retry.

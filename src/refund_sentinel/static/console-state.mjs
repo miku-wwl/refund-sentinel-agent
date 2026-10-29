@@ -17,6 +17,8 @@ export function demoNext(view) {
   if (view.action?.state === "Authorized") return "execute";
   return null;
 }
+export const hasExecutablePlan = (view) =>
+  Boolean(view?.run && view?.plan && view?.plan_sha256);
 export function commandBody(view, operation, key) {
   if (demoNext(view) !== operation)
     throw new Error("The simulation is not at this gate.");

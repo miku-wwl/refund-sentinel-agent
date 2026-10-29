@@ -1,4 +1,4 @@
-// Actual Chromium interactions. Live Ollama and deterministic scenarios are reported separately.
+// Actual Chromium interactions. Cloud/local inference and deterministic cases stay distinct.
 import assert from "node:assert/strict";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -8,6 +8,9 @@ const { chromium } = await import(
   process.env.PLAYWRIGHT_MODULE || "playwright"
 );
 const base = process.env.SENTINEL_PRESENTATION_URL || "http://127.0.0.1:8880";
+const liveMode = process.env.SENTINEL_LAB_PROVIDER || "local_ai";
+assert.ok(["local_ai", "deepseek"].includes(liveMode));
+const liveKey = liveMode === "deepseek" ? "live_deepseek" : "live_ollama";
 assert.equal(new URL(base).hostname, "127.0.0.1");
 // New recording/production evidence must live outside the source tree.
 assert.ok(
@@ -32,7 +35,7 @@ const report = {
   unexpected_errors: [],
   external_browser_requests: 0,
   genuine_paypal_requests: 0,
-  live_ollama: { status: "NOT RUN" },
+  [liveKey]: { status: "NOT RUN" },
 };
 await context.route("**/*", (route) => {
   const url = new URL(route.request().url());
@@ -107,6 +110,31 @@ async function load(caseId, mode) {
   });
   assert.equal(view.action, null);
   assert.equal(view.simulated_dispatches, 0);
+  assert.equal(view.requested_amount, view.decision.facts.requested_amount);
+  assert.equal(view.amount_semantics, "SIMULATION_DEFAULT_ONLY");
+  assert.equal(view.executable_amount, view.run ? "25.00" : null);
+  if (mode === "deepseek") {
+    assert.equal(view.analysis_source, "REAL_DEEPSEEK_API");
+    assert.equal(view.decision.provider, "deepseek");
+    assert.equal(view.decision.requested_model, "deepseek-flash");
+    assert.ok(view.decision.returned_model);
+    assert.equal(view.decision.finish_reason, "stop");
+    assert.equal(view.decision.refused, false);
+    assert.equal(view.decision.output_truncated, false);
+    assert.ok((await page.locator(".decision-output").innerText()).length > 0);
+    assert.match(
+      await page.locator(".mode-hint").innerText(),
+      /Cloud inference/,
+    );
+    const exported = await (
+      await page.request.get(base + "/presentation/demo/export")
+    ).json();
+    assert.deepEqual(exported, view);
+    writeFileSync(
+      resolve(output, `${caseId}-api-observation.json`),
+      JSON.stringify(exported, null, 2),
+    );
+  }
   return view;
 }
 async function gate(operation, screenshot) {
@@ -138,8 +166,8 @@ async function gate(operation, screenshot) {
 try {
   await page.goto(base + "/#demo");
   await page.locator("#scenario").waitFor();
-  let view = await load("valid_partial", "local_ai");
-  report.live_ollama = {
+  let view = await load("valid_partial", liveMode);
+  report[liveKey] = {
     status: view.plan ? "PASS" : "PARTIAL",
     model: view.model,
     seconds: view.model_seconds,
@@ -173,7 +201,7 @@ try {
   assert.equal((await saved()).simulated_dispatches, 1);
 
   for (const caseId of ["ambiguous", "excessive", "injection"]) {
-    view = await load(caseId, "local_ai");
+    view = await load(caseId, liveMode);
     if (caseId !== "injection") {
       assert.equal(view.decision.policy_verdict, "BLOCKED");
       assert.equal(view.plan, null);
@@ -221,6 +249,19 @@ try {
   await page.locator(".decision-evidence").waitFor();
   assert.equal((await saved()).action.state, "Unknown");
   assert.equal((await saved()).simulated_dispatches, 1);
+  const replay = await page.request.post(base + "/presentation/demo/command", {
+    headers: { "X-Sentinel-Demo": "simulation" },
+    data: {
+      operation: "execute",
+      confirmed: true,
+      expected_version: view.action.version,
+      plan_digest: view.plan_sha256,
+      idempotency_key: crypto.randomUUID(),
+    },
+  });
+  assert.equal(replay.status(), 409);
+  assert.equal((await saved()).simulated_dispatches, 1);
+  report.unknown_repeat_denied = true;
 
   const downloading = page.waitForEvent("download");
   await page.getByRole("link", { name: "Download synthetic evidence" }).click();
@@ -250,9 +291,31 @@ try {
     .waitFor();
   await capture("11-historical-paypal-evidence");
   await axe("historical-evidence");
+  // Explicitly mocked presentation consistency check; no model or Runtime operation.
+  const orphan = {
+    ...view,
+    run: null,
+    action: null,
+    receipt: null,
+    decision: null,
+  };
+  await page.route("**/presentation/demo", async (route) => {
+    if (route.request().method() === "GET")
+      return route.fulfill({ json: orphan });
+    return route.continue();
+  });
+  await page.goto(base + "/#demo");
+  await page.reload();
+  await page
+    .getByRole("heading", { name: "Your Plan will appear here" })
+    .waitFor();
+  assert.equal(await page.locator(".plan-box").count(), 0);
+  assert.equal(await page.locator('[data-demo="approve"]').count(), 0);
+  report.mocked_ui_no_run_no_ready_plan = "PASS";
+  await page.unroute("**/presentation/demo");
   assert.equal(report.external_browser_requests, 0);
   assert.equal(report.unexpected_errors.length, 0);
-  report.status = report.live_ollama.status === "PASS" ? "PASS" : "PARTIAL";
+  report.status = report[liveKey].status === "PASS" ? "PASS" : "PARTIAL";
 } catch (error) {
   report.status = "FAIL";
   report.failure = error.message;
@@ -269,7 +332,7 @@ try {
       scenarios: report.scenarios.length,
       gates: report.gates.length,
       screenshots: report.screenshots.length,
-      live_ollama: report.live_ollama,
+      [liveKey]: report[liveKey],
       axe_scans: report.accessibility.length,
       unexpected_errors: report.unexpected_errors,
       output,

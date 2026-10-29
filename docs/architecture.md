@@ -6,7 +6,7 @@ They share the installed public Runtime API, not financial state.
 ```mermaid
 flowchart TD
   UI[Five-screen presentation] --> ARCHIVE[Typed read-only PayPal archive]
-  UI --> AI[Local Ollama or labeled deterministic proposal]
+  UI --> AI[DeepSeek cloud, local Ollama or labeled deterministic proposal]
   AI --> POLICY[Strict schema + trusted merchant policy]
   POLICY --> PLAN[Persistent structured Plan]
   PLAN --> APPROVE[Exact human Approval]
@@ -49,6 +49,20 @@ Reset retains records and never copies grants. Restart uses the OS owner-fence
 probe and public Runtime lock; competing owners fail closed. Windows resume is
 qualified; cross-platform owner behavior is not.
 
+The preferred live provider uses only `https://api.deepseek.com/chat/completions`,
+requested model `deepseek-flash`, `stream: false`, `thinking: {type: disabled}`,
+JSON Output and 512 output tokens. A 30-second total inference deadline and 64 KiB
+response limit bound each attempt; the browser allows 35 seconds. Redirects,
+environment proxies and automatic retries are disabled. Explicit process environment
+credentials are used only in the fixed HTTPS Authorization header, never in Settings,
+financial executors, browser responses or evidence. No `.env` is read.
+The dedicated key has precedence over the generic key, including an empty dedicated
+value causing a clear configuration error. Cloud input is restricted to the existing
+server-owned synthetic cases A–D and three synthetic payment facts. Case E explicitly
+uses a deterministic fixture. JSON validity never replaces six-field schema validation
+or deterministic merchant policy. Requested/returned model IDs, duration, finish,
+refusal and truncation metadata are explanatory evidence, never grants.
+
 Local proposals use a fixed loopback endpoint/model, bounded output and a 45-second
 total planning limit. Invalid/unavailable output preserves safe state. Only an
 explicit fallback creates a deterministic case. Planning limits never increase
@@ -78,13 +92,13 @@ adapter-side durable receipt persistence are required before confirmed success.
 
 ## Budgets and outcomes
 
-| Property | Default / presentation | Reviewed historical Sandbox profile |
-| --- | --- | --- |
-| Adapter budget | 5 seconds | 15 seconds |
-| Binding revision | `refund-binding-v1` | `refund-binding-v2.exec-15s` |
-| HTTP read ceiling | 2 seconds | 4 seconds |
-| Connect/write/pool ceiling | 1.1 seconds | 1.1 seconds |
-| Extra pre-dispatch reserve | Existing deadline/cancel checks | 9 seconds remaining |
+| Property                   | Default / presentation          | Reviewed historical Sandbox profile |
+| -------------------------- | ------------------------------- | ----------------------------------- |
+| Adapter budget             | 5 seconds                       | 15 seconds                          |
+| Binding revision           | `refund-binding-v1`             | `refund-binding-v2.exec-15s`        |
+| HTTP read ceiling          | 2 seconds                       | 4 seconds                           |
+| Connect/write/pool ceiling | 1.1 seconds                     | 1.1 seconds                         |
+| Extra pre-dispatch reserve | Existing deadline/cancel checks | 9 seconds remaining                 |
 
 Trusted host code alone selects the profile. Extended identity uses public
 `execution_budget_binding`, a fresh base revision/scope and separate private
@@ -98,12 +112,12 @@ Caller deadlines only shorten it. Rechecks after persistence and immediately bef
 POST prevent new dispatch after observed expiry/cancellation. Blocking Python and
 already-dispatched remote effects cannot necessarily be preempted.
 
-| Evidence | Result |
-| --- | --- |
-| Refund GET verifies COMPLETED, exact IDs/capture/money and durable receipt binding | Succeeded |
-| Proven pre-dispatch no-effect rejection or supported definitive provider rejection | Failed |
-| Lost acknowledgment, ambiguous transport/verification, late outcome or uncertain persistence | Unknown; preserve evidence and stop |
-| Provider PENDING/FAILED/CANCELLED without supported no-effect proof | Unknown; provider status remains separately visible |
+| Evidence                                                                                     | Result                                              |
+| -------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Refund GET verifies COMPLETED, exact IDs/capture/money and durable receipt binding           | Succeeded                                           |
+| Proven pre-dispatch no-effect rejection or supported definitive provider rejection           | Failed                                              |
+| Lost acknowledgment, ambiguous transport/verification, late outcome or uncertain persistence | Unknown; preserve evidence and stop                 |
+| Provider PENDING/FAILED/CANCELLED without supported no-effect proof                          | Unknown; provider status remains separately visible |
 
 Unknown is terminal. No blind retry, new Action to replay an effect, automatic
 reconciliation or background financial execution is provided. A request ID does

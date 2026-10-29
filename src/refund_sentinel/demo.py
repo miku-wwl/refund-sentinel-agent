@@ -10,6 +10,7 @@ from uuid import UUID, uuid4
 from agentic_intent_gate.runtime import ExecutionSpec
 
 from .decision_lab import CASES, fixture, load_decision, save_decision, verify_case
+from .deepseek import DeepSeekProposal
 from .demo_ai import LocalProposal, PreparedAnalyst, demo_settings
 from .execution_guard import probe_owner_lock
 from .integration import composition, provision
@@ -36,14 +37,25 @@ def canonical_id(value):
 
 
 class DemoSession:
-    def __init__(self, directory, scenario, stack, *, delay, planning_mode, proposal_factory):
+    def __init__(
+        self,
+        directory,
+        scenario,
+        stack,
+        *,
+        delay,
+        planning_mode,
+        proposal_factory,
+        cloud_proposal_factory,
+    ):
         self.directory, self.scenario = directory, scenario
         self.planning_mode, self.proposal_factory = planning_mode, proposal_factory
+        self.cloud_proposal_factory = cloud_proposal_factory
         # Never from_env/load_env, never any genuine Sandbox identity or credential.
         self.settings = demo_settings(planning_mode)
         self.analyst = (
             PreparedAnalyst()
-            if planning_mode == "local_ai" or scenario in CASES
+            if planning_mode in {"local_ai", "deepseek"} or scenario in CASES
             else DeterministicAnalyst()
         )
         self.fake = FakePayPal(
@@ -89,8 +101,11 @@ class DemoSession:
             "execution_seconds": self.execution_seconds,
             "planning_mode": self.planning_mode,
             "analysis_source": "NOT_GENERATED"
-            if self.planning_mode == "local_ai"
+            if self.planning_mode in {"local_ai", "deepseek"}
             else "SIMULATED_DETERMINISTIC_FIXTURE",
+            "requested_amount": CASES[self.scenario].requested_amount
+            if self.scenario in CASES
+            else "25.00",
         }
         decision = load_decision(self.directory) if self.scenario in CASES else None
         if decision:
@@ -98,7 +113,8 @@ class DemoSession:
                 decision=decision,
                 recommendation=decision.recommendation,
                 analysis_source=decision.source,
-                model="phi4-mini:latest" if decision.source == "REAL_LOCAL_OLLAMA" else None,
+                model=decision.requested_model
+                or ("phi4-mini:latest" if decision.source == "REAL_LOCAL_OLLAMA" else None),
                 model_seconds=decision.model_seconds,
             )
         if incident:
@@ -114,6 +130,7 @@ class DemoSession:
                 )
             if run:
                 data.update(
+                    executable_amount="25.00",
                     plan=run.get("plan"),
                     plan_sha256=detail.get("plan_digest"),
                     run={"id": run["run_id"], "state": run["state"], "version": run["version"]},
@@ -194,15 +211,29 @@ class DemoSession:
             "source": "NOT_GENERATED",
             "reason": "ANALYSIS_INTERRUPTED",
             "facts": {"requested_amount": case.requested_amount},
+            "provider": {
+                "local_ai": "ollama",
+                "deepseek": "deepseek",
+                "deterministic": "deterministic",
+            }[self.planning_mode],
+            "requested_model": {"local_ai": "phi4-mini:latest", "deepseek": "deepseek-flash"}.get(
+                self.planning_mode
+            ),
         }
         save_decision(self.directory, evidence)
         local = None
         try:
             facts = await self.fake.capture("DEMO0000000000001")
-            if self.planning_mode == "local_ai":
-                local = self.proposal_factory()
+            if self.planning_mode in {"local_ai", "deepseek"}:
+                local = (
+                    self.cloud_proposal_factory()
+                    if self.planning_mode == "deepseek"
+                    else self.proposal_factory()
+                )
                 proposal = await local.analyze(case.message, facts.model_dump())
-                evidence["source"] = "REAL_LOCAL_OLLAMA"
+                evidence["source"] = (
+                    "REAL_DEEPSEEK_API" if self.planning_mode == "deepseek" else "REAL_LOCAL_OLLAMA"
+                )
             else:
                 proposal = fixture(self.scenario)
                 evidence.update(
@@ -230,9 +261,17 @@ class DemoSession:
                     model_output=local.model_output,
                     output_truncated=local.output_truncated,
                     model_seconds=local.seconds,
+                    returned_model=getattr(local, "returned_model", None),
+                    refused=getattr(local, "refused", False),
+                    finish_reason=getattr(local, "finish_reason", None),
+                    http_status=getattr(local, "http_status", None),
                 )
-                if local.model_output is not None:
-                    evidence["source"] = "REAL_LOCAL_OLLAMA"
+                if local.model_output is not None or getattr(local, "request_sent", False):
+                    evidence["source"] = (
+                        "REAL_DEEPSEEK_API"
+                        if self.planning_mode == "deepseek"
+                        else "REAL_LOCAL_OLLAMA"
+                    )
             save_decision(self.directory, evidence)
         return self.view()
 
@@ -299,7 +338,14 @@ class DemoSession:
 
 
 class DemoController:
-    def __init__(self, root, *, delay=0.8, proposal_factory=LocalProposal):
+    def __init__(
+        self,
+        root,
+        *,
+        delay=0.8,
+        proposal_factory=LocalProposal,
+        cloud_proposal_factory=DeepSeekProposal,
+    ):
         self.root = Path(root).absolute()
         if self.root.is_symlink():
             raise Problem("DEMO_ROOT_UNSAFE", 503)
@@ -312,12 +358,20 @@ class DemoController:
             marker.write_text(MARKER, "ascii")
         self.stack, self.sessions, self.delay = ExitStack(), {}, delay
         self.proposal_factory = proposal_factory
+        self.cloud_proposal_factory = cloud_proposal_factory
 
     def new(self, scenario, planning_mode="deterministic"):
         if scenario not in SCENARIOS:
             raise Problem("DEMO_SCENARIO_INVALID")
-        if planning_mode not in {"deterministic", "local_ai"}:
+        if planning_mode not in {"deterministic", "local_ai", "deepseek"}:
             raise Problem("DEMO_PLANNING_MODE_INVALID")
+        if planning_mode == "deepseek" and scenario not in {
+            "valid_partial",
+            "ambiguous",
+            "excessive",
+            "injection",
+        }:
+            raise Problem("DEEPSEEK_CASE_NOT_SUPPORTED", 422)
         if len(list(self.root.iterdir())) >= 65:
             raise Problem("DEMO_SESSION_LIMIT", 429)
         directory = self.root / str(uuid4())
@@ -344,7 +398,8 @@ class DemoController:
             set(metadata) not in ({"marker", "scenario"}, {"marker", "scenario", "planning_mode"})
             or metadata["marker"] != MARKER
             or metadata["scenario"] not in SCENARIOS
-            or metadata.get("planning_mode", "deterministic") not in {"deterministic", "local_ai"}
+            or metadata.get("planning_mode", "deterministic")
+            not in {"deterministic", "local_ai", "deepseek"}
         ):
             raise Problem("DEMO_SESSION_INVALID", 409)
         if session_id not in self.sessions:
@@ -355,6 +410,7 @@ class DemoController:
                 delay=self.delay,
                 planning_mode=metadata.get("planning_mode", "deterministic"),
                 proposal_factory=self.proposal_factory,
+                cloud_proposal_factory=self.cloud_proposal_factory,
             )
         return self.sessions[session_id]
 

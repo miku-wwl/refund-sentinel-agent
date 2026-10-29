@@ -14,7 +14,21 @@ uv sync --frozen --all-extras
 
 Open **http://127.0.0.1:8880**. No PayPal credentials, `.env`, buyer login or operator
 capability is needed. The default Deterministic Demo works offline after install.
-For optional genuine inference, provide local Ollama `phi4-mini:latest` at
+For the preferred live cloud demonstration, configure
+`REFUND_SENTINEL_DEEPSEEK_API_KEY` in the server process before startup. If absent,
+the server uses `DEEPSEEK_API_KEY`; an empty/invalid dedicated setting does not fall
+through. The presentation does not read this repository's or another project's
+`.env`. Select **DeepSeek Flash — Live Cloud AI**, case A–D, and explicitly load
+a new sample. The fixed destination is `https://api.deepseek.com/chat/completions`,
+with requested alias `deepseek-flash`, non-streaming JSON Output and thinking
+explicitly disabled. The official current mapping is DeepSeek-V4.1-Flash-1017;
+the response does not independently attest to a specific immutable model revision.
+Only existing synthetic customer text and synthetic amount/currency/status are sent.
+There is a 30-second total deadline, 512 output-token limit, 64 KiB response limit
+and no redirects, environment proxies or automatic retries. No model can approve,
+authorize or dispatch. Actual output, model IDs and duration remain visible.
+
+For optional genuine local inference, provide Ollama `phi4-mini:latest` at
 `http://127.0.0.1:11434`, then select Local AI Demo and load a new sample.
 This repository does not install Ollama or download models.
 
@@ -29,18 +43,20 @@ Manual fallback creates a new deterministic case; automatic fallback is absent.
 
 The fifth screen now defaults to case A in the **AI Decision Lab** selector:
 
-| Case | Trusted synthetic request | Boundary |
-| --- | --- | --- |
-| A — Valid partial refund | USD 25.00 from completed USD 120.00 | Strict output + payment policy, then three independent confirmations |
-| B — Ambiguous | Damaged item, no specified amount | No executable Run/Action, even if the model invents an amount |
-| C — Excessive | USD 150.00; policy maximum USD 100.00 | Deterministic rejection, even if a model substitutes a smaller amount |
-| D — Prompt injection | USD 25.00 plus malicious instructions | Model behavior varies; trusted identities/policy/gates remain mandatory |
-| E — Unknown | USD 25.00; fake provider loses acknowledgment | Terminal Unknown; no successful Receipt claim or second dispatch |
+| Case                     | Trusted synthetic request                     | Boundary                                                                |
+| ------------------------ | --------------------------------------------- | ----------------------------------------------------------------------- |
+| A — Valid partial refund | USD 25.00 from completed USD 120.00           | Strict output + payment policy, then three independent confirmations    |
+| B — Ambiguous            | Damaged item, no specified amount             | No executable Run/Action, even if the model invents an amount           |
+| C — Excessive            | USD 150.00; policy maximum USD 100.00         | Deterministic rejection, even if a model substitutes a smaller amount   |
+| D — Prompt injection     | USD 25.00 plus malicious instructions         | Model behavior varies; trusted identities/policy/gates remain mandatory |
+| E — Unknown              | USD 25.00; fake provider loses acknowledgment | Terminal Unknown; no successful Receipt claim or second dispatch        |
 
 All inputs and supported amounts are server-owned. Browser users select an
 allowlisted case and proposal mode, never a message, amount, provider endpoint,
 credential, merchant, binding, scope or execution budget. The original three
 demonstration profiles remain readable and retain their API behavior.
+Cloud mode is restricted to A–D. Select the deterministic provider explicitly for
+case E; choosing DeepSeek with E returns an error rather than changing provider.
 
 The explanation panel separates untrusted proposal, deterministic policy, human
 Authorization and simulated payment. It preserves actual bounded model-authored
@@ -57,16 +73,20 @@ continue through the unchanged Sentinel and installed Runtime. The download rout
 `GET /presentation/demo/export` exposes only the same closed synthetic projection,
 with no capability, raw database, private path, PII or genuine provider payload.
 Fingerprints are comparison aids; the export is not digitally signed evidence.
+The legacy top-level `amount` remains the USD 25.00 simulation default and is marked
+`amount_semantics: SIMULATION_DEFAULT_ONLY`. `requested_amount` states the case
+request (including null or USD 150.00), and `executable_amount` is null until a real
+persistent Run exists. A Plan-shaped projection without a Run is not displayed ready.
 
 ## Five screens and gates
 
-| Screen | Behavior |
-| --- | --- |
-| Overview | Product entry and archived qualified Sandbox result |
-| AI refund review | Preserved historical genuine recommendation, exact Plan and fingerprint |
-| Trust workflow | Approval, independent Authorization and one-time execution explanation |
-| Verified evidence | Historical HTTP results, provenance and durable Receipt |
-| Interactive demo | Deterministic or live local proposal; simulated provider execution only |
+| Screen            | Behavior                                                                           |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| Overview          | Product entry and archived qualified Sandbox result                                |
+| AI refund review  | Preserved historical genuine recommendation, exact Plan and fingerprint            |
+| Trust workflow    | Approval, independent Authorization and one-time execution explanation             |
+| Verified evidence | Historical HTTP results, provenance and durable Receipt                            |
+| Interactive demo  | DeepSeek cloud, local Ollama or offline fixture; simulated provider execution only |
 
 In the interactive screen, confirm **Approve Plan**, then **Authorize Action**,
 then **Execute Simulation** in three separate dialogs. The first two leave dispatch
@@ -143,6 +163,20 @@ historical financial state or overwrite final video files:
 $env:SENTINEL_QA_OUTPUT_DIR = 'D:\refund-sentinel-phase4-qa'
 node "$projectRoot/scripts/test_decision_lab_browser.mjs"
 ```
+
+The same full Lab suite qualifies DeepSeek separately, using four actual cloud
+requests (one per A–D), plus explicitly labeled offline injection/Unknown cases:
+
+```powershell
+$env:SENTINEL_LAB_PROVIDER = 'deepseek'
+$env:SENTINEL_QA_OUTPUT_DIR = 'D:\refund-sentinel-deepseek-qa'
+node "$projectRoot/scripts/test_decision_lab_browser.mjs"
+Remove-Item Env:\SENTINEL_LAB_PROVIDER
+```
+
+Keep cloud requests bounded and use a new output directory for each qualification.
+See [Phase 4.6 results](PHASE46-DEEPSEEK-INTEGRATION-REPORT.md) for measured behavior,
+provider distinctions and unresolved full-regression failures.
 
 All browser and mock-timing outputs default to ignored `.state-qa/`; the optional
 `SENTINEL_QA_OUTPUT_DIR` chooses a new local QA destination. `collect_evidence.py`

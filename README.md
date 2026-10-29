@@ -14,7 +14,7 @@ acknowledgment. Inspect the actual proposal, deterministic verdict, separate
 human gates and simulated outcome together. **AI can recommend a refund. Only
 verified authority can move money.**
 
-The working five-screen app combines genuine local Ollama inference, three separate
+The working five-screen app combines genuine DeepSeek cloud or local Ollama inference, three separate
 human gates and durable execution through an external pinned Runtime. Interactive
 payments are isolated simulations. A read-only archive records one genuine PayPal
 Sandbox refund: **NZD 5.00 from NZD 20.00**, independently verified **COMPLETED**,
@@ -36,21 +36,32 @@ Open **http://127.0.0.1:8880**. No PayPal credentials, login, capability upload 
 financial execution routes. On macOS/Linux use `.venv/bin/python`; Windows is the
 qualified demo platform.
 
-**Deterministic Demo** works offline after installation. For genuine AI, install
-Ollama separately, provide `phi4-mini:latest` at its default local endpoint, and
-select **Local AI Demo — Live Ollama**. This repository does not install Ollama or
-download a model. Unavailable/invalid model output is shown honestly; deterministic
-fallback requires an explicit choice.
+**DeepSeek Flash — Live Cloud AI** is the preferred live demonstration for cases
+A–D. Configure `REFUND_SENTINEL_DEEPSEEK_API_KEY` in the server environment before
+starting it. If that variable is absent, `DEEPSEEK_API_KEY` is used; a present but
+empty dedicated variable is a configuration error. No `.env` is loaded. Only
+server-owned synthetic requests and minimal synthetic payment facts leave the host.
+The endpoint and requested `deepseek-flash` alias are fixed. Official documentation
+currently maps it to DeepSeek-V4.1-Flash-1017; response metadata does not independently
+attest to an immutable build. See [DeepSeek qualification](docs/PHASE46-DEEPSEEK-INTEGRATION-REPORT.md).
+
+**Deterministic Demo** starts offline after installation. Explicitly choose it for
+case E's FakePayPal lost acknowledgment. For optional local AI, install Ollama
+separately, provide `phi4-mini:latest` at its default local endpoint, and select
+**Local AI Demo — Live Ollama**. This repository does not install Ollama or download
+a model. Unavailable/invalid output remains visible; changing provider or choosing
+a deterministic fixture requires an explicit new case. There is no automatic fallback.
 
 ## What is real?
 
-| Component | Boundary |
-| --- | --- |
-| Local AI proposal | Genuine `phi4-mini:latest` on a synthetic incident; strict schema and policy validation |
-| Deterministic proposal | Labeled offline fixture; no model call |
-| Interactive payment | FakePayPal only: trusted USD 120.00 payment; allowed refund USD 25.00; USD 150.00 requests denied; no PayPal request |
-| Execution control | Genuine installed Agentic Intent Gate v0.2.0: exact Approval, independent Authorization, durable claim and result |
-| Historical evidence | Genuine past Sandbox POST 201, independent GET 200 / COMPLETED and durable Receipt; viewing it performs no current verification |
+| Component              | Boundary                                                                                                                                 |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| Cloud AI proposal      | Genuine `deepseek-flash` HTTPS inference on fixed synthetic cases A–D; strict local schema and policy validation; no financial authority |
+| Local AI proposal      | Genuine `phi4-mini:latest` on a synthetic incident; strict schema and policy validation                                                  |
+| Deterministic proposal | Labeled offline fixture; no model call                                                                                                   |
+| Interactive payment    | FakePayPal only: trusted USD 120.00 payment; allowed refund USD 25.00; USD 150.00 requests denied; no PayPal request                     |
+| Execution control      | Genuine installed Agentic Intent Gate v0.2.0: exact Approval, independent Authorization, durable claim and result                        |
+| Historical evidence    | Genuine past Sandbox POST 201, independent GET 200 / COMPLETED and durable Receipt; viewing it performs no current verification          |
 
 PayPal is the backend integration, not a decorative label. The separate Sandbox
 adapter reads Payments v2 captures and Orders v2 facts, validates merchant, money
@@ -68,7 +79,7 @@ the [original sanitized proof](evidence/phase2-freeze/verified-refund.json) and
 5. **Interactive demo:** load a case, generate a Plan, then separately confirm
    **Approve Plan → Authorize Action → Execute Simulation**. Open its Receipt and reload.
 
-On screen five, choose **cases A–E**. The default is A. Local AI preserves its actual
+On screen five, choose **cases A–E**. The default is A. Each AI provider preserves its actual
 bounded output, including rejected recommendations; missing amounts and excessive
 requests produce evidence without an executable Run or Action. Prompt injection may
 be rejected or may yield a valid proposal; it never grants authority. The offline
@@ -87,17 +98,18 @@ creates a fresh scope.
 
 ## Documentation
 
-| Guide | Purpose |
-| --- | --- |
-| [UI setup and QA](docs/PHASE3-UI-DEMO.md) | Ollama, state, browser regressions, packaging and platform limits |
-| [Phase 4 acceptance](docs/PHASE4-AWARD-UPGRADE-REPORT.md) | Decision Lab scenarios, actual tests, browser/model evidence and judging risks |
-| [Demo script](docs/DEMO-SCRIPT.md) | English 2–3 minute walkthrough and 60-second pitch |
-| [Architecture](docs/architecture.md) | Runtime reuse, trusted policy, identities, budgets and outcomes |
-| [Sandbox developer guide](docs/sandbox-setup.md) | Separate 8879 workflow, configuration and financial authorization boundaries |
-| [Backend freeze](docs/PHASE2-BACKEND-FREEZE.md) | Immutable financial implementation and original Sandbox qualification |
-| [Competition requirements](docs/competition.md) | Official sources, contribution and remaining submission work |
-| [Curated evidence](evidence/submission/README.md) | Screenshots, qualification summary and historical archive |
-| [Final cleanup report](docs/SUBMISSION-CLEANUP-REPORT.md) | Five batches, actual release qualification, preserved state and remaining work |
+| Guide                                                               | Purpose                                                                           |
+| ------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [UI setup and QA](docs/PHASE3-UI-DEMO.md)                           | Ollama, state, browser regressions, packaging and platform limits                 |
+| [Phase 4 acceptance](docs/PHASE4-AWARD-UPGRADE-REPORT.md)           | Decision Lab scenarios, actual tests, browser/model evidence and judging risks    |
+| [DeepSeek integration](docs/PHASE46-DEEPSEEK-INTEGRATION-REPORT.md) | Cloud configuration, actual observations, request budget and qualification limits |
+| [Demo script](docs/DEMO-SCRIPT.md)                                  | English 2–3 minute walkthrough and 60-second pitch                                |
+| [Architecture](docs/architecture.md)                                | Runtime reuse, trusted policy, identities, budgets and outcomes                   |
+| [Sandbox developer guide](docs/sandbox-setup.md)                    | Separate 8879 workflow, configuration and financial authorization boundaries      |
+| [Backend freeze](docs/PHASE2-BACKEND-FREEZE.md)                     | Immutable financial implementation and original Sandbox qualification             |
+| [Competition requirements](docs/competition.md)                     | Official sources, contribution and remaining submission work                      |
+| [Curated evidence](evidence/submission/README.md)                   | Screenshots, qualification summary and historical archive                         |
+| [Final cleanup report](docs/SUBMISSION-CLEANUP-REPORT.md)           | Five batches, actual release qualification, preserved state and remaining work    |
 
 Earlier engineering reports remain in the
 [pre-cleanup checkpoint](https://github.com/miku-wwl/refund-sentinel-agent/tree/86a179fc6ca02568a849c51e765d6dca123dced7).
