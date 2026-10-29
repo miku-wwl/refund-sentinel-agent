@@ -9,6 +9,7 @@ export const escapeHTML = (value) =>
   );
 export function demoNext(view) {
   if (!view) return "load";
+  if (view.decision && !view.run) return null;
   if (!view.run) return "generate";
   if (view.run.state === "AwaitingApproval") return "approve";
   if (view.run.state === "Approved" && !view.action) return "admit";
@@ -43,8 +44,13 @@ export function workflowProgress(view, busy = false) {
   return {
     complete,
     terminal: ["Succeeded", "Failed", "Unknown"].includes(state),
-    stopped: ["Unknown", "Failed"].includes(state),
-    state: state ?? view?.run?.state ?? "Sample loaded",
+    stopped:
+      ["Unknown", "Failed"].includes(state) ||
+      view?.decision?.policy_verdict === "BLOCKED",
+    state:
+      state ??
+      view?.run?.state ??
+      (view?.decision ? "Decision blocked" : "Sample loaded"),
   };
 }
 export const money = (value, currency) =>

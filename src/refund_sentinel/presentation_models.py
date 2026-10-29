@@ -7,6 +7,16 @@ from pydantic import Field
 from .models import Recommendation, RefundInput, StrictModel
 
 Digest = Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+Scenario = Literal[
+    "completed",
+    "unknown",
+    "rejected",  # Existing saved demonstrations remain readable.
+    "valid_partial",
+    "ambiguous",
+    "excessive",
+    "injection",
+    "unknown_outcome",
+]
 
 
 class PlanStep(StrictModel):
@@ -92,7 +102,7 @@ class HistoricalProof(StrictModel):
 
 
 class NewDemo(StrictModel):
-    scenario: Literal["completed", "unknown", "rejected"] = "completed"
+    scenario: Scenario = "completed"
     planning_mode: Literal["deterministic", "local_ai"] = "deterministic"
 
 
@@ -133,10 +143,32 @@ class DemoReceipt(StrictModel):
     persisted: Literal[True]
 
 
+class DecisionFacts(StrictModel):
+    source: Literal["SYNTHETIC_SERVER_CASE"] = "SYNTHETIC_SERVER_CASE"
+    payment_status: Literal["COMPLETED"] = "COMPLETED"
+    payment_amount: Literal["120.00"] = "120.00"
+    currency: Literal["USD"] = "USD"
+    policy_maximum: Literal["100.00"] = "100.00"
+    requested_amount: Literal["25.00", "150.00"] | None = None
+
+
+class DecisionEvidence(StrictModel):
+    evidence_kind: Literal["SYNTHETIC_DECISION_EVIDENCE"] = "SYNTHETIC_DECISION_EVIDENCE"
+    source: Literal["SIMULATED_DETERMINISTIC_FIXTURE", "REAL_LOCAL_OLLAMA", "NOT_GENERATED"]
+    model_output: str | None = Field(default=None, max_length=16384)
+    output_truncated: bool = False
+    model_seconds: float | None = None
+    schema_verdict: Literal["NOT_EVALUATED", "PASS", "REJECTED"] = "NOT_EVALUATED"
+    policy_verdict: Literal["NOT_EVALUATED", "PASS", "BLOCKED"] = "NOT_EVALUATED"
+    reason: str = Field(max_length=80)
+    facts: DecisionFacts
+    recommendation: Recommendation | None = None
+
+
 class DemoView(StrictModel):
     mode: Literal["DEMO MODE — SIMULATED"] = "DEMO MODE — SIMULATED"
     session_id: str
-    scenario: Literal["completed", "unknown", "rejected"]
+    scenario: Scenario
     capture_id: Literal["DEMO0000000000001"] = "DEMO0000000000001"
     merchant_id: Literal["DEMO-MERCHANT"] = "DEMO-MERCHANT"
     original_amount: Literal["120.00"] = "120.00"
@@ -150,6 +182,7 @@ class DemoView(StrictModel):
     model_seconds: float | None = None
     incident_description: str
     recommendation: Recommendation | None = None
+    decision: DecisionEvidence | None = None
     plan: PresentedPlan | None = None
     plan_sha256: Digest | None = None
     run: DemoRun | None = None

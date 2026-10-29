@@ -9,6 +9,7 @@ from uuid import UUID, uuid4
 
 from agentic_intent_gate.runtime import ExecutionSpec
 
+from .decision_lab import CASES, fixture, load_decision, save_decision, verify_case
 from .demo_ai import LocalProposal, PreparedAnalyst, demo_settings
 from .execution_guard import probe_owner_lock
 from .integration import composition, provision
@@ -22,6 +23,7 @@ from .web import DecisionCommand, ExecutionCommand
 MARKER = "refund-sentinel-presentation-simulation-v1"
 SAMPLE = "Synthetic customer: my item arrived damaged. Please refund USD 25.00."
 SCENARIOS = {"completed": "COMPLETED", "unknown": "TIMEOUT_AFTER_EFFECT", "rejected": "REJECT"}
+SCENARIOS.update({name: case.behavior for name, case in CASES.items()})
 
 
 def canonical_id(value):
@@ -39,7 +41,11 @@ class DemoSession:
         self.planning_mode, self.proposal_factory = planning_mode, proposal_factory
         # Never from_env/load_env, never any genuine Sandbox identity or credential.
         self.settings = demo_settings(planning_mode)
-        self.analyst = PreparedAnalyst() if planning_mode == "local_ai" else DeterministicAnalyst()
+        self.analyst = (
+            PreparedAnalyst()
+            if planning_mode == "local_ai" or scenario in CASES
+            else DeterministicAnalyst()
+        )
         self.fake = FakePayPal(
             directory / "fake-paypal.sqlite3", behavior=SCENARIOS[scenario], delay=delay
         )
@@ -76,7 +82,9 @@ class DemoSession:
         data = {
             "session_id": self.directory.name,
             "scenario": self.scenario,
-            "incident_description": SAMPLE,
+            "incident_description": CASES[self.scenario].message
+            if self.scenario in CASES
+            else SAMPLE,
             "simulated_dispatches": len(self.fake.recorded_calls()),
             "execution_seconds": self.execution_seconds,
             "planning_mode": self.planning_mode,
@@ -84,6 +92,15 @@ class DemoSession:
             if self.planning_mode == "local_ai"
             else "SIMULATED_DETERMINISTIC_FIXTURE",
         }
+        decision = load_decision(self.directory) if self.scenario in CASES else None
+        if decision:
+            data.update(
+                decision=decision,
+                recommendation=decision.recommendation,
+                analysis_source=decision.source,
+                model="phi4-mini:latest" if decision.source == "REAL_LOCAL_OLLAMA" else None,
+                model_seconds=decision.model_seconds,
+            )
         if incident:
             detail = self.sentinel.view(incident["id"], self.principal)
             run = detail.get("run")
@@ -139,6 +156,8 @@ class DemoSession:
 
     async def generate(self):
         async with self.lock:
+            if self.scenario in CASES:
+                return await self.generate_lab()
             if self.incident():
                 raise Problem("DEMO_PLAN_ALREADY_EXISTS", 409)
             if self.planning_mode == "local_ai":
@@ -164,6 +183,58 @@ class DemoSession:
                 RequestInput(capture_id="DEMO0000000000001", message=SAMPLE)
             )
             return self.view()
+
+    async def generate_lab(self):
+        # Evidence is not a gate/grant ledger. Never retry an interrupted or blocked decision;
+        # a new synthetic case is required. All execution still uses Sentinel and public Runtime.
+        if self.incident() or load_decision(self.directory):
+            raise Problem("DEMO_DECISION_ALREADY_EXISTS", 409)
+        case = CASES[self.scenario]
+        evidence = {
+            "source": "NOT_GENERATED",
+            "reason": "ANALYSIS_INTERRUPTED",
+            "facts": {"requested_amount": case.requested_amount},
+        }
+        save_decision(self.directory, evidence)
+        local = None
+        try:
+            facts = await self.fake.capture("DEMO0000000000001")
+            if self.planning_mode == "local_ai":
+                local = self.proposal_factory()
+                proposal = await local.analyze(case.message, facts.model_dump())
+                evidence["source"] = "REAL_LOCAL_OLLAMA"
+            else:
+                proposal = fixture(self.scenario)
+                evidence.update(
+                    source="SIMULATED_DETERMINISTIC_FIXTURE",
+                    model_output=proposal.model_dump_json(),
+                )
+            evidence.update(schema_verdict="PASS", recommendation=proposal.model_dump())
+            verify_case(self.scenario, facts, proposal, self.settings)
+            evidence.update(policy_verdict="PASS", reason="REQUEST_SUPPORTED_POLICY_PASS")
+            self.analyst.value = proposal
+            if local:
+                (self.directory / "proposal.json").write_text(
+                    json.dumps({"seconds": local.seconds}), "utf-8"
+                )
+            await self.sentinel.analyze(
+                RequestInput(capture_id="DEMO0000000000001", message=case.message)
+            )
+        except Problem as exc:
+            evidence.update(policy_verdict="BLOCKED", reason=exc.code)
+            if exc.code == "INVALID_MODEL_RESPONSE":
+                evidence["schema_verdict"] = "REJECTED"
+        finally:
+            if local:
+                evidence.update(
+                    model_output=local.model_output,
+                    output_truncated=local.output_truncated,
+                    model_seconds=local.seconds,
+                )
+                if local.model_output is not None:
+                    evidence["source"] = "REAL_LOCAL_OLLAMA"
+            save_decision(self.directory, evidence)
+        return self.view()
 
     async def command(self, command):
         # Consumer serializes commands; CAS, grant/claim and effect protection remain in Runtime.

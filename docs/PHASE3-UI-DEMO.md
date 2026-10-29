@@ -25,6 +25,39 @@ total inference limit; the browser has a 50-second planning envelope. Invalid,
 uncertain, wrong-money, refused or unavailable output does not grant authority.
 Manual fallback creates a new deterministic case; automatic fallback is absent.
 
+## AI Decision Lab (Phase 4)
+
+The fifth screen now defaults to case A in the **AI Decision Lab** selector:
+
+| Case | Trusted synthetic request | Boundary |
+| --- | --- | --- |
+| A — Valid partial refund | USD 25.00 from completed USD 120.00 | Strict output + payment policy, then three independent confirmations |
+| B — Ambiguous | Damaged item, no specified amount | No executable Run/Action, even if the model invents an amount |
+| C — Excessive | USD 150.00; policy maximum USD 100.00 | Deterministic rejection, even if a model substitutes a smaller amount |
+| D — Prompt injection | USD 25.00 plus malicious instructions | Model behavior varies; trusted identities/policy/gates remain mandatory |
+| E — Unknown | USD 25.00; fake provider loses acknowledgment | Terminal Unknown; no successful Receipt claim or second dispatch |
+
+All inputs and supported amounts are server-owned. Browser users select an
+allowlisted case and proposal mode, never a message, amount, provider endpoint,
+credential, merchant, binding, scope or execution budget. The original three
+demonstration profiles remain readable and retain their API behavior.
+
+The explanation panel separates untrusted proposal, deterministic policy, human
+Authorization and simulated payment. It preserves actual bounded model-authored
+text, parsed recommendation/uncertainty, synthetic facts and reason codes. Invalid
+model responses, refusal, unavailability and timeout remain inspectable. Truncation
+is labeled; transport exception details and raw provider envelopes are not retained.
+The offline injection fixture explicitly follows the excessive injected amount to
+exercise the trusted rejection boundary; it is never labeled real inference.
+
+Decision evidence is an atomic explanatory file, not an alternative gate ledger.
+Interrupted analysis cannot be automatically regenerated after restart. A new
+case requires an explicit choice and retains earlier records. Allowed decisions
+continue through the unchanged Sentinel and installed Runtime. The download route
+`GET /presentation/demo/export` exposes only the same closed synthetic projection,
+with no capability, raw database, private path, PII or genuine provider payload.
+Fingerprints are comparison aids; the export is not digitally signed evidence.
+
 ## Five screens and gates
 
 | Screen | Behavior |
@@ -75,7 +108,7 @@ All HTTP payment tests use ASGI/FakePayPal/MockTransport and forbid real transpo
 
 ```powershell
 .venv\Scripts\python.exe -m pytest -q
-node --test tests/presentation-state.test.mjs
+node --test tests/presentation-state.test.mjs tests/decision-lab-state.test.mjs
 node scripts/verify_presentation.mjs
 .venv\Scripts\python.exe scripts/check_submission.py
 .venv\Scripts\ruff.exe check src tests scripts
@@ -100,6 +133,15 @@ $env:SENTINEL_QA_OUTPUT_DIR = Join-Path $qa 'results'
 node "$projectRoot/scripts/test_presentation_browser.mjs"
 node "$projectRoot/scripts/test_ui_acceptance_browser.mjs"
 node "$projectRoot/scripts/test_presentation_ai_browser.mjs"
+```
+
+For the additional Decision Lab browser suite, use an **external** output directory
+and a fresh isolated simulation root (the app factory accepts `root`). Do not reuse
+historical financial state or overwrite final video files:
+
+```powershell
+$env:SENTINEL_QA_OUTPUT_DIR = 'D:\refund-sentinel-phase4-qa'
+node "$projectRoot/scripts/test_decision_lab_browser.mjs"
 ```
 
 All browser and mock-timing outputs default to ignored `.state-qa/`; the optional

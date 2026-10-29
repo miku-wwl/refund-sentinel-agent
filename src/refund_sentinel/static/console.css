@@ -1658,6 +1658,37 @@ dialog p {
     font-size: 12px;
   }
 }
+.decision-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 32px;
+}
+.decision-grid > div {
+  min-width: 0;
+}
+.decision-grid h3 {
+  color: var(--cyan);
+  font-size: var(--label);
+  letter-spacing: 0.06em;
+  margin: 24px 0 14px;
+}
+.decision-output {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 360px;
+  overflow: auto;
+}
+.mode-hint a {
+  color: var(--cyan);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 900px) {
+  .decision-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

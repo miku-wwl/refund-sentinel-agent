@@ -157,6 +157,19 @@ def create_presentation_app(root=None, *, delay=0.8, proposal_factory=LocalPropo
     async def command(body: DemoCommand, request: Request):
         return await session(request).command(body)
 
+    @app.get("/presentation/demo/export", response_model=DemoView)
+    def export_decision(request: Request):
+        # Typed synthetic projection only; never databases, capabilities or archive payloads.
+        return JSONResponse(
+            session(request).view().model_dump(mode="json"),
+            headers={
+                "Content-Disposition": (
+                    'attachment; filename="refund-sentinel-synthetic-evidence.json"'
+                ),
+                "X-Evidence-Kind": "SYNTHETIC_SIMULATION_ONLY",
+            },
+        )
+
     return app
 
 

@@ -7,6 +7,13 @@ turns a damaged-item request into a bounded Plan, lets a human review each decis
 and presents the evidence behind the result. An AI recommendation should not, by
 itself, move money.
 
+For merchant support teams reviewing AI-suggested refunds, the **AI Decision Lab**
+shows the authority boundary in five synthetic cases: a valid partial refund,
+an unspecified amount, an excessive request, prompt injection and a lost
+acknowledgment. Inspect the actual proposal, deterministic verdict, separate
+human gates and simulated outcome together. **AI can recommend a refund. Only
+verified authority can move money.**
+
 The working five-screen app combines genuine local Ollama inference, three separate
 human gates and durable execution through an external pinned Runtime. Interactive
 payments are isolated simulations. A read-only archive records one genuine PayPal
@@ -41,7 +48,7 @@ fallback requires an explicit choice.
 | --- | --- |
 | Local AI proposal | Genuine `phi4-mini:latest` on a synthetic incident; strict schema and policy validation |
 | Deterministic proposal | Labeled offline fixture; no model call |
-| Interactive payment | FakePayPal only: synthetic USD 25.00 refund from USD 120.00; no PayPal request |
+| Interactive payment | FakePayPal only: trusted USD 120.00 payment; allowed refund USD 25.00; USD 150.00 requests denied; no PayPal request |
 | Execution control | Genuine installed Agentic Intent Gate v0.2.0: exact Approval, independent Authorization, durable claim and result |
 | Historical evidence | Genuine past Sandbox POST 201, independent GET 200 / COMPLETED and durable Receipt; viewing it performs no current verification |
 
@@ -61,6 +68,16 @@ the [original sanitized proof](evidence/phase2-freeze/verified-refund.json) and
 5. **Interactive demo:** load a case, generate a Plan, then separately confirm
    **Approve Plan → Authorize Action → Execute Simulation**. Open its Receipt and reload.
 
+On screen five, choose **cases A–E**. The default is A. Local AI preserves its actual
+bounded output, including rejected recommendations; missing amounts and excessive
+requests produce evidence without an executable Run or Action. Prompt injection may
+be rejected or may yield a valid proposal; it never grants authority. The offline
+injection fixture deliberately proposes the excessive amount to demonstrate policy
+denial. Model errors require an explicit fallback into a new case. Download a
+sanitized synthetic evidence projection; it contains no credentials or raw provider
+payloads and makes no signature/authenticity claim. Original demonstration profiles
+and saved sessions remain supported.
+
 Approval and Authorization each leave dispatch count at zero. Only the third
 confirmation executes the simulation. Unknown and Failed remain terminal, with
 no retry or automatic reconciliation. Reset retains earlier synthetic cases and
@@ -73,6 +90,7 @@ creates a fresh scope.
 | Guide | Purpose |
 | --- | --- |
 | [UI setup and QA](docs/PHASE3-UI-DEMO.md) | Ollama, state, browser regressions, packaging and platform limits |
+| [Phase 4 acceptance](docs/PHASE4-AWARD-UPGRADE-REPORT.md) | Decision Lab scenarios, actual tests, browser/model evidence and judging risks |
 | [Demo script](docs/DEMO-SCRIPT.md) | English 2–3 minute walkthrough and 60-second pitch |
 | [Architecture](docs/architecture.md) | Runtime reuse, trusted policy, identities, budgets and outcomes |
 | [Sandbox developer guide](docs/sandbox-setup.md) | Separate 8879 workflow, configuration and financial authorization boundaries |

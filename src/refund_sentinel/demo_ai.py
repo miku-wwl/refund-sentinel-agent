@@ -31,6 +31,8 @@ class BoundedOllamaTransport(httpx.AsyncBaseTransport):
 
     def __init__(self, inner=None):
         self.inner = inner or httpx.AsyncHTTPTransport(retries=0)
+        self.model_output = None
+        self.output_truncated = False
 
     async def handle_async_request(self, request):
         if request.method != "POST" or str(request.url) != OLLAMA_URL + "/chat/completions":
@@ -52,6 +54,17 @@ class BoundedOllamaTransport(httpx.AsyncBaseTransport):
                     raise Problem("LOCAL_AI_OUTPUT_TOO_LARGE", 502)
         finally:
             await response.aclose()
+        # Preserve only bounded model-authored text from this synthetic request, never headers,
+        # transport errors or a raw provider envelope. The original strict parser still decides.
+        if response.status_code == 200:
+            try:
+                message = json.loads(content)["choices"][0]["message"]
+                output = message.get("content") or message.get("refusal")
+                if isinstance(output, str):
+                    self.model_output = output[:16384]
+                    self.output_truncated = len(output) > 16384
+            except (ValueError, KeyError, IndexError, TypeError, AttributeError):
+                pass
         return httpx.Response(response.status_code, content=bytes(content))
 
     async def aclose(self):
@@ -62,11 +75,12 @@ class LocalProposal:
     def __init__(self, *, transport=None, timeout=PROPOSAL_SECONDS):
         self.transport, self.timeout = transport, timeout
         self.seconds = None
+        self.model_output = None
+        self.output_truncated = False
 
     async def analyze(self, message, facts):
-        analyst = ChatCompletionsAnalyst(
-            demo_settings("local_ai"), transport=BoundedOllamaTransport(self.transport)
-        )
+        transport = BoundedOllamaTransport(self.transport)
+        analyst = ChatCompletionsAnalyst(demo_settings("local_ai"), transport=transport)
         started = time.perf_counter()
         try:
             async with asyncio.timeout(self.timeout):
@@ -75,6 +89,8 @@ class LocalProposal:
             raise Problem("LOCAL_AI_REQUEST_EXPIRED", 504) from None
         finally:
             self.seconds = round(time.perf_counter() - started, 6)
+            self.model_output = transport.model_output
+            self.output_truncated = transport.output_truncated
             await analyst.close()
 
 
