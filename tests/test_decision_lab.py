@@ -16,6 +16,7 @@ from refund_sentinel import integration
 from refund_sentinel.decision_lab import CASES
 from refund_sentinel.demo import DemoController
 from refund_sentinel.demo_ai import LocalProposal
+from refund_sentinel.models import Problem
 from refund_sentinel.presentation import COOKIE, create_presentation_app
 
 
@@ -362,3 +363,169 @@ def test_interrupted_model_analysis_is_not_retried_after_restart(tmp_path):
             restored.close()
 
     asyncio.run(run())
+
+
+@pytest.mark.parametrize("fault", ["missing_run", "controlled", "unexpected", "fingerprint"])
+def test_runtime_failure_never_exposes_policy_pass_or_authority(lab, monkeypatch, fault):
+    client, app = lab
+    body = {"scenario": "valid_partial"}
+    view = client.post("/presentation/demo", json=body).json()
+    session = app.state.demo.get(view["session_id"])
+    original = session.sentinel.analyze
+
+    async def broken(request):
+        if fault == "controlled":
+            raise Problem("CONTROLLED_RUNTIME_FAILURE", 409)
+        if fault == "unexpected":
+            raise RuntimeError("PRIVATE_RUNTIME_DETAIL")
+        if fault == "missing_run":
+            return {}
+        detail = await original(request)
+        detail["plan_digest"] = "0" * 64
+        return detail
+
+    monkeypatch.setattr(session.sentinel, "analyze", broken)
+    response = client.post("/presentation/demo/generate", json=body)
+    assert response.status_code == 200
+    view = response.json()
+    assert view["decision"]["schema_verdict"] == "PASS"
+    assert view["decision"]["policy_eligibility"] == "ELIGIBLE"
+    assert view["decision"]["policy_verdict"] == "NOT_EVALUATED"
+    assert view["decision"]["workflow_status"] == "FAILED"
+    assert "PRIVATE_RUNTIME_DETAIL" not in response.text
+    assert view["run"] is None and view["plan"] is None and view["plan_sha256"] is None
+    assert view["action"] is None and view["receipt"] is None
+    assert view["executable_amount"] is None and view["simulated_dispatches"] == 0
+    with closing(sqlite3.connect(session.directory / "gate.sqlite3")) as db:
+        assert db.execute("SELECT COUNT(*) FROM actions").fetchone()[0] == 0
+        assert db.execute("SELECT COUNT(*) FROM runs").fetchone()[0] == (
+            1 if fault == "fingerprint" else 0
+        )
+    for operation in ("approve", "admit", "authorize", "execute"):
+        assert (
+            client.post("/presentation/demo/command", json=command(view, operation)).status_code
+            == 409
+        )
+    assert client.post("/presentation/demo/generate", json=body).status_code == 409
+    assert session.fake.recorded_calls() == []
+
+
+@pytest.mark.parametrize("error", [Problem("RUNTIME_CREATE_FAILED", 409), RuntimeError("private")])
+def test_runtime_creation_fault_retains_reserved_incident_without_executable_plan(
+    lab, monkeypatch, error
+):
+    client, app = lab
+    body = {"scenario": "valid_partial"}
+    view = client.post("/presentation/demo", json=body).json()
+    session = app.state.demo.get(view["session_id"])
+
+    async def fail_create(*args, **kwargs):
+        raise error
+
+    # Fault injection at the public API boundary only; installed Runtime is unchanged.
+    monkeypatch.setattr(session.runtime.run_service, "create", fail_create)
+    view = client.post("/presentation/demo/generate", json=body).json()
+    assert len(session.store.list()) == 1
+    assert view["decision"]["workflow_status"] == "FAILED"
+    assert view["decision"]["policy_verdict"] != "PASS"
+    assert view["run"] is None and view["plan"] is None and view["action"] is None
+    assert session.fake.recorded_calls() == []
+    with closing(sqlite3.connect(session.directory / "gate.sqlite3")) as db:
+        assert db.execute("SELECT COUNT(*) FROM runs").fetchone()[0] == 0
+        assert db.execute("SELECT COUNT(*) FROM actions").fetchone()[0] == 0
+
+
+@pytest.mark.parametrize("fault", ["missing", "fingerprint"])
+def test_ready_projection_rechecks_persistent_run_without_rewriting_evidence(
+    lab, monkeypatch, fault
+):
+    client, _ = lab
+    view, session, _ = generate(lab, "valid_partial")
+    assert view["decision"]["workflow_status"] == "READY"
+    assert view["decision"]["run_id"] == view["run"]["id"]
+    assert view["decision"]["plan_sha256"] == view["plan_sha256"]
+    path = session.directory / "decision.json"
+    if fault == "missing":
+        monkeypatch.setattr(session.runtime.run_service, "get", lambda *a: None)
+    else:
+        evidence = json.loads(path.read_text("utf-8"))
+        evidence["plan_sha256"] = "0" * 64
+        path.write_text(json.dumps(evidence), "utf-8")
+    before = path.read_bytes()
+    current = client.get("/presentation/demo").json()
+    assert current["decision"]["workflow_status"] == "FAILED"
+    assert current["decision"]["policy_verdict"] != "PASS"
+    assert current["run"] is None and current["plan"] is None and current["action"] is None
+    assert path.read_bytes() == before
+    assert (
+        client.post("/presentation/demo/command", json=command(current, "approve")).status_code
+        == 409
+    )
+    assert session.fake.recorded_calls() == []
+
+
+def test_interruption_after_persisted_run_stays_non_executable_after_restart(tmp_path):
+    async def run():
+        root = tmp_path / "interrupted-lab"
+        controller = DemoController(root, delay=0)
+        session = controller.new("valid_partial")
+        original = session.sentinel.analyze
+        started = asyncio.Event()
+
+        async def interrupted(request):
+            detail = await original(request)
+            assert detail["run"]["state"] == "AwaitingApproval"
+            started.set()
+            await asyncio.Event().wait()
+
+        session.sentinel.analyze = interrupted
+        task = asyncio.create_task(session.generate())
+        await asyncio.wait_for(started.wait(), timeout=5)
+        task.cancel()
+        with pytest.raises(asyncio.CancelledError):
+            await task
+        before = session.view().model_dump()
+        assert before["decision"]["workflow_status"] == "INTERRUPTED"
+        assert before["decision"]["policy_verdict"] != "PASS"
+        assert before["run"] is None and before["action"] is None
+        with closing(sqlite3.connect(session.directory / "gate.sqlite3")) as db:
+            assert db.execute("SELECT COUNT(*) FROM runs").fetchone()[0] == 1
+            assert db.execute("SELECT COUNT(*) FROM actions").fetchone()[0] == 0
+        controller.close()
+        with TestClient(create_presentation_app(root), base_url="http://127.0.0.1") as client:
+            client.cookies.set(COOKIE, session.directory.name)
+            client.headers["X-Sentinel-Demo"] = "simulation"
+            current = client.get("/presentation/demo").json()
+            assert current["decision"] == before["decision"]
+            for operation in ("approve", "admit", "authorize", "execute"):
+                assert (
+                    client.post(
+                        "/presentation/demo/command", json=command(current, operation)
+                    ).status_code
+                    == 409
+                )
+            assert (
+                client.post(
+                    "/presentation/demo/generate", json={"scenario": "valid_partial"}
+                ).status_code
+                == 409
+            )
+            assert client.get("/presentation/demo").json()["simulated_dispatches"] == 0
+
+    asyncio.run(run())
+
+
+def test_legacy_evidence_is_not_reinterpreted_or_rewritten(lab):
+    client, _ = lab
+    view, session, _ = generate(lab, "valid_partial")
+    path = session.directory / "decision.json"
+    legacy = json.loads(path.read_text("utf-8"))
+    for key in ("workflow_status", "policy_eligibility", "run_id", "plan_sha256"):
+        legacy.pop(key)
+    path.write_text(json.dumps(legacy), "utf-8")
+    before = path.read_bytes()
+    current = client.get("/presentation/demo").json()
+    assert current["decision"]["workflow_status"] is None
+    assert current["decision"]["policy_verdict"] == "PASS"
+    assert current["run"] == view["run"] and current["plan_sha256"] == view["plan_sha256"]
+    assert path.read_bytes() == before

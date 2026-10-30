@@ -9,6 +9,11 @@ export const escapeHTML = (value) =>
   );
 export function demoNext(view) {
   if (!view) return "load";
+  if (
+    view.decision?.workflow_status &&
+    view.decision.workflow_status !== "READY"
+  )
+    return null;
   if (view.decision && !view.run) return null;
   if (!view.run) return "generate";
   if (view.run.state === "AwaitingApproval") return "approve";
@@ -18,7 +23,13 @@ export function demoNext(view) {
   return null;
 }
 export const hasExecutablePlan = (view) =>
-  Boolean(view?.run && view?.plan && view?.plan_sha256);
+  Boolean(
+    view?.run &&
+    view?.plan &&
+    view?.plan_sha256 &&
+    (!view?.decision?.workflow_status ||
+      view.decision.workflow_status === "READY"),
+  );
 export function commandBody(view, operation, key) {
   if (demoNext(view) !== operation)
     throw new Error("The simulation is not at this gate.");
@@ -34,6 +45,13 @@ export function commandBody(view, operation, key) {
   };
 }
 export function workflowProgress(view, busy = false) {
+  const failure = {
+    FAILED: "Generation failed",
+    INTERRUPTED: "Generation interrupted",
+    BLOCKED: "Decision blocked",
+  }[view?.decision?.workflow_status];
+  if (failure)
+    return { complete: 0, terminal: false, stopped: true, state: failure };
   const state = view?.action?.state;
   let complete = 0;
   if (view?.run) complete = 2;

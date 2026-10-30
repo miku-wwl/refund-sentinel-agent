@@ -18,7 +18,7 @@ from .llm import DeterministicAnalyst
 from .models import Problem, RequestInput, validate_policy
 from .paypal import FakePayPal
 from .presentation_models import DemoView
-from .service import Sentinel
+from .service import Sentinel, plan_digest
 from .web import DecisionCommand, ExecutionCommand
 
 MARKER = "refund-sentinel-presentation-simulation-v1"
@@ -117,6 +117,26 @@ class DemoSession:
                 or ("phi4-mini:latest" if decision.source == "REAL_LOCAL_OLLAMA" else None),
                 model_seconds=decision.model_seconds,
             )
+        if decision and decision.workflow_status is not None:
+            if decision.workflow_status != "READY":
+                return DemoView.model_validate(data)
+            try:
+                if not incident:
+                    raise Problem("DEMO_RUN_NOT_PERSISTED", 409)
+                detail = self.sentinel.view(incident["id"], self.principal)
+                run_id, digest = self.verified_lab_plan(detail)
+                if run_id != decision.run_id or digest != decision.plan_sha256:
+                    raise Problem("DEMO_PLAN_FINGERPRINT_MISMATCH", 409)
+            except Exception:
+                # Fail closed in the projection without rewriting stored/historical evidence.
+                data["decision"] = decision.model_copy(
+                    update={
+                        "workflow_status": "FAILED",
+                        "policy_verdict": "NOT_EVALUATED",
+                        "reason": "DEMO_PERSISTENT_PLAN_UNVERIFIABLE",
+                    }
+                )
+                return DemoView.model_validate(data)
         if incident:
             detail = self.sentinel.view(incident["id"], self.principal)
             run = detail.get("run")
@@ -201,6 +221,24 @@ class DemoSession:
             )
             return self.view()
 
+    def verified_lab_plan(self, detail):
+        """Read the public durable Run and compare it with the analysis result."""
+        incident = self.incident()
+        if not incident or not incident.get("run_id") or not detail.get("run"):
+            raise Problem("DEMO_RUN_NOT_PERSISTED", 409)
+        run = self.runtime.run_service.get(incident["run_id"])
+        if not run or not run.plan:
+            raise Problem("DEMO_RUN_NOT_PERSISTED", 409)
+        digest = plan_digest(run.plan.to_dict())
+        if (
+            incident.get("analysis_state") != "READY"
+            or detail["run"].get("run_id") != run.run_id
+            or detail["run"].get("plan") != run.plan.to_dict()
+            or detail.get("plan_digest") != digest
+        ):
+            raise Problem("DEMO_PLAN_FINGERPRINT_MISMATCH", 409)
+        return run.run_id, digest
+
     async def generate_lab(self):
         # Evidence is not a gate/grant ledger. Never retry an interrupted or blocked decision;
         # a new synthetic case is required. All execution still uses Sentinel and public Runtime.
@@ -210,6 +248,8 @@ class DemoSession:
         evidence = {
             "source": "NOT_GENERATED",
             "reason": "ANALYSIS_INTERRUPTED",
+            "workflow_status": "INTERRUPTED",
+            "policy_eligibility": "NOT_EVALUATED",
             "facts": {"requested_amount": case.requested_amount},
             "provider": {
                 "local_ai": "ollama",
@@ -242,19 +282,53 @@ class DemoSession:
                 )
             evidence.update(schema_verdict="PASS", recommendation=proposal.model_dump())
             verify_case(self.scenario, facts, proposal, self.settings)
-            evidence.update(policy_verdict="PASS", reason="REQUEST_SUPPORTED_POLICY_PASS")
+            evidence["policy_eligibility"] = "ELIGIBLE"
             self.analyst.value = proposal
             if local:
                 (self.directory / "proposal.json").write_text(
                     json.dumps({"seconds": local.seconds}), "utf-8"
                 )
-            await self.sentinel.analyze(
+            detail = await self.sentinel.analyze(
                 RequestInput(capture_id="DEMO0000000000001", message=case.message)
             )
+            run_id, digest = self.verified_lab_plan(detail)
+            if detail["run"]["state"] != "AwaitingApproval" or detail.get("action"):
+                raise Problem("DEMO_INITIAL_RUN_INVALID", 409)
+            evidence.update(
+                policy_verdict="PASS",
+                workflow_status="READY",
+                run_id=run_id,
+                plan_sha256=digest,
+                reason="REQUEST_SUPPORTED_POLICY_PASS",
+            )
         except Problem as exc:
-            evidence.update(policy_verdict="BLOCKED", reason=exc.code)
+            runtime_failure = evidence["policy_eligibility"] == "ELIGIBLE"
+            evidence.update(
+                policy_verdict="NOT_EVALUATED" if runtime_failure else "BLOCKED",
+                workflow_status="FAILED" if runtime_failure else "BLOCKED",
+                reason=exc.code,
+            )
+            if not runtime_failure:
+                evidence["policy_eligibility"] = "BLOCKED"
             if exc.code == "INVALID_MODEL_RESPONSE":
                 evidence["schema_verdict"] = "REJECTED"
+        except asyncio.CancelledError:
+            evidence.update(
+                policy_verdict="NOT_EVALUATED",
+                workflow_status="INTERRUPTED",
+                reason="ANALYSIS_INTERRUPTED",
+            )
+            raise
+        except Exception:
+            # Exception text can contain private transport/state details. Preserve a bounded
+            # failure code and never expose a policy PASS without a verified persistent Plan.
+            evidence.update(
+                policy_verdict="NOT_EVALUATED",
+                workflow_status="FAILED",
+                reason="DEMO_RUNTIME_PROCESSING_FAILED"
+                if evidence["policy_eligibility"] == "ELIGIBLE"
+                else "DEMO_ANALYSIS_FAILED",
+            )
         finally:
             if local:
                 evidence.update(
@@ -278,11 +352,13 @@ class DemoSession:
     async def command(self, command):
         # Consumer serializes commands; CAS, grant/claim and effect protection remain in Runtime.
         async with self.lock:
+            view = self.view()
+            if view.decision and view.decision.workflow_status not in (None, "READY"):
+                raise Problem("DEMO_DECISION_NOT_READY", 409)
             incident = self.incident()
             if not incident:
                 raise Problem("DEMO_PLAN_REQUIRED", 409)
             self.sentinel.confirm_plan(incident["id"], command.plan_digest)
-            view = self.view()
             operation = command.operation
             if operation == "approve":
                 if view.run.state != "AwaitingApproval" or view.action:

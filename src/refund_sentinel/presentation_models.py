@@ -170,6 +170,11 @@ class DecisionEvidence(StrictModel):
     model_seconds: float | None = None
     schema_verdict: Literal["NOT_EVALUATED", "PASS", "REJECTED"] = "NOT_EVALUATED"
     policy_verdict: Literal["NOT_EVALUATED", "PASS", "BLOCKED"] = "NOT_EVALUATED"
+    # None identifies legacy evidence; never infer or rewrite its historical readiness.
+    policy_eligibility: Literal["NOT_EVALUATED", "ELIGIBLE", "BLOCKED"] | None = None
+    workflow_status: Literal["INTERRUPTED", "READY", "BLOCKED", "FAILED"] | None = None
+    run_id: str | None = None
+    plan_sha256: Digest | None = None
     reason: str = Field(max_length=80)
     facts: DecisionFacts
     recommendation: Recommendation | None = None

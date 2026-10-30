@@ -4,6 +4,7 @@ import {
   demoNext,
   commandBody,
   workflowProgress,
+  hasExecutablePlan,
 } from "../src/refund_sentinel/static/console-state.mjs";
 
 for (const verdict of ["BLOCKED", "NOT_EVALUATED"]) {
@@ -28,6 +29,25 @@ test("decision evidence grants no authority to an admitted Action", () => {
   assert.equal(demoNext(view), "authorize");
   assert.throws(() => commandBody(view, "execute", "key"));
 });
+
+for (const status of ["FAILED", "INTERRUPTED", "BLOCKED"]) {
+  test(`${status} cannot expose controls even with a stale Run projection`, () => {
+    const view = {
+      decision: { workflow_status: status, policy_verdict: "PASS" },
+      run: { state: "AwaitingApproval" },
+      plan: { goal: "stale proposal" },
+      plan_sha256: "a".repeat(64),
+    };
+    assert.equal(demoNext(view), null);
+    assert.equal(hasExecutablePlan(view), false);
+    assert.equal(workflowProgress(view).stopped, true);
+    assert.equal(workflowProgress(view).complete, 0);
+    assert.notEqual(workflowProgress(view).state, "AwaitingApproval");
+    for (const op of ["approve", "admit", "authorize", "execute"]) {
+      assert.throws(() => commandBody(view, op, "key"));
+    }
+  });
+}
 test("policy denial stops the visual workflow", () => {
   const progress = workflowProgress({
     decision: { policy_verdict: "BLOCKED" },
